@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, filedialog
 
 
 # User login/create account
@@ -36,9 +36,10 @@ def login_window():
     def create_account():
         # from ** import **
         # username exists
-        # account created successfully & open main window
         print('Username: {}'.format(username.get()))
         root.destroy()
+        print('Account created successfully.')
+        main_window(username.get())
         return
 
     ca_btn = ttk.Button(root, text='Create Account', command=create_account)
@@ -47,12 +48,27 @@ def login_window():
     # Login button
     def login():
         # open main window
-        # main_window(username)
         root.destroy()
+        main_window(username.get())
         return
 
     login_btn = ttk.Button(root, text='Login', command=login)
     login_btn.grid(column=2, row=4)
+
+    root.mainloop()
+    return
+
+
+# Main window
+def main_window(username):
+
+    root = Tk()
+    root.title('Image Processor')
+
+    # Identify user
+    user_label = ttk.Label(root,
+                           text='You are logged in as: {}'.format(username))
+    user_label.grid(column=0, row=1, columnspan=3, sticky=W)
 
     root.mainloop()
     return
