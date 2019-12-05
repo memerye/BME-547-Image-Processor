@@ -80,6 +80,23 @@ def main_window(username):
                                command=user_data)
     user_data_btn.grid(column=3, row=1)
 
+    # Images upload/choose from history
+    action_label = ttk.Label(root, text='1. Choose an action to begin: ')
+    action_label.grid(column=0, row=2, columnspan=2)
+
+    # Upload button
+    def upload_img():
+        # open local directory
+        # right now, only one file can be selected
+        root.file = filedialog.askopenfilename(filetypes=[
+            ('Image files', '.png .jpg .jpeg .tif .zip',)])
+        file_label = ttk.Label(root, text='{}'.format(root.file), width=50)
+        file_label.grid(column=2, row=3, columnspan=2)
+        return
+
+    upld_btn = ttk.Button(root, text='Upload image file(s)', command=upload_img)
+    upld_btn.grid(column=1, row=3)
+
     root.mainloop()
     return
 
