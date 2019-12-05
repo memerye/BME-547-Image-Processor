@@ -97,6 +97,23 @@ def main_window(username):
     upld_btn = ttk.Button(root, text='Upload image file(s)', command=upload_img)
     upld_btn.grid(column=1, row=3)
 
+    # History button
+    def history():
+        print('Retrieve')
+        # outputs history into pull down menu
+        donor_center_combo['values'] = ('values will be output of history',
+                                        'None')
+        return
+
+    hist_btn = ttk.Button(root, text='Choose from history', command=history)
+    hist_btn.grid(column=1, row=4)
+
+    # History pull down
+    history = StringVar()
+    donor_center_combo = ttk.Combobox(root, textvariable=history)
+    donor_center_combo.grid(column=2, row=4, sticky=W)
+    donor_center_combo.state(['readonly'])
+
     root.mainloop()
     return
 
