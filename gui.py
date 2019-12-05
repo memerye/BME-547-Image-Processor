@@ -70,6 +70,26 @@ def main_window(username):
                            text='You are logged in as: {}'.format(username))
     user_label.grid(column=0, row=1, columnspan=3, sticky=W)
 
+    # View user data
+    def user_data():
+        print('Get data summary from database')
+        user_data_window()
+        return
+
+    user_data_btn = ttk.Button(root, text='View my user data',
+                               command=user_data)
+    user_data_btn.grid(column=3, row=1)
+
+    root.mainloop()
+    return
+
+
+def user_data_window():
+    root = Tk()
+    root.title('Your User Data Summary')
+    data_label = ttk.Label(root,
+                           text='You have done ** things # number of times')
+    data_label.grid(column=0, row=1)
     root.mainloop()
     return
 
