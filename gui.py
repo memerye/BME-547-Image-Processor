@@ -97,6 +97,26 @@ def main_window(username):
     botton4 = ttk.Radiobutton(root, text='Invert Image', variable=process_opt, value='Invert Image')
     botton4.grid(column=2, row=10, columnspan=1, sticky=W)
 
+    # start to process image
+    def process():
+        print('Process {} requested'.format(process_opt.get()))
+        if process_opt.get() == 'Histogram Equalization':
+            print("he")
+            return
+        elif process_opt.get() == 'Contrast Stretching':
+            print("cs")
+            return
+        elif process_opt.get() == 'Log Compression':
+            print("lc")
+            return
+        elif process_opt.get() == 'Invert Image':
+            print("ii")
+            return
+        return
+
+    # Process button
+    process_btn = ttk.Button(root, text='Process', command=process)
+    process_btn.grid(column=3, row=12, columnspan=1, sticky=E)
 
     # Upload button
     def upload_img():
