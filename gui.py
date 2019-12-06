@@ -84,8 +84,8 @@ def main_window(username):
 
     # process option
     process_opt = StringVar(None, 'Histogram Equalization')
-    action_label = ttk.Label(root, text='2. Choose a process option: ')
-    action_label.grid(column=0, row=6, columnspan=2, sticky=W)
+    pro_label = ttk.Label(root, text='2. Choose a process option: ')
+    pro_label.grid(column=0, row=6, columnspan=2, sticky=W)
 
     # process option select button
     botton1 = ttk.Radiobutton(root, text='Histogram Equalization', variable=process_opt, value='Histogram Equalization')
