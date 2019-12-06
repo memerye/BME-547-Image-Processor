@@ -82,12 +82,12 @@ def main_window(username):
     action_label = ttk.Label(root, text='1. Choose an action to begin: ')
     action_label.grid(column=0, row=2, columnspan=2, sticky=W)
 
-    # Images upload/choose from history
+    # process option
     process_opt = StringVar(None, 'Histogram Equalization')
     action_label = ttk.Label(root, text='2. Choose a process option: ')
     action_label.grid(column=0, row=6, columnspan=2, sticky=W)
 
-    # select button
+    # process option select button
     botton1 = ttk.Radiobutton(root, text='Histogram Equalization', variable=process_opt, value='Histogram Equalization')
     botton1.grid(column=1, row=8, columnspan=1, sticky=W)
     botton2 = ttk.Radiobutton(root, text='Contrast Stretching', variable=process_opt, value='Contrast Stretching')
