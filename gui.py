@@ -237,6 +237,17 @@ def main_window(username):
     #     print(time_upload)
     #     return
 
+    # back to login function at main window
+    def back_to_login():
+        root.destroy()
+        login_window()
+        return
+
+    # back to login button
+    back_to_login_btn = ttk.Button(root, text='Back to Login',
+                                   command=back_to_login)
+    back_to_login_btn.grid(column=5, row=21, sticky=E)
+
     # process info include uploaded/processing time and image size
     uptime_label = ttk.Label(root, text='Uploaded time: b')
     uptime_label.grid(column=0, row=19, columnspan=2, sticky=W)
