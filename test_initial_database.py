@@ -14,3 +14,13 @@ def test_add_new_user_to_db(user_info, u_id):
     add_new_user_to_db(user_info)
     u = ImageUser.objects.raw({"_id": u_id}).first()
     assert u_id == u.user_id
+
+
+@pytest.mark.parametrize("u_id, expected", [
+    ("Bob1", True),
+    ("Who3", False)
+])
+def test_validate_existing_id(u_id, expected):
+    from initial_database import validate_existing_id
+    result = validate_existing_id(u_id)
+    assert result == expected
