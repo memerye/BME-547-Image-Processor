@@ -1,2 +1,3 @@
 pytest
-pytest-PEP8
+pytest-pep8
+zipfile36
