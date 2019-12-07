@@ -227,6 +227,13 @@ def main_window(username):
     download_btn = ttk.Button(root, text='Download', command=download)
     download_btn.grid(column=3, row=16, sticky=E)
 
+    #process time function
+    # def process_time():
+    #     global time_process
+    #     time_process = str(datetime.datetime.now())
+    #     print(time_process)
+    #     return
+
     #process info include uploaded/processing time and image size
     uptime_label = ttk.Label(root, text='Uploaded time: b')
     uptime_label.grid(column=0, row=19, columnspan=2, sticky=W)
