@@ -29,3 +29,20 @@ def add_new_user_to_db(user_info):
                   processed=dict.fromkeys(key_list_process, []))
     u.save()
     return None
+
+
+def validate_existing_id(u_id):
+    """Validate the existence of the user id in the database.
+    Args:
+        u_id (string): the patient id.
+    Returns:
+        bool: False if the id doesn't exist in the database;
+        True if the id has been registered in the database.
+    """
+    id_list = []
+    for u in ImageUser.objects.raw({}):
+        id_list.append(u.user_id)
+    if u_id in id_list:
+        return True
+    else:
+        return False
