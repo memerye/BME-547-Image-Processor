@@ -248,6 +248,16 @@ def main_window(username):
                                    command=back_to_login)
     back_to_login_btn.grid(column=5, row=21, sticky=E)
 
+    # exit function at main window
+    def exit():
+        root.destroy()
+        return
+
+    # exit button
+    exit_btn = ttk.Button(root, text='Exit',
+                          command=exit)
+    exit_btn.grid(column=6, row=21, sticky=E)
+
     # process info include uploaded/processing time and image size
     uptime_label = ttk.Label(root, text='Uploaded time: b')
     uptime_label.grid(column=0, row=19, columnspan=2, sticky=W)
