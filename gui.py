@@ -88,13 +88,21 @@ def main_window(username):
     pro_label.grid(column=0, row=6, columnspan=2, sticky=W)
 
     # process option select button
-    botton1 = ttk.Radiobutton(root, text='Histogram Equalization', variable=process_opt, value='Histogram Equalization')
+    botton1 = ttk.Radiobutton(root, text='Histogram Equalization',
+                              variable=process_opt,
+                              value='Histogram Equalization')
     botton1.grid(column=1, row=8, columnspan=1, sticky=W)
-    botton2 = ttk.Radiobutton(root, text='Contrast Stretching', variable=process_opt, value='Contrast Stretching')
+    botton2 = ttk.Radiobutton(root, text='Contrast Stretching',
+                              variable=process_opt,
+                              value='Contrast Stretching')
     botton2.grid(column=2, row=8, columnspan=1, sticky=W)
-    botton3 = ttk.Radiobutton(root, text='Log Compression', variable=process_opt, value='Log Compression')
+    botton3 = ttk.Radiobutton(root, text='Log Compression',
+                              variable=process_opt,
+                              value='Log Compression')
     botton3.grid(column=1, row=10, columnspan=1, sticky=W)
-    botton4 = ttk.Radiobutton(root, text='Invert Image', variable=process_opt, value='Invert Image')
+    botton4 = ttk.Radiobutton(root, text='Invert Image',
+                              variable=process_opt,
+                              value='Invert Image')
     botton4.grid(column=2, row=10, columnspan=1, sticky=W)
 
     # start to process image
@@ -128,7 +136,8 @@ def main_window(username):
         file_label.grid(column=2, row=3, columnspan=2, sticky=W)
         return
 
-    upld_btn = ttk.Button(root, text='Upload image file(s)', command=upload_img)
+    upld_btn = ttk.Button(root, text='Upload image file(s)',
+                          command=upload_img)
     upld_btn.grid(column=1, row=3, sticky=W)
 
     # History button
