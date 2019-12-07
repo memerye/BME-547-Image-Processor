@@ -174,11 +174,13 @@ def main_window(username):
     #                                 height=250, width=300)
     # img_orig_frame.grid(column=2, row=1, columnspan=1)
     # # histogram for processed image frame
-    # hist_pro_frame = ttk.LabelFrame(img_frame, text='Processed Img. Histogram',
+    # hist_pro_frame = ttk.LabelFrame(img_frame,
+    #                                 text='Processed Img. Histogram',
     #                                 height=250, width=300)
     # hist_pro_frame.grid(column=1, row=2, columnspan=1)
     # # histogram for original image frame
-    # hist_pro_frame = ttk.LabelFrame(img_frame, text='Original Img. Histogram',
+    # hist_pro_frame = ttk.LabelFrame(img_frame,
+    #                                 text='Original Img. Histogram',
     #                                 height=250, width=300)
     # hist_pro_frame.grid(column=2, row=2, columnspan=1)
     # # previous/next frame
@@ -198,13 +200,14 @@ def main_window(username):
         print('display images')
         return
 
-    # prev_btn = ttk.Button(prev_frame, text='<', width=1, command=previous_img)
+    # prev_btn = ttk.Button(prev_frame, text='<',
+    #                       width=1, command=previous_img)
     # prev_btn.grid(column=1, row=1)
     # next_btn = ttk.Button(next_frame, text='>', width=1, command=next_img)
     # next_btn.grid(column=1, row=1)
 
     # Download Section
-    download_opt = StringVar()
+    download_opt = StringVar(None, 'jpeg')
     download_label = ttk.Label(root, text='4. Select download format: ')
     download_label.grid(column=0, row=14, columnspan=2, sticky=W)
 
@@ -227,14 +230,14 @@ def main_window(username):
     download_btn = ttk.Button(root, text='Download', command=download)
     download_btn.grid(column=3, row=16, sticky=E)
 
-    #upload time function
+    # upload time function
     # def upload_time():
     #     global time_upload
     #     time_upload = str(datetime.datetime.now())
     #     print(time_upload)
     #     return
 
-    #process info include uploaded/processing time and image size
+    # process info include uploaded/processing time and image size
     uptime_label = ttk.Label(root, text='Uploaded time: b')
     uptime_label.grid(column=0, row=19, columnspan=2, sticky=W)
     protime_label = ttk.Label(root, text='Processsing time: a')
