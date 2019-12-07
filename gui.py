@@ -90,7 +90,7 @@ def main_window(username):
         # right now, only one file can be selected
         root.file = filedialog.askopenfilename(filetypes=[
             ('Image files', '.png .jpg .jpeg .tif .zip',)])
-        file_label = ttk.Label(root, text='{}'.format(root.file), width=50)
+        file_label = ttk.Label(root, text='...{}'.format(root.file[-50::]), width=50)
         file_label.grid(column=2, row=3, columnspan=2)
         return
 
