@@ -82,6 +82,38 @@ def main_window(username):
     action_label = ttk.Label(root, text='1. Choose an action to begin: ')
     action_label.grid(column=0, row=2, columnspan=2, sticky=W)
 
+
+    # Upload button
+    def upload_img():
+        # open local directory
+        # right now, only one file can be selected
+        root.file = filedialog.askopenfilename(filetypes=[
+            ('Image files', '.png .jpg .jpeg .tif .zip',)])
+        file_label = ttk.Label(root, text='{}'.format(root.file), width=50)
+        file_label.grid(column=2, row=3, columnspan=2, sticky=W)
+        return
+
+    upld_btn = ttk.Button(root, text='Upload image file(s)',
+                          command=upload_img)
+    upld_btn.grid(column=1, row=3, sticky=W)
+
+    # History button
+    def history():
+        print('Retrieve')
+        # outputs history into pull down menu
+        donor_center_combo['values'] = ('values will be output of history',
+                                        'None')
+        return
+
+    hist_btn = ttk.Button(root, text='Choose from history', command=history)
+    hist_btn.grid(column=1, row=4, sticky=W)
+
+    # History pull down
+    history = StringVar()
+    donor_center_combo = ttk.Combobox(root, textvariable=history)
+    donor_center_combo.grid(column=2, row=4, sticky=W)
+    donor_center_combo.state(['readonly'])
+
     # process option
     process_opt = StringVar(None, 'Histogram Equalization')
     pro_label = ttk.Label(root, text='2. Choose a process option: ')
@@ -137,55 +169,22 @@ def main_window(username):
     download_cb.state(['readonly'])
 
     def download():
-        root.file = filedialog.asksaveasfilename(
-            title='Download Image',
-            defaultextension='.{}'
-            .format(download_opt.get()),
-            initialdir='/',
-            initialfile='Image.{}'
-            .format(download_opt.get()),
-            filetypes=[
-                 (download_opt.get(),
-                  '*.{}'.format(download_opt.get()))])
+        root.file = filedialog.\
+            asksaveasfilename(title='Download Image',
+                              defaultextension='.{}'.format(
+                                  download_opt.get()),
+                              initialdir='/',
+                              initialfile='Image.{}'
+                              .format(download_opt.get()),
+                              filetypes=[(download_opt.get(), '*.{}'
+                                          .format(download_opt.get()))])
         return
 
     download_btn = ttk.Button(root, text='Download', command=download)
     download_btn.grid(column=3, row=16, sticky=E)
 
-    # Upload button
-    def upload_img():
-        # open local directory
-        # right now, only one file can be selected
-        root.file = filedialog.askopenfilename(filetypes=[
-            ('Image files', '.png .jpg .jpeg .tif .zip',)])
-        file_label = ttk.Label(root, text='{}'.format(root.file), width=50)
-        file_label.grid(column=2, row=3, columnspan=2, sticky=W)
-        return
-
-    upld_btn = ttk.Button(root, text='Upload image file(s)',
-                          command=upload_img)
-    upld_btn.grid(column=1, row=3, sticky=W)
-
-    # History button
-    def history():
-        print('Retrieve')
-        # outputs history into pull down menu
-        donor_center_combo['values'] = ('values will be output of history',
-                                        'None')
-        return
-
-    hist_btn = ttk.Button(root, text='Choose from history', command=history)
-    hist_btn.grid(column=1, row=4, sticky=W)
-
-    # History pull down
-    history = StringVar()
-    donor_center_combo = ttk.Combobox(root, textvariable=history)
-    donor_center_combo.grid(column=2, row=4, sticky=W)
-    donor_center_combo.state(['readonly'])
-
     root.mainloop()
     return
-
 
 def user_data_window():
     root = Tk()
