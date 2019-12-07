@@ -186,6 +186,22 @@ def main_window(username):
     next_frame = ttk.Frame(root, height=600, width=20)
     next_frame.grid(column=5, row=13)
 
+    # previous/next button
+    def previous_img():
+        print('get previous image from server')
+        print('display images')
+        return
+
+    def next_img():
+        print('get previous image from server')
+        print('display images')
+        return
+
+    prev_btn = ttk.Button(prev_frame, text='<', width=1, command=previous_img)
+    prev_btn.grid(column=1, row=1)
+    next_btn = ttk.Button(next_frame, text='>', width=1, command=next_img)
+    next_btn.grid(column=1, row=1)
+
     root.mainloop()
     return
 
