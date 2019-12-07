@@ -137,12 +137,16 @@ def main_window(username):
     download_cb.state(['readonly'])
 
     def download():
-        root.file = filedialog.asksaveasfilename(title='Download',
-                                                 defaultextension='.{}'.format(download_opt.get()),
-                                                 initialdir='/',
-                                                 initialfile='Image.{}'.format(download_opt.get()),
-                                                 filetypes=[(download_opt.get(),
-                                                             '*.{}'.format(download_opt.get()))])
+        root.file = filedialog.asksaveasfilename(
+            title='Download Image',
+            defaultextension='.{}'
+            .format(download_opt.get()),
+            initialdir='/',
+            initialfile='Image.{}'
+            .format(download_opt.get()),
+            filetypes=[
+                 (download_opt.get(),
+                  '*.{}'.format(download_opt.get()))])
         return
 
     download_btn = ttk.Button(root, text='Download', command=download)
