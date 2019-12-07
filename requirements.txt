@@ -10,3 +10,4 @@ dnspython
 numpy
 matplotlib
 scikit-image
+zipfile36
