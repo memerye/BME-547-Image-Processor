@@ -1,2 +1,12 @@
 pytest
-pytest-PEP8
+pytest-pep8
+testfixtures
+sphinx
+flask
+requests
+sendgrid
+pymodm
+dnspython
+numpy
+matplotlib
+scikit-image
