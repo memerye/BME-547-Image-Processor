@@ -157,7 +157,7 @@ def main_window(username):
     # Process button
     process_btn = ttk.Button(root, text='Process', command=process)
     process_btn.grid(column=3, row=12, columnspan=1, sticky=E)
-
+    
     # Download Section
     download_opt = StringVar()
     download_label = ttk.Label(root, text='4. Select download format: ')
@@ -178,7 +178,7 @@ def main_window(username):
                               .format(download_opt.get()),
                               filetypes=[(download_opt.get(), '*.{}'
                                           .format(download_opt.get()))])
-        return
+
 
     download_btn = ttk.Button(root, text='Download', command=download)
     download_btn.grid(column=3, row=16, sticky=E)
