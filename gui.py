@@ -82,15 +82,16 @@ def main_window(username):
     action_label = ttk.Label(root, text='1. Choose an action to begin: ')
     action_label.grid(column=0, row=2, columnspan=2, sticky=W)
 
-
     # Upload button
     def upload_img():
         # open local directory
         # right now, only one file can be selected
         root.file = filedialog.askopenfilename(filetypes=[
             ('Image files', '.png .jpg .jpeg .tif .zip',)])
-        file_label = ttk.Label(root, text='{}'.format(root.file), width=50)
-        file_label.grid(column=2, row=3, columnspan=2, sticky=W)
+
+        file_label = ttk.Label(root, text='...{}'.format(root.file[-50::]),
+                               width=50)
+        file_label.grid(column=2, row=3, columnspan=2)
         return
 
     upld_btn = ttk.Button(root, text='Upload image file(s)',
@@ -157,7 +158,51 @@ def main_window(username):
     # Process button
     process_btn = ttk.Button(root, text='Process', command=process)
     process_btn.grid(column=3, row=12, columnspan=1, sticky=E)
-    
+
+    # Image Display frame
+    img_frame = ttk.Frame(root, height=600, width=700)
+    # img_frame.pack()
+    # img_frame.columnconfigure(2, weight=1)
+    # img_frame.rowconfigure(2, weight=1)
+    img_frame.grid(column=1, row=13, columnspan=4)
+    # processed image frame
+    img_pro_frame = ttk.LabelFrame(img_frame, text='Processed Image',
+                                   height=250, width=300)
+    img_pro_frame.grid(column=1, row=1, columnspan=1)
+    # original image frame
+    img_orig_frame = ttk.LabelFrame(img_frame, text='Original Image',
+                                    height=250, width=300)
+    img_orig_frame.grid(column=2, row=1, columnspan=1)
+    # histogram for processed image frame
+    hist_pro_frame = ttk.LabelFrame(img_frame, text='Processed Img. Histogram',
+                                    height=250, width=300)
+    hist_pro_frame.grid(column=1, row=2, columnspan=1)
+    # histogram for original image frame
+    hist_pro_frame = ttk.LabelFrame(img_frame, text='Original Img. Histogram',
+                                    height=250, width=300)
+    hist_pro_frame.grid(column=2, row=2, columnspan=1)
+    # previous/next frame
+    prev_frame = ttk.Frame(root, height=600, width=20)
+    prev_frame.grid(column=0, row=13)
+    next_frame = ttk.Frame(root, height=600, width=20)
+    next_frame.grid(column=5, row=13)
+
+    # previous/next button
+    def previous_img():
+        print('get previous image from server')
+        print('display images')
+        return
+
+    def next_img():
+        print('get previous image from server')
+        print('display images')
+        return
+
+    prev_btn = ttk.Button(prev_frame, text='<', width=1, command=previous_img)
+    prev_btn.grid(column=1, row=1)
+    next_btn = ttk.Button(next_frame, text='>', width=1, command=next_img)
+    next_btn.grid(column=1, row=1)
+
     # Download Section
     download_opt = StringVar()
     download_label = ttk.Label(root, text='4. Select download format: ')
@@ -179,12 +224,12 @@ def main_window(username):
                               filetypes=[(download_opt.get(), '*.{}'
                                           .format(download_opt.get()))])
 
-
     download_btn = ttk.Button(root, text='Download', command=download)
     download_btn.grid(column=3, row=16, sticky=E)
 
     root.mainloop()
     return
+
 
 def user_data_window():
     root = Tk()
