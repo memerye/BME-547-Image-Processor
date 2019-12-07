@@ -126,6 +126,12 @@ def main_window(username):
     process_btn = ttk.Button(root, text='Process', command=process)
     process_btn.grid(column=3, row=12, columnspan=1, sticky=E)
 
+    # Download Section
+    download_opt = StringVar()
+    download_label = ttk.Label(root, text='4. Select download format: ')
+    download_label.grid(column=0, row=14, columnspan=2, sticky=W)
+
+
     # Upload button
     def upload_img():
         # open local directory
