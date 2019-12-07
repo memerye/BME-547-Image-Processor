@@ -202,10 +202,34 @@ def main_window(username):
     prev_btn.grid(column=1, row=1)
     next_btn = ttk.Button(next_frame, text='>', width=1, command=next_img)
     next_btn.grid(column=1, row=1)
+    
+    # Download Section
+    download_opt = StringVar()
+    download_label = ttk.Label(root, text='4. Select download format: ')
+    download_label.grid(column=0, row=14, columnspan=2, sticky=W)
+
+    download_cb = ttk.Combobox(root, textvariable=download_opt)
+    download_cb.grid(column=1, row=16, sticky=E)
+    download_cb["values"] = ("jpeg", "png", "tiff")
+    download_cb.state(['readonly'])
+
+    def download():
+        root.file = filedialog.\
+            asksaveasfilename(title='Download Image',
+                              defaultextension='.{}'.format(
+                                  download_opt.get()),
+                              initialdir='/',
+                              initialfile='Image.{}'
+                              .format(download_opt.get()),
+                              filetypes=[(download_opt.get(), '*.{}'
+                                          .format(download_opt.get()))])
+
+
+    download_btn = ttk.Button(root, text='Download', command=download)
+    download_btn.grid(column=3, row=16, sticky=E)
 
     root.mainloop()
     return
-
 
 def user_data_window():
     root = Tk()
