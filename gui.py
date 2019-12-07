@@ -198,10 +198,10 @@ def main_window(username):
         print('display images')
         return
 
-    prev_btn = ttk.Button(prev_frame, text='<', width=1, command=previous_img)
-    prev_btn.grid(column=1, row=1)
-    next_btn = ttk.Button(next_frame, text='>', width=1, command=next_img)
-    next_btn.grid(column=1, row=1)
+    # prev_btn = ttk.Button(prev_frame, text='<', width=1, command=previous_img)
+    # prev_btn.grid(column=1, row=1)
+    # next_btn = ttk.Button(next_frame, text='>', width=1, command=next_img)
+    # next_btn.grid(column=1, row=1)
 
     # Download Section
     download_opt = StringVar()
