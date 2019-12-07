@@ -4,7 +4,6 @@ from tkinter import ttk, filedialog
 
 # User login/create account
 def login_window():
-
     root = Tk()
     root.title('Create Account/User Login')
 
@@ -61,7 +60,6 @@ def login_window():
 
 # Main window
 def main_window(username):
-
     root = Tk()
     root.title('Image Processor')
 
@@ -82,7 +80,51 @@ def main_window(username):
 
     # Images upload/choose from history
     action_label = ttk.Label(root, text='1. Choose an action to begin: ')
-    action_label.grid(column=0, row=2, columnspan=2)
+    action_label.grid(column=0, row=2, columnspan=2, sticky=W)
+
+    # process option
+    process_opt = StringVar(None, 'Histogram Equalization')
+    pro_label = ttk.Label(root, text='2. Choose a process option: ')
+    pro_label.grid(column=0, row=6, columnspan=2, sticky=W)
+
+    # process option select button
+    botton1 = ttk.Radiobutton(root, text='Histogram Equalization',
+                              variable=process_opt,
+                              value='Histogram Equalization')
+    botton1.grid(column=1, row=8, columnspan=1, sticky=W)
+    botton2 = ttk.Radiobutton(root, text='Contrast Stretching',
+                              variable=process_opt,
+                              value='Contrast Stretching')
+    botton2.grid(column=2, row=8, columnspan=1, sticky=W)
+    botton3 = ttk.Radiobutton(root, text='Log Compression',
+                              variable=process_opt,
+                              value='Log Compression')
+    botton3.grid(column=1, row=10, columnspan=1, sticky=W)
+    botton4 = ttk.Radiobutton(root, text='Invert Image',
+                              variable=process_opt,
+                              value='Invert Image')
+    botton4.grid(column=2, row=10, columnspan=1, sticky=W)
+
+    # start to process image
+    def process():
+        print('Process {} requested'.format(process_opt.get()))
+        if process_opt.get() == 'Histogram Equalization':
+            print("he")
+            return
+        elif process_opt.get() == 'Contrast Stretching':
+            print("cs")
+            return
+        elif process_opt.get() == 'Log Compression':
+            print("lc")
+            return
+        elif process_opt.get() == 'Invert Image':
+            print("ii")
+            return
+        return
+
+    # Process button
+    process_btn = ttk.Button(root, text='Process', command=process)
+    process_btn.grid(column=3, row=12, columnspan=1, sticky=E)
 
     # Upload button
     def upload_img():
@@ -90,12 +132,14 @@ def main_window(username):
         # right now, only one file can be selected
         root.file = filedialog.askopenfilename(filetypes=[
             ('Image files', '.png .jpg .jpeg .tif .zip',)])
+
         file_label = ttk.Label(root, text='...{}'.format(root.file[-50::]), width=50)
         file_label.grid(column=2, row=3, columnspan=2)
         return
 
-    upld_btn = ttk.Button(root, text='Upload image file(s)', command=upload_img)
-    upld_btn.grid(column=1, row=3)
+    upld_btn = ttk.Button(root, text='Upload image file(s)',
+                          command=upload_img)
+    upld_btn.grid(column=1, row=3, sticky=W)
 
     # History button
     def history():
@@ -106,7 +150,7 @@ def main_window(username):
         return
 
     hist_btn = ttk.Button(root, text='Choose from history', command=history)
-    hist_btn.grid(column=1, row=4)
+    hist_btn.grid(column=1, row=4, sticky=W)
 
     # History pull down
     history = StringVar()
