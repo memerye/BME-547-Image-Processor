@@ -123,6 +123,20 @@ def validate_image_keys(image_info):
     return True
 
 
+def validate_images(image_info):
+    images = image_info["image"]
+    try:
+        assert type(images) == list
+    except AssertionError:
+        return False
+    for i in images:
+        try:
+            assert type(i) == str
+        except AssertionError:
+            return False
+    return True
+
+
 def init_server():
     """Initialize the logging configuration and database connection.
 
