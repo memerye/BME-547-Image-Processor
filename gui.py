@@ -61,7 +61,10 @@ def login_window():
 # Main window
 def main_window(username):
     root = Tk()
-    root.title('Image Processor')
+    # root.title('Image Processor')
+    # canvas = Canvas(root)
+    # scrollbar = ttk.Scrollbar(root, orient="v", command=canvas.yview)
+    # scrollbar.grid(row=0, column=8, rowspan=22, sticky='ns')
 
     # Identify user
     user_label = ttk.Label(root,
@@ -158,36 +161,36 @@ def main_window(username):
     # Process button
     process_btn = ttk.Button(root, text='Process', command=process)
     process_btn.grid(column=3, row=12, columnspan=1, sticky=E)
-    #
-    # # Image Display frame
-    # img_frame = ttk.Frame(root, height=600, width=700)
-    # # img_frame.pack()
-    # # img_frame.columnconfigure(2, weight=1)
-    # # img_frame.rowconfigure(2, weight=1)
-    # img_frame.grid(column=1, row=13, columnspan=4)
-    # # processed image frame
-    # img_pro_frame = ttk.LabelFrame(img_frame, text='Processed Image',
-    #                                height=250, width=300)
-    # img_pro_frame.grid(column=1, row=1, columnspan=1)
-    # # original image frame
-    # img_orig_frame = ttk.LabelFrame(img_frame, text='Original Image',
-    #                                 height=250, width=300)
-    # img_orig_frame.grid(column=2, row=1, columnspan=1)
-    # # histogram for processed image frame
-    # hist_pro_frame = ttk.LabelFrame(img_frame,
-    #                                 text='Processed Img. Histogram',
-    #                                 height=250, width=300)
-    # hist_pro_frame.grid(column=1, row=2, columnspan=1)
-    # # histogram for original image frame
-    # hist_pro_frame = ttk.LabelFrame(img_frame,
-    #                                 text='Original Img. Histogram',
-    #                                 height=250, width=300)
-    # hist_pro_frame.grid(column=2, row=2, columnspan=1)
-    # # previous/next frame
-    # prev_frame = ttk.Frame(root, height=600, width=20)
-    # prev_frame.grid(column=0, row=13)
-    # next_frame = ttk.Frame(root, height=600, width=20)
-    # next_frame.grid(column=5, row=13)
+
+    # Image Display frame
+    img_frame = ttk.Frame(root, height=600, width=700)
+    # img_frame.pack()
+    # img_frame.columnconfigure(2, weight=1)
+    # img_frame.rowconfigure(2, weight=1)
+    img_frame.grid(column=1, row=13, columnspan=4)
+    # processed image frame
+    img_pro_frame = ttk.LabelFrame(img_frame, text='Processed Image',
+                                   height=250, width=300)
+    img_pro_frame.grid(column=1, row=1, columnspan=1)
+    # original image frame
+    img_orig_frame = ttk.LabelFrame(img_frame, text='Original Image',
+                                    height=250, width=300)
+    img_orig_frame.grid(column=2, row=1, columnspan=1)
+    # histogram for processed image frame
+    hist_pro_frame = ttk.LabelFrame(img_frame,
+                                    text='Processed Img. Histogram',
+                                    height=250, width=300)
+    hist_pro_frame.grid(column=1, row=2, columnspan=1)
+    # histogram for original image frame
+    hist_pro_frame = ttk.LabelFrame(img_frame,
+                                    text='Original Img. Histogram',
+                                    height=250, width=300)
+    hist_pro_frame.grid(column=2, row=2, columnspan=1)
+    # previous/next frame
+    prev_frame = ttk.Frame(root, height=600, width=10)
+    prev_frame.grid(column=0, row=13)
+    next_frame = ttk.Frame(root, height=600, width=10)
+    next_frame.grid(column=5, row=13)
 
     # previous/next button
     def previous_img():
@@ -200,11 +203,11 @@ def main_window(username):
         print('display images')
         return
 
-    # prev_btn = ttk.Button(prev_frame, text='<',
-    #                       width=1, command=previous_img)
-    # prev_btn.grid(column=1, row=1)
-    # next_btn = ttk.Button(next_frame, text='>', width=1, command=next_img)
-    # next_btn.grid(column=1, row=1)
+    prev_btn = ttk.Button(prev_frame, text='<',
+                          width=1, command=previous_img)
+    prev_btn.grid(column=1, row=1)
+    next_btn = ttk.Button(next_frame, text='>', width=1, command=next_img)
+    next_btn.grid(column=1, row=1)
 
     # Download Section
     download_opt = StringVar(None, 'jpeg')
