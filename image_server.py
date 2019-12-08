@@ -91,6 +91,13 @@ def add_user_id():
         return "The user has been registered and logged in."
 
 
+@app.route("/api/check_id/<user_id>", methods=["GET"])
+def check_user_id(user_id):
+    result = initial_database.validate_existing_id(user_id)
+    flag = {"result": result}
+    return jsonify(flag)
+
+
 def init_server():
     """Initialize the logging configuration and database connection.
 
