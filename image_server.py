@@ -124,6 +124,15 @@ def validate_image_keys(image_info):
 
 
 def validate_images(image_info):
+    """Validate the format of the encoded images as strings
+
+    Args:
+        image_info(dict): the posted image data.
+
+    Returns:
+        bool: True if the keys are all valid;
+        False if it contains wrong keys.
+    """
     images = image_info["image"]
     try:
         assert type(images) == list
@@ -132,6 +141,31 @@ def validate_images(image_info):
     for i in images:
         try:
             assert type(i) == str
+        except AssertionError:
+            return False
+    return True
+
+
+def validate_image_names(image_info):
+    """Validate the format of the image names as "name.type".
+    e.g. "01.jpg", but not "01jpg"
+
+    Args:
+        image_info(dict): the posted image data.
+
+    Returns:
+        bool: True if the keys are all valid;
+        False if it contains wrong keys.
+    """
+    names = image_info["name"]
+    try:
+        assert type(names) == list
+    except AssertionError:
+        return False
+    for n in names:
+        try:
+            assert type(n) == str
+            assert "." in n
         except AssertionError:
             return False
     return True
