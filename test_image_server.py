@@ -149,3 +149,37 @@ def test_validate_image_names(image_info, expected):
     from image_server import validate_image_names
     result = validate_image_names(image_info)
     assert result == expected
+
+
+@pytest.mark.parametrize("image_info, expected", [
+    ({"user_id": "123",
+      "image": ["pseudo_encoeded1", "pseudo_encoeded2", "pseudo_encoeded3"],
+      "name": ["01.jpg", "02.jpg", "03.jpg"],
+      "size": [(200, 300, 3), (100, 150, 3), (180, 180, 1)]}, True),
+    ({"user_id": "123",
+      "image": ["pseudo_encoeded1", "pseudo_encoeded2"],
+      "name": ["01.jpg", "02.jpg", "03.jpg"],
+      "size": [(200, 300, 3), (100, 150, 3), (180, 180, 1)]}, False),
+    ({"user_id": "123",
+      "image": ["pseudo_encoeded1", "pseudo_encoeded2", "pseudo_encoeded3"],
+      "name": ["01.jpg", "02.jpg"],
+      "size": [(200, 300, 3), (100, 150, 3), (180, 180, 1)]}, False),
+    ({"user_id": "123",
+      "image": ["pseudo_encoeded1", "pseudo_encoeded2", "pseudo_encoeded3"],
+      "name": ["01.jpg", "02.jpg", "03.jpg"],
+      "size": [(200, 300, 3), (100, 150, 3)]}, False)
+])
+def test_validate_data_length(image_info, expected):
+    """Test the function validate_data_length.
+
+    Args:
+        image_info (dict): the posted image data.
+        expected (bool): the expected result of the function.
+
+    Returns:
+        Error if the test fails
+        Pass if the test passes
+    """
+    from image_server import validate_data_length
+    result = validate_data_length(image_info)
+    assert result == expected

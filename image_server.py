@@ -130,8 +130,8 @@ def validate_images(image_info):
         image_info(dict): the posted image data.
 
     Returns:
-        bool: True if the keys are all valid;
-        False if it contains wrong keys.
+        bool: True if the images are all valid;
+        False if it contains wrong format of images.
     """
     images = image_info["image"]
     try:
@@ -154,8 +154,8 @@ def validate_image_names(image_info):
         image_info(dict): the posted image data.
 
     Returns:
-        bool: True if the keys are all valid;
-        False if it contains wrong keys.
+        bool: True if the names are all valid;
+        False if it contains wrong format of names.
     """
     names = image_info["name"]
     try:
@@ -169,6 +169,28 @@ def validate_image_names(image_info):
         except AssertionError:
             return False
     return True
+
+
+def validate_data_length(image_info):
+    """Validate the total length of the images, their names and their size.
+
+    The total length of the images, their names and their size should
+    always be equal.
+
+    Args:
+        image_info(dict): the posted image data.
+
+    Returns:
+        bool: True if the length are all equal;
+        False if they have different length.
+    """
+    try:
+        assert len(image_info["image"]) == \
+               len(image_info["name"]) == len(image_info["size"])
+    except AssertionError:
+        return False
+    else:
+        return True
 
 
 def init_server():
