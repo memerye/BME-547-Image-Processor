@@ -37,5 +37,17 @@ def test_add_patients():
     return None
 
 
+def request_check_id():
+    ids = ["1_a", "08563", "Lily121", "whoisthis"]
+    for p_id in ids:
+        r = requests.get("http://127.0.0.1:5000/api/check_id/{}".format(p_id))
+        print(r)
+        print(r.status_code)
+        if r.status_code == 200:
+            answer = r.json()
+            print(answer)
+
+
 if __name__ == '__main__':
     test_add_patients()
+    request_check_id()
