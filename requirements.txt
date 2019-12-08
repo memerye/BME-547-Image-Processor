@@ -17,3 +17,15 @@ scipy==1.3.3
 six==1.13.0
 wcwidth==0.1.7
 zipp==0.6.0
+pytest
+pytest-pep8
+testfixtures
+sphinx
+flask
+requests
+sendgrid
+pymodm
+dnspython
+numpy
+matplotlib
+scikit-image

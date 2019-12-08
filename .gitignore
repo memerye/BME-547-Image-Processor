@@ -1,1 +1,6 @@
 lingvenv
+venv
+.idea
+__pycache__/
+.DS_Store
+image_server.log
