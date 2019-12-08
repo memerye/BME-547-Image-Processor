@@ -1,3 +1,12 @@
 pytest
-pymodm
 pytest-pep8
+testfixtures
+sphinx
+flask
+requests
+sendgrid
+pymodm
+dnspython
+numpy
+matplotlib
+scikit-image
