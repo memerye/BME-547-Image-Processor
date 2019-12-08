@@ -135,11 +135,11 @@ def main_window(username):
     botton3 = ttk.Radiobutton(root, text='Log Compression',
                               variable=process_opt,
                               value='Log Compression')
-    botton3.grid(column=1, row=10, columnspan=1, sticky=W)
+    botton3.grid(column=1, row=9, columnspan=1, sticky=W)
     botton4 = ttk.Radiobutton(root, text='Invert Image',
                               variable=process_opt,
                               value='Invert Image')
-    botton4.grid(column=2, row=10, columnspan=1, sticky=W)
+    botton4.grid(column=2, row=9, columnspan=1, sticky=W)
 
     # start to process image
     def process():
@@ -160,14 +160,14 @@ def main_window(username):
 
     # Process button
     process_btn = ttk.Button(root, text='Process', command=process)
-    process_btn.grid(column=3, row=12, columnspan=1, sticky=E)
+    process_btn.grid(column=3, row=10, columnspan=1, sticky=E)
 
     # Image Display frame
-    img_frame = ttk.Frame(root, height=600, width=700)
+    img_frame = ttk.Frame(root, height=500, width=700)
     # img_frame.pack()
     # img_frame.columnconfigure(2, weight=1)
     # img_frame.rowconfigure(2, weight=1)
-    img_frame.grid(column=1, row=13, columnspan=4)
+    img_frame.grid(column=6, row=1, columnspan=10, rowspan=16)
     # processed image frame
     img_pro_frame = ttk.LabelFrame(img_frame, text='Processed Image',
                                    height=250, width=300)
@@ -188,9 +188,9 @@ def main_window(username):
     hist_pro_frame.grid(column=2, row=2, columnspan=1)
     # previous/next frame
     prev_frame = ttk.Frame(root, height=600, width=10)
-    prev_frame.grid(column=0, row=13)
+    prev_frame.grid(column=5, row=8)
     next_frame = ttk.Frame(root, height=600, width=10)
-    next_frame.grid(column=5, row=13)
+    next_frame.grid(column=16, row=8)
 
     # previous/next button
     def previous_img():
@@ -249,7 +249,7 @@ def main_window(username):
     # back to login button
     back_to_login_btn = ttk.Button(root, text='Back to Login',
                                    command=back_to_login)
-    back_to_login_btn.grid(column=5, row=21, sticky=E)
+    back_to_login_btn.grid(column=14, row=19, sticky=E)
 
     # exit function at main window
     def exit():
@@ -259,15 +259,15 @@ def main_window(username):
     # exit button
     exit_btn = ttk.Button(root, text='Exit',
                           command=exit)
-    exit_btn.grid(column=6, row=21, sticky=E)
+    exit_btn.grid(column=15, row=19)
 
     # process info include uploaded/processing time and image size
     uptime_label = ttk.Label(root, text='Uploaded time: b')
-    uptime_label.grid(column=0, row=19, columnspan=2, sticky=W)
+    uptime_label.grid(column=7, row=18, columnspan=1, sticky=W)
     protime_label = ttk.Label(root, text='Processsing time: a')
-    protime_label.grid(column=2, row=19, columnspan=2, sticky=W)
+    protime_label.grid(column=11, row=18, columnspan=1, sticky=W)
     size_label = ttk.Label(root, text='Image size: c')
-    size_label.grid(column=0, row=20, columnspan=2, sticky=W)
+    size_label.grid(column=14, row=18, columnspan=1, sticky=W)
 
     root.mainloop()
     return
