@@ -93,9 +93,34 @@ def add_user_id():
 
 @app.route("/api/check_id/<user_id>", methods=["GET"])
 def check_user_id(user_id):
+    """Get the message if this id exists in the database.
+
+    Args:
+        user_id (string): The id of this user
+
+    Returns:
+        json: The bool variable of the existence of this id
+    """
     result = initial_database.validate_existing_id(user_id)
     flag = {"result": result}
     return jsonify(flag)
+
+
+def validate_image_keys(image_info):
+    """Validate the keys when posting images
+
+    Args:
+        image_info(dict): the posted image data.
+
+    Returns:
+        bool: True if the keys are all valid;
+        False if it contains wrong keys.
+    """
+    expected_keys = ["user_id", "image", "name", "size"]
+    for key in image_info.keys():
+        if key not in expected_keys:
+            return False
+    return True
 
 
 def init_server():
