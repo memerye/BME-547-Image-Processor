@@ -5,6 +5,7 @@ import logging
 from pymodm import connect
 import initial_database
 from image_processing import ImageProcessing
+from en_de_code import image_to_b64, b64_to_image
 
 # Ignore warnings
 import warnings
@@ -117,7 +118,7 @@ def validate_image_keys(image_info):
     """Validate the keys when posting images
 
     Args:
-        image_info(dict): the posted image data.
+        image_info (dict): the posted image data.
 
     Returns:
         bool: True if the keys are all valid;
@@ -136,17 +137,16 @@ def validate_image_keys(image_info):
         return False
 
 
-def validate_images(image_info):
+def validate_images(images):
     """Validate the format of the encoded images as strings
 
     Args:
-        image_info(dict): the posted image data.
+        images (list): the posted encoded image data.
 
     Returns:
         bool: True if the images are all valid;
         False if it contains wrong format of images.
     """
-    images = image_info["image"]
     try:
         assert type(images) == list
     except AssertionError:
@@ -159,18 +159,17 @@ def validate_images(image_info):
     return True
 
 
-def validate_image_names(image_info):
+def validate_image_names(names):
     """Validate the format of the image names as "name.type".
     e.g. "01.jpg", but not "01jpg"
 
     Args:
-        image_info(dict): the posted image data.
+        names (list): the posted image names.
 
     Returns:
         bool: True if the names are all valid;
         False if it contains wrong format of names.
     """
-    names = image_info["name"]
     try:
         assert type(names) == list
     except AssertionError:
@@ -184,7 +183,7 @@ def validate_image_names(image_info):
     return True
 
 
-def validate_size(image_info):
+def validate_size(size):
     """Validate the format of the size of the images.
 
     The "size" stores all of the images' size as a list.
@@ -192,13 +191,12 @@ def validate_size(image_info):
     e.g. [[200, 300, 3], [100, 150, 1]].
 
     Args:
-        image_info(dict): the posted image data.
+        size (list): the posted image size.
 
     Returns:
         bool: True if the names are all valid;
         False if it contains wrong format of names.
     """
-    size = image_info["size"]
     try:
         assert type(size) == list
     except AssertionError:
@@ -217,22 +215,23 @@ def validate_size(image_info):
     return True
 
 
-def validate_data_length(image_info):
-    """Validate the total lengths of the images, their names and their size.
+def validate_data_length(image, name, size):
+    """Validate the total lengths of the images, their names and their sizes.
 
     The total lengths of the images, their names and their size should
     always be equal.
 
     Args:
-        image_info(dict): the posted image data.
+        image (list): the posted image data.
+        name (list): the posted image names.
+        size (list): the posted image size.
 
     Returns:
         bool: True if the length are all equal;
         False if they have different length.
     """
     try:
-        assert len(image_info["image"]) == \
-               len(image_info["name"]) == len(image_info["size"])
+        assert len(image) == len(name) == len(size)
     except AssertionError:
         return False
     else:
@@ -245,13 +244,16 @@ def add_images():
     good_keys = validate_image_keys(indata)
     if good_keys is False:
         return "The dictionary keys are not correct.", 400
-    if validate_images(indata) is False:
+    images = indata["image"]
+    if validate_images(images) is False:
         return "Please upload the encoded images!", 400
-    if validate_image_names(indata) is False:
+    names = indata["name"]
+    if validate_image_names(names) is False:
         return "Please upload the valid image names!", 400
-    if validate_size(indata) is False:
+    size = indata["size"]
+    if validate_size(size) is False:
         return "The type of image size is not valid!", 400
-    if validate_data_length(indata) is False:
+    if validate_data_length(images, names, size) is False:
         return "The total lengths of the images, their names and" \
                "their size should always be equal.", 400
     u_id = indata["user_id"]
@@ -313,6 +315,52 @@ def process_image(img, operation):
     else:
         return False
     return processed_img, run_time
+
+
+@app.route("/api/process", methods=["POST"])
+def img_process():
+    indata = request.get_json()
+    good_keys = validate_process_keys(indata)
+    if good_keys is False:
+        return "The dictionary keys are not correct.", 400
+    op = validate_operation(indata)
+    if op is False:
+        return "This operation doesn't exist!", 400
+    images = indata["raw_img"]
+    if validate_images(images) is False:
+        return "Please upload the encoded images!", 400
+    names = indata["name"]
+    if validate_image_names(names) is False:
+        return "Please upload the valid image names!", 400
+    size = indata["size"]
+    if validate_size(size) is False:
+        return "The type of image size is not valid!", 400
+    if validate_data_length(images, names, size) is False:
+        return "The total lengths of the images, their names and" \
+               "their size should always be equal.", 400
+    u_id = validate_id(indata)
+    indata["user_id"] = u_id
+    u_raw_img = indata["raw_img"]
+    u_size = indata["size"]
+    indata["processed_img"] = []
+    indata["run_time"] = []
+    if initial_database.validate_existing_id(u_id):
+        for img_i, size_i in zip(u_raw_img, u_size):
+            size_i_tuple = tuple(size_i)
+            img = b64_to_image(img_i, size_i_tuple)
+            processed_img, run_time = process_image(img, op)
+            processed_img_b64, _ = image_to_b64(processed_img)
+            indata["processed_img"].append(processed_img_b64)
+            indata["run_time"].append(run_time)
+        initial_database.add_processed_image_to_db(indata)
+        #############################################
+        num = len(indata["processed_img"])
+        logging.info("* ID {} has processed {} images."
+                     .format(u_id, num))
+        #############################################
+        return "Success process!"
+    else:
+        return "The user doesn't exist!", 400
 
 
 def init_server():

@@ -63,7 +63,7 @@ def test_validate_id(user_info, expected):
       "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, False),
     ({"user_id": "123",
       "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, False),
+      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, False)
 ])
 def test_validate_image_keys(image_info, expected):
     """Test the function validate_image_keys.
@@ -81,25 +81,16 @@ def test_validate_image_keys(image_info, expected):
     assert result == expected
 
 
-@pytest.mark.parametrize("image_info, expected", [
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, True),
-    ({"user_id": "123",
-      "image": "pseudo_encode1",
-      "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, False),
-    ({"user_id": "123",
-      "image": [np.array([1, 2, 3]), np.array([4, 5, 6]), "pseudo_encode3"],
-      "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, False)
+@pytest.mark.parametrize("images, expected", [
+    (["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"], True),
+    ("pseudo_encode1", False),
+    ([np.array([1, 2, 3]), np.array([4, 5, 6]), "pseudo_encode3"], False)
 ])
-def test_validate_images(image_info, expected):
+def test_validate_images(images, expected):
     """Test the function validate_images.
 
     Args:
-        image_info (dict): the posted image data.
+        images (list): the posted encoded image data.
         expected (bool): the expected result of the function.
 
     Returns:
@@ -107,33 +98,21 @@ def test_validate_images(image_info, expected):
         Pass if the test passes
     """
     from image_server import validate_images
-    result = validate_images(image_info)
+    result = validate_images(images)
     assert result == expected
 
 
-@pytest.mark.parametrize("image_info, expected", [
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, True),
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": "01.jpg",
-      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, False),
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": [1, 2, 3],
-      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, False),
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": ["01jpg", "02jpg", "03jpg"],
-      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, False)
+@pytest.mark.parametrize("names, expected", [
+    (["01.jpg", "02.jpg", "03.jpg"], True),
+    ("01.jpg", False),
+    ([1, 2, 3], False),
+    (["01jpg", "02jpg", "03jpg"], False)
 ])
-def test_validate_image_names(image_info, expected):
+def test_validate_image_names(names, expected):
     """Test the function validate_image_names.
 
     Args:
-        image_info (dict): the posted image data.
+        names (list): the posted image names.
         expected (bool): the expected result of the function.
 
     Returns:
@@ -141,37 +120,22 @@ def test_validate_image_names(image_info, expected):
         Pass if the test passes
     """
     from image_server import validate_image_names
-    result = validate_image_names(image_info)
+    result = validate_image_names(names)
     assert result == expected
 
 
-@pytest.mark.parametrize("image_info, expected", [
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, True),
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": (200, 300, 3)}, False),
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": [200, 300, 3]}, False),
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": [[200], [300], [3]]}, False),
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": [[20.5, 300, 3], [10.3, 150, 3], [180, 180, 1]]}, False),
+@pytest.mark.parametrize("size, expected", [
+    ([[200, 300, 3], [100, 150, 3], [180, 180, 1]], True),
+    ((200, 300, 3), False),
+    ([200, 300, 3], False),
+    ([[200], [300], [3]], False),
+    ([[20.5, 300, 3], [10.3, 150, 3], [180, 180, 1]], False)
 ])
-def test_validate_size(image_info, expected):
+def test_validate_size(size, expected):
     """Test the function validate_size.
 
     Args:
-        image_info (dict): the posted image data.
+        size (list): the posted image size.
         expected (bool): the expected result of the function.
 
     Returns:
@@ -179,33 +143,31 @@ def test_validate_size(image_info, expected):
         Pass if the test passes
     """
     from image_server import validate_size
-    result = validate_size(image_info)
+    result = validate_size(size)
     assert result == expected
 
 
-@pytest.mark.parametrize("image_info, expected", [
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, True),
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2"],
-      "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, False),
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": ["01.jpg", "02.jpg"],
-      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]]}, False),
-    ({"user_id": "123",
-      "image": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
-      "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": [[200, 300, 3], [100, 150, 3]]}, False)
+@pytest.mark.parametrize("image, name, size, expected", [
+    (["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
+     ["01.jpg", "02.jpg", "03.jpg"],
+     [[200, 300, 3], [100, 150, 3], [180, 180, 1]], True),
+    (["pseudo_encode1", "pseudo_encode2"],
+     ["01.jpg", "02.jpg", "03.jpg"],
+     [[200, 300, 3], [100, 150, 3], [180, 180, 1]], False),
+    (["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
+     ["01.jpg", "02.jpg"],
+     [[200, 300, 3], [100, 150, 3], [180, 180, 1]], False),
+    (["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
+     ["01.jpg", "02.jpg", "03.jpg"],
+     [[200, 300, 3], [100, 150, 3]], False)
 ])
-def test_validate_data_length(image_info, expected):
+def test_validate_data_length(image, name, size, expected):
     """Test the function validate_data_length.
 
     Args:
-        image_info (dict): the posted image data.
+        image (list): the posted image data.
+        name (list): the posted image names.
+        size (list): the posted image size.
         expected (bool): the expected result of the function.
 
     Returns:
@@ -213,7 +175,7 @@ def test_validate_data_length(image_info, expected):
         Pass if the test passes
     """
     from image_server import validate_data_length
-    result = validate_data_length(image_info)
+    result = validate_data_length(image, name, size)
     assert result == expected
 
 
@@ -281,12 +243,12 @@ def test_validate_operation(image_info, expected):
 
 
 @pytest.mark.parametrize("img, operation, expected", [
-    (np.uint8(np.array([1, 2, 3])), 0, I.histeq()[0]),
-    (np.uint8(np.array([1, 2, 3])), 1, I.constr()[0]),
-    (np.uint8(np.array([1, 2, 3])), 2, I.logcom()[0]),
-    (np.uint8(np.array([1, 2, 3])), 3, I.invert()[0]),
+    (np.array([1, 2, 3]), 0, I.histeq()[0]),
+    (np.array([1, 2, 3]), 1, I.constr()[0]),
+    (np.array([1, 2, 3]), 2, I.logcom()[0]),
+    (np.array([1, 2, 3]), 3, I.invert()[0])
 ])
-def test_constr(img, operation, expected):
+def test_process_image(img, operation, expected):
     """Test the functions process_image that can choose the operation
     to process the images.
 
