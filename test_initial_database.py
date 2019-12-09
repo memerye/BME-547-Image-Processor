@@ -27,7 +27,8 @@ def test_validate_existing_id(u_id, expected):
 
 
 def test_add_original_image_to_db():
-    test_input = {"user_id": "Bob1", "image": ["abc", "cd"],
+    test_input = {"user_id": "Bob1",
+                  "image": ["abc", "cd"],
                   "name": ["abc.jpg", "cd.jpg"],
                   "size": [[200, 200, 3], [200, 200, 3]],
                   "time": ["2019 - 12 - 07 17: 12: 09.164933",
@@ -37,3 +38,18 @@ def test_add_original_image_to_db():
     u = ImageUser.objects.raw({"_id": "Bob1"}).first()
     expected = ["abc", "cd"]
     assert expected == u.images["image"]
+
+
+def test_add_processed_image_to_db():
+    test_input = {"user_id": "Bob1",
+                  "operation": [0, 1],
+                  "size": [[200, 200, 3], [200, 200, 3]],
+                  "run_time": [0.1, 0.2],
+                  "name": ["aa.jpg", "bb.jpg"],
+                  "raw_img": ["abc", "cd"],
+                  "processed_img": ["cc", "dd"]}
+    from initial_database import add_processed_image_to_db, ImageUser
+    add_processed_image_to_db(test_input)
+    u = ImageUser.objects.raw({"_id": "Bob1"}).first()
+    expected = ["cc", "dd"]
+    assert expected == u.processed["processed_img"]
