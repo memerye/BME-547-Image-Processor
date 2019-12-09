@@ -36,6 +36,23 @@ def add_new_user_to_db(user_info):
     return None
 
 
+def validate_existing_id(u_id):
+    """Validate the existence of the user id in the database.
+    Args:
+        u_id (string): the patient id.
+    Returns:
+        bool: False if the id doesn't exist in the database;
+        True if the id has been registered in the database.
+    """
+    id_list = []
+    for u in ImageUser.objects.raw({}):
+        id_list.append(u.user_id)
+    if u_id in id_list:
+        return True
+    else:
+        return False
+
+
 def add_original_image_to_db(u_img):
     """Validate the existence of the user id in the database.
     Args:
@@ -103,21 +120,16 @@ def add_processed_image_to_db(u_pro):
     return None
 
 
-def validate_existing_id(u_id):
-    """Validate the existence of the user id in the database.
-    Args:
-        u_id (string): the patient id.
-    Returns:
-        bool: False if the id doesn't exist in the database;
-        True if the id has been registered in the database.
-    """
-    id_list = []
-    for u in ImageUser.objects.raw({}):
-        id_list.append(u.user_id)
-    if u_id in id_list:
-        return True
-    else:
-        return False
+def get_user_info(user_id):
+    u_db = ImageUser.objects.raw({"_id": user_id}).first()
+    user_info = {"user_id": user_id,
+                 "create_time": u_db.created_timestamp,
+                 "img_num": u_db.metrics["img_num"][0],
+                 "histeq": u_db.metrics["histeq"][0],
+                 "constr": u_db.metrics["constr"][0],
+                 "logcom": u_db.metrics["logcom"][0],
+                 "invert": u_db.metrics["invert"][0]}
+    return user_info
 
 
 if __name__ == '__main__':

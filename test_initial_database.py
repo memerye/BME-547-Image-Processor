@@ -65,3 +65,20 @@ def test_add_processed_image_to_db():
     assert expected_name == u.processed["name"]
     assert expected_raw_img == u.processed["raw_img"]
     assert expected_processed_img == u.processed["processed_img"]
+
+
+def test_get_user_info():
+    from initial_database import get_user_info
+    result = get_user_info("Bob1")
+    expected = {"user_id": "Bob1",
+                "img_num": 2,
+                "histeq": 1,
+                "constr": 0,
+                "logcom": 0,
+                "invert": 0}
+    assert result["user_id"] == expected["user_id"]
+    assert result["img_num"] == expected["img_num"]
+    assert result["histeq"] == expected["histeq"]
+    assert result["constr"] == expected["constr"]
+    assert result["logcom"] == expected["logcom"]
+    assert result["invert"] == expected["invert"]
