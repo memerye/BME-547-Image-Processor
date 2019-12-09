@@ -30,7 +30,7 @@ def test_add_patients():
     (1) Wrong dictionary key
     (2) Wrong format of id
     Ultimately three valid patient information will be added into
-    the database with the id of "1_a", "08563", "Lily121".
+    the database with the id of "1_a", "Lily121".
 
     Returns:
         None
@@ -38,7 +38,6 @@ def test_add_patients():
     u_info = [{"userid": "1"},
               {"user_id": "1+a"},
               {"user_id": "1_a"},
-              {"user_id": "08563"},
               {"user_id": "  Lily121"}]
     for info in u_info:
         post_user_id(info)
@@ -233,8 +232,21 @@ def process_test_imageset():
     return None
 
 
+def request_user_info():
+    ids = ["1_a", "08563"]
+    for p_id in ids:
+        r = requests.get("http://127.0.0.1:5000/api/user_info/{}".format(p_id))
+        print(r)
+        print(r.text)
+        print(r.status_code)
+        if r.status_code == 200:
+            answer = r.json()
+            print(answer)
+
+
 if __name__ == '__main__':
     test_add_patients()
     request_check_id()
     test_add_images()
     process_test_imageset()
+    request_user_info()

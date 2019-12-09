@@ -411,6 +411,15 @@ def img_process():
         return "The user doesn't exist!", 400
 
 
+@app.route("/api/user_info/<user_id>", methods=["GET"])
+def user_info(user_id):
+    if initial_database.validate_existing_id(user_id):
+        data = initial_database.get_user_info(user_id)
+        return jsonify(data)
+    else:
+        return "The user doesn't exist!", 400
+
+
 def init_server():
     """Initialize the logging configuration and database connection.
 
