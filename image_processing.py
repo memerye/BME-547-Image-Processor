@@ -48,6 +48,12 @@ class ImageProcessing(object):
         img_log_uint8 = convert_image_to_uint8(img_log)
         return img_log_uint8, time()-start
 
+    def invert(self):
+        start = time()
+        img_invert = 255-self.image
+        img_invert_uint8 = convert_image_to_uint8(img_invert)
+        return img_invert_uint8, time()-start
+
     def plotimages(self, img_raw, img_processed):
         plt.subplot(2, 2, 1)
         plt.imshow(img_raw)
@@ -90,7 +96,7 @@ if __name__ == "__main__":
         img = I.image
         shape = I.shape
         length = I.__len__()
-        img_processed, run_time = I.logcom()
+        img_processed, run_time = I.invert()
         print(type(img))
         print(shape)
         print(length)

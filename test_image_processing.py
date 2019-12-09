@@ -37,7 +37,7 @@ def test_constr(img, expected):
 
     Args:
         img (ndarray): The image array
-        expected (ndarray): The expected image array with uint8 data
+        expected (ndarray): The expected image array after contrast stretching.
 
     Returns:
         Error if the test fails
@@ -46,4 +46,27 @@ def test_constr(img, expected):
     from image_processing import ImageProcessing
     I = ImageProcessing(img)
     processed_img, _ = I.constr()
+    assert processed_img.tolist() == expected.tolist()
+
+
+@pytest.mark.parametrize("img, expected", [
+    (np.uint8(np.array([1, 2, 3])), np.uint8(np.array([254, 253, 252]))),
+    (np.uint8(np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])),
+     np.uint8(np.array([[254, 253, 252], [251, 250, 249], [248, 247, 246]])))
+])
+def test_constr(img, expected):
+    """Test the functions invert in ImageProcessing class
+    that can achieve inverting color.
+
+    Args:
+        img (ndarray): The image array
+        expected (ndarray): The expected image array after inverting color.
+
+    Returns:
+        Error if the test fails
+        Pass if the test passes
+    """
+    from image_processing import ImageProcessing
+    I = ImageProcessing(img)
+    processed_img, _ = I.invert()
     assert processed_img.tolist() == expected.tolist()
