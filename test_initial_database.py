@@ -27,13 +27,41 @@ def test_validate_existing_id(u_id, expected):
 
 
 def test_add_original_image_to_db():
-    test_input = {"user_id": "Bob1", "image": ["abc", "cd"],
+    test_input = {"user_id": "Bob1",
+                  "image": ["abc", "cd"],
                   "name": ["abc.jpg", "cd.jpg"],
-                  "size": [[200, 200, 3], [200, 200, 3]],
-                  "time": ["2019 - 12 - 07 17: 12: 09.164933",
-                           "2019 - 12 - 08 17: 12: 09.164933"]}
+                  "size": [[200, 200, 3], [200, 200, 3]]}
     from initial_database import add_original_image_to_db, ImageUser
     add_original_image_to_db(test_input)
     u = ImageUser.objects.raw({"_id": "Bob1"}).first()
-    expected = ["abc", "cd"]
-    assert expected == u.images["image"]
+    expected_image = ["abc", "cd"]
+    expected_name = ["abc.jpg", "cd.jpg"]
+    expected_size = [[200, 200, 3], [200, 200, 3]]
+    assert expected_image == u.images["image"]
+    assert expected_name == u.images["name"]
+    assert expected_size == u.images["size"]
+
+
+def test_add_processed_image_to_db():
+    test_input = {"user_id": "Bob1",
+                  "operation": 0,
+                  "size": [[200, 200, 3], [200, 200, 3]],
+                  "run_time": [0.1, 0.2],
+                  "name": ["aa.jpg", "bb.jpg"],
+                  "raw_img": ["abc", "cd"],
+                  "processed_img": ["cc", "dd"]}
+    from initial_database import add_processed_image_to_db, ImageUser
+    add_processed_image_to_db(test_input)
+    u = ImageUser.objects.raw({"_id": "Bob1"}).first()
+    expected_operation = [0]
+    expected_size = [[[200, 200, 3], [200, 200, 3]]]
+    expected_run_time = [[0.1, 0.2]]
+    expected_name = [["aa.jpg", "bb.jpg"]]
+    expected_raw_img = [["abc", "cd"]]
+    expected_processed_img = [["cc", "dd"]]
+    assert expected_operation == u.processed["operation"]
+    assert expected_size == u.processed["size"]
+    assert expected_run_time == u.processed["run_time"]
+    assert expected_name == u.processed["name"]
+    assert expected_raw_img == u.processed["raw_img"]
+    assert expected_processed_img == u.processed["processed_img"]
