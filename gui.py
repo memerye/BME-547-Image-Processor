@@ -92,54 +92,72 @@ def main_window(username):
     action_label = ttk.Label(root, text='1. Choose an action to begin: ')
     action_label.grid(column=0, row=2, columnspan=2, sticky=W)
 
-    # Select and Upload button
+    # Select files to upload
     def select_img():
         # open local directory
         root.file = filedialog.askopenfilename(multiple=True, filetypes=[
             ('Image files', '.png .jpg .jpeg .tif .zip',)])
-        file_label = ttk.Label(root, text='...{}'.format(root.file[-25::]),
-                               width=30)
-        file_label.grid(column=2, row=3, columnspan=1, sticky=W)
-        return
-
-    def upload_img():
-        print('uploading')
-        from en_de_code import image_to_b64
         # save file names into a list
         filename_ls = []
         for i in root.file:
             filename = os.path.basename(i)
             filename_ls.append(filename)
-        print(filename_ls)
+        # check type of file selected
+        root.type = ck_type(filename_ls)
+        print(root.type)
+        # if root.type == 'zip and multiple':
+        #     # open a warning window
+        file_label = ttk.Label(root, text='...{}'.format(root.file[0][-25::]),
+                               width=30)
+        file_label.grid(column=2, row=3, columnspan=1, sticky=W)
+        return
+
+    # function to check type of file selected
+    def ck_type(filename):
+        typ = ''
+        if len(filename) != 1:
+            for i in filename:
+                if '.zip' in i:
+                    typ = 'zip and multiple'
+                else:
+                    typ = 'multiple img'
+        else:
+            if '.zip' in filename[0]:
+                typ = 'zip'
+            else:
+                typ = 'img'
+        return typ
+
+    def upload_img():
+        print('uploading')
+        from en_de_code import image_to_b64
         # check if multiple files are selected
-        if len(filename_ls) != 1:
+        if root.type == 'multiple img':
             imgs = []
             for i in root.file:
                 img_array = read_img(i)
                 encoded_img_array = image_to_b64(img_array)[0]
                 imgs.append(encoded_img_array)
-        else:
-            print('single file selected')
+        elif root.type == 'zip':
             # read zip files into numpy array
-            if '.zip' in filename_ls[0]:
-                print('zip')
-                imgs = []
-                zip_ref = ZipFile(root.file[0], "r")
-                # returns a list of file names in the archive
-                directory = zip_ref.namelist()
-                for i in directory:
-                    img_bytes = zip_ref.read(i)
-                    data = io.BytesIO(img_bytes)
-                    img = Image.open(data)
-                    img_array = np.uint8(img)
-                    encoded_img_array = image_to_b64(img_array)[0]
-                    imgs.append(encoded_img_array)
+            imgs = []
+            zip_ref = ZipFile(root.file[0], "r")
+            # returns a list of file names in the archive
+            directory = zip_ref.namelist()
+            for i in directory:
+                img_bytes = zip_ref.read(i)
+                data = io.BytesIO(img_bytes)
+                img = Image.open(data)
+                img_array = np.uint8(img)
+                encoded_img_array = image_to_b64(img_array)[0]
+                imgs.append(encoded_img_array)
             # read non-zip files into numpy array
-            else:
-                print('not zip')
-                img_array = read_img(root.file[0])
-                imgs = [image_to_b64(img_array)[0]]
-                show_imgs = plt.imshow(img_array)
+        elif root.type == 'img':
+            img_array = read_img(root.file[0])
+            imgs = [image_to_b64(img_array)[0]]
+            show_imgs = plt.imshow(img_array)
+        else:
+            print('cannot upload. wrong files selected.')
 # remember to change encoded_img_array to string when sending to server!!
 # remember to also get size from image_to_b64
         return
@@ -150,10 +168,6 @@ def main_window(username):
     upld_btn = ttk.Button(root, text='Upload',
                           command=upload_img)
     upld_btn.grid(column=3, row=3, sticky=E)
-
-    # def ck_multiple(ls):
-    #     if len(ls) != 1:
-    #         print('multiple files')
 
     # function for reading non-zip image file
     def read_img(img_path):
