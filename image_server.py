@@ -4,6 +4,7 @@ import re
 import logging
 from pymodm import connect
 import initial_database
+from image_processing import ImageProcessing
 
 # Ignore warnings
 import warnings
@@ -297,6 +298,21 @@ def validate_operation(process_info):
             return False
         else:
             return op
+
+
+def process_image(img, operation):
+    I = ImageProcessing(img)
+    if operation == 0:
+        processed_img, run_time = I.histeq()
+    elif operation == 1:
+        processed_img, run_time = I.constr()
+    elif operation == 2:
+        processed_img, run_time = I.logcom()
+    elif operation == 3:
+        processed_img, run_time = I.invert()
+    else:
+        return False
+    return processed_img, run_time
 
 
 def init_server():

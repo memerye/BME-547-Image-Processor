@@ -1,7 +1,10 @@
 # test_image_server.py
 import pytest
 import numpy as np
-from pymodm import connect
+from image_processing import ImageProcessing
+
+global I
+I = ImageProcessing(np.uint8(np.array([1, 2, 3])))
 
 
 @pytest.mark.parametrize("user_info, expected", [
@@ -275,3 +278,27 @@ def test_validate_operation(image_info, expected):
     from image_server import validate_operation
     result = validate_operation(image_info)
     assert result == expected
+
+
+@pytest.mark.parametrize("img, operation, expected", [
+    (np.uint8(np.array([1, 2, 3])), 0, I.histeq()[0]),
+    (np.uint8(np.array([1, 2, 3])), 1, I.constr()[0]),
+    (np.uint8(np.array([1, 2, 3])), 2, I.logcom()[0]),
+    (np.uint8(np.array([1, 2, 3])), 3, I.invert()[0]),
+])
+def test_constr(img, operation, expected):
+    """Test the functions process_image that can choose the operation
+    to process the images.
+
+    Args:
+        img (ndarray): The image array
+        operation (int): The operation index
+        expected (ndarray): The expected image array after inverting color.
+
+    Returns:
+        Error if the test fails
+        Pass if the test passes
+    """
+    from image_server import process_image
+    p_img, _ = process_image(img, operation)
+    assert p_img.tolist() == expected.tolist()
