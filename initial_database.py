@@ -2,8 +2,6 @@
 from datetime import datetime
 from pymodm import MongoModel, fields
 from pymodm import connect
-
-
 # Ignore warnings
 import warnings
 warnings.filterwarnings("ignore")
@@ -22,7 +20,23 @@ class ImageUser(MongoModel):
     processed = fields.DictField()
 
 
-def validate_existing_id(u_id):
+def add_new_user_to_db(user_info):
+    u_id = user_info["user_id"]
+    u_time = str(datetime.now())
+    key_list_metrics = ("img_num", "histeq", "constr", "logcom", "invert")
+    key_list_images = ("image", "name", "size", "time")
+    key_list_processed = ("num", "timestamp", "operation", "size",
+                          "run_time", "name", "raw_img", "processed_img")
+    u = ImageUser(user_id=u_id,
+                  created_timestamp=u_time,
+                  metrics=dict.fromkeys(key_list_metrics, []),
+                  images=dict.fromkeys(key_list_images, []),
+                  processed=dict.fromkeys(key_list_processed, []))
+    u.save()
+    return None
+
+
+def add_original_image_to_db(u_img):
     """Validate the existence of the user id in the database.
     Args:
         u_id (string): the patient id.
@@ -30,32 +44,6 @@ def validate_existing_id(u_id):
         bool: False if the id doesn't exist in the database;
         True if the id has been registered in the database.
     """
-    id_list = []
-    for u in ImageUser.objects.raw({}):
-        id_list.append(u.user_id)
-    if u_id in id_list:
-        return True
-    else:
-        return False
-
-
-def add_new_user_to_db(user_info):
-    u_id = user_info["user_id"]
-    u_time = str(datetime.now())
-    key_list_metrics = ("img_num", "histeq", "constr", "logcom", "invert")
-    key_list_images = ("image", "name", "size", "time")
-    key_list_process = ("num", "timestamp", "operation", "size",
-                        "run_time", "name", "raw_img", "processed_img")
-    u = ImageUser(user_id=u_id,
-                  created_timestamp=u_time,
-                  metrics=dict.fromkeys(key_list_metrics, []),
-                  images=dict.fromkeys(key_list_images, []),
-                  processed=dict.fromkeys(key_list_process, []))
-    u.save()
-    return None
-
-
-def add_original_image_to_db(u_img):
     u_id = u_img["user_id"]
     image_list = u_img["image"]
     name_list = u_img["name"]
@@ -71,6 +59,67 @@ def add_original_image_to_db(u_img):
     imageuser.metrics["img_num"] = [len(image_list)]
     imageuser.save()
     return None
+
+
+def add_processed_image_to_db(u_pro):
+    """Validate the existence of the user id in the database.
+    Args:
+        u_id (string): the patient id.
+    Returns:
+        bool: False if the id doesn't exist in the database;
+        True if the id has been registered in the database.
+    """
+    u_id = u_pro["user_id"]
+    oper_num_list = u_pro["operation"]
+    size_list = u_pro["size"]
+    run_list = u_pro["run_time"]
+    name_list = u_pro["name"]
+    raw_list = u_pro["raw_img"]
+    processed_list = u_pro["processed_img"]
+    # index = u_pro["num"]
+    imageuser = ImageUser.objects.raw({"_id": u_id}).first()
+    if len(imageuser.processed["num"]):
+        cur_ind = imageuser.processed["num"][-1]
+    else:
+        cur_ind = 0
+    for oper in oper_num_list:
+        imageuser.processed["operation"].append(oper)
+        imageuser.processed["timestamp"].append(str(datetime.now()))
+        cur_ind += 1
+        imageuser.processed["num"].append(cur_ind)
+    for size in size_list:
+        imageuser.processed["size"].append(size)
+    for run in run_list:
+        imageuser.processed["run_time"].append(run)
+    for name in name_list:
+        imageuser.processed["name"].append(name)
+    for raw in raw_list:
+        imageuser.processed["raw_img"].append(raw)
+    for pro in processed_list:
+        imageuser.processed["processed_img"].append(pro)
+    imageuser.metrics["histeq"] = imageuser.processed["operation"].count(0)
+    imageuser.metrics["constr"] = imageuser.processed["operation"].count(1)
+    imageuser.metrics["logcom"] = imageuser.processed["operation"].count(2)
+    imageuser.metrics["invert"] = imageuser.processed["operation"].count(3)
+    imageuser.save()
+    return None
+
+
+def validate_existing_id(u_id):
+    """Validate the existence of the user id in the database.
+    Args:
+        u_id (string): the patient id.
+    Returns:
+        bool: False if the id doesn't exist in the database;
+        True if the id has been registered in the database.
+    """
+    id_list = []
+    for u in ImageUser.objects.raw({}):
+        id_list.append(u.user_id)
+    if u_id in id_list:
+        return True
+    else:
+        return False
 
 
 if __name__ == '__main__':
