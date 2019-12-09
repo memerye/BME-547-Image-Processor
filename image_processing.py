@@ -42,6 +42,12 @@ class ImageProcessing(object):
         img_constr_uint8 = convert_image_to_uint8(img_constr)
         return img_constr_uint8, time()-start
 
+    def logcom(self):
+        start = time()
+        img_log = exposure.adjust_log(self.image)
+        img_log_uint8 = convert_image_to_uint8(img_log)
+        return img_log_uint8, time()-start
+
     def plotimages(self, img_raw, img_processed):
         plt.subplot(2, 2, 1)
         plt.imshow(img_raw)
@@ -84,7 +90,7 @@ if __name__ == "__main__":
         img = I.image
         shape = I.shape
         length = I.__len__()
-        img_processed, run_time = I.constr()
+        img_processed, run_time = I.logcom()
         print(type(img))
         print(shape)
         print(length)
