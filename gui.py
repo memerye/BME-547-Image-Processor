@@ -92,12 +92,19 @@ def main_window(username):
     action_label = ttk.Label(root, text='1. Choose an action to begin: ')
     action_label.grid(column=0, row=2, columnspan=2, sticky=W)
 
-    # Upload button
-    def upload_img():
-        from en_de_code import image_to_b64
+    # Select and Upload button
+    def select_img():
         # open local directory
         root.file = filedialog.askopenfilename(multiple=True, filetypes=[
             ('Image files', '.png .jpg .jpeg .tif .zip',)])
+        file_label = ttk.Label(root, text='...{}'.format(root.file[-25::]),
+                               width=30)
+        file_label.grid(column=2, row=3, columnspan=1, sticky=W)
+        return
+
+    def upload_img():
+        print('uploading')
+        from en_de_code import image_to_b64
         # save file names into a list
         filename_ls = []
         for i in root.file:
@@ -132,20 +139,17 @@ def main_window(username):
                 print('not zip')
                 img_array = read_img(root.file[0])
                 imgs = [image_to_b64(img_array)[0]]
-                show_imgs = plt.imshow(img_array[0])
-        print(imgs[0])
-        print(np.shape(imgs))
-        print(np.shape(imgs[0]))
+                show_imgs = plt.imshow(img_array)
 # remember to change encoded_img_array to string when sending to server!!
 # remember to also get size from image_to_b64
-        file_label = ttk.Label(root, text='{}'.format(filename_ls),
-                               width=50)  # [-50::]
-        file_label.grid(column=2, row=3, columnspan=2)
         return
 
-    upld_btn = ttk.Button(root, text='Upload image file(s)',
+    select_btn = ttk.Button(root, text='Select image file(s)',
+                            command=select_img)
+    select_btn.grid(column=1, row=3, sticky=W)
+    upld_btn = ttk.Button(root, text='Upload',
                           command=upload_img)
-    upld_btn.grid(column=1, row=3, sticky=W)
+    upld_btn.grid(column=3, row=3, sticky=E)
 
     # def ck_multiple(ls):
     #     if len(ls) != 1:
