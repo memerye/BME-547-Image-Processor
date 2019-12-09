@@ -280,6 +280,25 @@ def validate_process_keys(process_info):
         return False
 
 
+def validate_operation(process_info):
+    operation = process_info["operation"]
+    expected_op = [0, 1, 2, 3]
+    try:
+        float(operation)
+    except ValueError:
+        return False
+    try:
+        assert float(operation).is_integer()
+    except AssertionError:
+        return False
+    else:
+        op = int(operation)
+        if op not in expected_op:
+            return False
+        else:
+            return op
+
+
 def init_server():
     """Initialize the logging configuration and database connection.
 

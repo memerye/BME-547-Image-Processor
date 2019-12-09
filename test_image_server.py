@@ -241,3 +241,37 @@ def test_validate_process_keys(image_info, expected):
     from image_server import validate_process_keys
     result = validate_process_keys(image_info)
     assert result == expected
+
+
+@pytest.mark.parametrize("image_info, expected", [
+    ({"user_id": "123", "operation": 0,
+      "raw_img": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
+      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]],
+      "name": ["01.jpg", "02.jpg", "03.jpg"]}, 0),
+    ({"user_id": "123", "operation": "histeq",
+      "raw_img": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
+      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]],
+      "name": ["01.jpg", "02.jpg", "03.jpg"]}, False),
+    ({"user_id": "123", "operation": 0.3,
+      "raw_img": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
+      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]],
+      "name": ["01.jpg", "02.jpg", "03.jpg"]}, False),
+    ({"user_id": "123", "operation": 10,
+      "raw_img": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
+      "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]],
+      "name": ["01.jpg", "02.jpg", "03.jpg"]}, False)
+])
+def test_validate_operation(image_info, expected):
+    """Test the function validate_operation.
+
+    Args:
+        image_info (dict): the posted image data.
+        expected (bool): the expected result of the function.
+
+    Returns:
+        Error if the test fails
+        Pass if the test passes
+    """
+    from image_server import validate_operation
+    result = validate_operation(image_info)
+    assert result == expected
