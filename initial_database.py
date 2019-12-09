@@ -132,5 +132,15 @@ def get_user_info(user_id):
     return user_info
 
 
+def history_info(user_id):
+    u_db = ImageUser.objects.raw({"_id": user_id}).first()
+    history = {"user_id": user_id,
+               "num": u_db.processed["num"],
+               "timestamp": u_db.processed["timestamp"],
+               "operation": u_db.processed["operation"],
+               "name": u_db.processed["name"]}
+    return history
+
+
 if __name__ == '__main__':
     init_mongodb()
