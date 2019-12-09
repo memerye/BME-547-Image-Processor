@@ -240,6 +240,16 @@ def validate_data_length(image, name, size):
 
 @app.route("/api/upload_images", methods=["POST"])
 def add_images():
+    """Post images to the database
+
+    Before posting new images to database, the keys and the
+    values in the posted json should all be validated first.
+    If there is anything invalid in the posted json, the server
+    will return error status codes with reasons.
+
+    Returns:
+        string: message to indicate the status of the server.
+    """
     indata = request.get_json()
     good_keys = validate_image_keys(indata)
     if good_keys is False:
@@ -270,6 +280,15 @@ def add_images():
 
 
 def validate_process_keys(process_info):
+    """Validate the image processing keys
+
+    Args:
+        process_info (dict): The posted image processing data
+
+    Returns:
+        bool: True if the keys are all valid;
+        False if it contains wrong keys.
+    """
     expected_keys = ["user_id", "operation", "raw_img", "size", "name"]
     flag = 0
     for key in process_info.keys():
@@ -284,6 +303,15 @@ def validate_process_keys(process_info):
 
 
 def validate_operation(process_info):
+    """Validation the index of the operation.
+
+    Args:
+        process_info (dict): The posted image processing data.
+
+    Returns:
+        False: if the operation is not valid;
+        int: if the operation is valid.
+    """
     operation = process_info["operation"]
     expected_op = [0, 1, 2, 3]
     try:
@@ -303,6 +331,16 @@ def validate_operation(process_info):
 
 
 def process_image(img, operation):
+    """Process the image with specific operation.
+
+    Args:
+        img (ndarray): The posted processing image(s);
+        operation (int): The operation index.
+
+    Returns:
+        ndarray: The processed images;
+        float: The time needed to processing all of image(s).
+    """
     I = ImageProcessing(img)
     if operation == 0:
         processed_img, run_time = I.histeq()
@@ -319,6 +357,16 @@ def process_image(img, operation):
 
 @app.route("/api/process", methods=["POST"])
 def img_process():
+    """Post the image information related to one processing
+
+    Before posting new processed images to database, the keys and
+    the values in the posted json should all be validated first.
+    If there is anything invalid in the posted json, the server
+    will return error status codes with reasons.
+
+    Returns:
+        string: message to indicate the status of the server.
+    """
     indata = request.get_json()
     good_keys = validate_process_keys(indata)
     if good_keys is False:
