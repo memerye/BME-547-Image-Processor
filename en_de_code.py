@@ -9,12 +9,12 @@ def image_to_b64(img):
         img (ndarray): The image array, dtype=np.uint8
 
     Returns:
-        string: The encoded string for the images
+        bytes: The encoded bytes for the images
         tuple: The size of the image
     """
     size = img.shape
-    b64_string = base64.b64encode(img.tobytes())
-    return b64_string, size
+    b64_bytes = base64.b64encode(img.tobytes())
+    return b64_bytes, size
 
 
 def b64_to_image(base64_string, size):

@@ -1,5 +1,12 @@
 from tkinter import *
 from tkinter import ttk, filedialog
+from zipfile36 import ZipFile
+import os
+import numpy as np
+import io
+from PIL import Image
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
 
 
 # User login/create account
@@ -87,19 +94,67 @@ def main_window(username):
 
     # Upload button
     def upload_img():
+        from en_de_code import image_to_b64
         # open local directory
-        # right now, only one file can be selected
-        root.file = filedialog.askopenfilename(filetypes=[
+        root.file = filedialog.askopenfilename(multiple=True, filetypes=[
             ('Image files', '.png .jpg .jpeg .tif .zip',)])
-
-        file_label = ttk.Label(root, text='...{}'.format(root.file[-50::]),
-                               width=50)
+        # save file names into a list
+        filename_ls = []
+        for i in root.file:
+            filename = os.path.basename(i)
+            filename_ls.append(filename)
+        print(filename_ls)
+        # check if multiple files are selected
+        if len(filename_ls) != 1:
+            imgs = []
+            for i in root.file:
+                img_array = read_img(i)
+                encoded_img_array = image_to_b64(img_array)[0]
+                imgs.append(encoded_img_array)
+        else:
+            print('single file selected')
+            # read zip files into numpy array
+            if '.zip' in filename_ls[0]:
+                print('zip')
+                imgs = []
+                zip_ref = ZipFile(root.file[0], "r")
+                # returns a list of file names in the archive
+                directory = zip_ref.namelist()
+                for i in directory:
+                    img_bytes = zip_ref.read(i)
+                    data = io.BytesIO(img_bytes)
+                    img = Image.open(data)
+                    img_array = np.uint8(img)
+                    encoded_img_array = image_to_b64(img_array)[0]
+                    imgs.append(encoded_img_array)
+            # read non-zip files into numpy array
+            else:
+                print('not zip')
+                img_array = read_img(root.file[0])
+                imgs = [image_to_b64(img_array)[0]]
+                show_imgs = plt.imshow(img_array[0])
+        print(imgs[0])
+        print(np.shape(imgs))
+        print(np.shape(imgs[0]))
+# remember to change encoded_img_array to string when sending to server!!
+# remember to also get size from image_to_b64
+        file_label = ttk.Label(root, text='{}'.format(filename_ls),
+                               width=50)  # [-50::]
         file_label.grid(column=2, row=3, columnspan=2)
         return
 
     upld_btn = ttk.Button(root, text='Upload image file(s)',
                           command=upload_img)
     upld_btn.grid(column=1, row=3, sticky=W)
+
+    # def ck_multiple(ls):
+    #     if len(ls) != 1:
+    #         print('multiple files')
+
+    # function for reading non-zip image file
+    def read_img(img_path):
+        img_array = np.uint8(np.array(Image.open(img_path)))
+        return img_array
 
     # History button
     def history():
@@ -187,6 +242,7 @@ def main_window(username):
                                     height=250, width=300)
     hist_pro_frame.grid(column=2, row=2, columnspan=1)
     # previous/next frame
+
     prev_frame = ttk.Frame(root, height=600, width=10)
     prev_frame.grid(column=5, row=8)
     next_frame = ttk.Frame(root, height=600, width=10)
@@ -233,7 +289,7 @@ def main_window(username):
     download_btn = ttk.Button(root, text='Download', command=download)
     download_btn.grid(column=3, row=16, sticky=E)
 
-    # upload time function
+    # # upload time function
     # def upload_time():
     #     global time_upload
     #     time_upload = str(datetime.datetime.now())
