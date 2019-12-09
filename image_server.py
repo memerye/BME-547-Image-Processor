@@ -27,10 +27,16 @@ def validate_user_keys(user_info):
         False if it contains wrong keys.
     """
     expected_keys = ["user_id"]
+    flag = 0
     for key in user_info.keys():
         if key not in expected_keys:
             return False
-    return True
+        else:
+            flag = flag + 1
+    if flag == 1:
+        return True
+    else:
+        return False
 
 
 def validate_id(user_info):
@@ -117,10 +123,16 @@ def validate_image_keys(image_info):
         False if it contains wrong keys.
     """
     expected_keys = ["user_id", "image", "name", "size"]
+    flag = 0
     for key in image_info.keys():
         if key not in expected_keys:
             return False
-    return True
+        else:
+            flag = flag + 1
+    if flag == 4:
+        return True
+    else:
+        return False
 
 
 def validate_images(image_info):
@@ -252,6 +264,20 @@ def add_images():
         return "Valid image data!"
     else:
         return "The user doesn't exist!", 400
+
+
+def validate_process_keys(process_info):
+    expected_keys = ["user_id", "operation", "raw_img", "size", "name"]
+    flag = 0
+    for key in process_info.keys():
+        if key not in expected_keys:
+            return False
+        else:
+            flag = flag+1
+    if flag == 5:
+        return True
+    else:
+        return False
 
 
 def init_server():
