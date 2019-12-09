@@ -2,12 +2,14 @@ from tkinter import *
 from tkinter import ttk, filedialog
 import numpy as np
 from PIL import Image
-# from StringIO import StringIO
-from io import StringIO
+from io import BytesIO
 from zipfile36 import ZipFile
+import base64
+
 
 # User login/create account
 def login_window():
+
     root = Tk()
     root.title('Create Account/User Login')
 
@@ -223,52 +225,70 @@ def main_window(username):
     download_cb["values"] = ("jpeg", "png", "tiff","jpg")# no jpg
     download_cb.state(['readonly'])
 
-    # def if_mutiple():
-    #     if image is multiple:
-    #         root.file = filedialog. \
-    #             asksaveasfilename(title='Download Image',
-    #                               defaultextension='.zip',
-    #                               initialdir='/',
-    #                               initialfile='Image.zip',
-    #                               filetypes=[('zip', '*.zip')])
-    #
-    #         return
-    #     elif image is not multiple:
-    #         root.file = filedialog. \
-    #             asksaveasfilename(title='Download Image',
-    #                               defaultextension='.{}'.format(
-    #                                   download_opt.get()),
-    #                               initialdir='/',
-    #                               initialfile='Image.{}'
-    #                               .format(download_opt.get()),
-    #                               filetypes=[(download_opt.get(), '*.{}'
-    #                                           .format(download_opt.get()))])
-    # Receive image_read(list)
-    # f = StringIO()
-    # zip = ZipFile(f, 'w')
-    # zip.writestr('{}.{}'.format(filename, download_opt.get()), image_read.read())
-    # zip.close() # Close
-
-    def download():
-        root.file = filedialog.\
-            asksaveasfilename(title='Download Image',
-                              defaultextension='.{}'.format(
-                                  download_opt.get()),
-                              initialdir='/',
-                              initialfile='Image.{}'
-                              .format(download_opt.get()),
-                              filetypes=[(download_opt.get(), '*.{}'
-                                          .format(download_opt.get()))])
-        print(root.file)
+    def if_mutiple():
         imgs = [np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/123.jpg")))]
+        img1 = np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/h.jpg")))
+        imgs.append(img1)
         print(type(imgs))
-        new_im = Image.fromarray(imgs[0]) # imgs from server
+        print(len(imgs))
+        if len(imgs) > 1:
+            root.file = filedialog. \
+                asksaveasfilename(title='Download Image',
+                                  defaultextension='.zip',
+                                  initialdir='/',
+                                  initialfile='Image.zip',
+                                  filetypes=[('zip', '*.zip')])
+            y=1
+            for i in imgs:
+                img = i
+                op = str(base64.b64encode(img.tobytes()))
+                zip = ZipFile(root.file, mode='w')
+                y=1+y
+                zip.writestr("{}.jpg".format(y), op)
+                zip.close()
+
+
+            return
+        elif len(imgs) == 1:
+            root.file = filedialog. \
+                asksaveasfilename(title='Download Image',
+                                  defaultextension='.{}'.format(
+                                      download_opt.get()),
+                                  initialdir='/',
+                                  initialfile='Image.{}'
+                                  .format(download_opt.get()),
+                                  filetypes=[(download_opt.get(), '*.{}'
+                                              .format(download_opt.get()))])
+        new_im = Image.fromarray(imgs[0])  # imgs from server
         new_im.save(root.file)
-        new_im.show()
+        return
 
-        
+    #
+    # def download():
+    #     root.file = filedialog.\
+    #         asksaveasfilename(title='Download Image',
+    #                           defaultextension='.{}'.format(
+    #                               download_opt.get()),
+    #                           initialdir='/',
+    #                           initialfile='Image.{}'
+    #                           .format(download_opt.get()),
+    #                           filetypes=[(download_opt.get(), '*.{}'
+    #                                       .format(download_opt.get()))])
+    #
+    #     imgs = [np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/123.jpg")))]
+    #     img = imgs[0]
+    #     op = str(base64.b64encode(img.tobytes()))
+    #     oi = img.tobytes()
+    #     str = img.tostring()
+    #     new_im = Image.fromarray(imgs[0])  # imgs from server
+    #     new_im.save("C:/Users/Sara Qi/Pictures/1789.jpg")
+    #     f = BytesIO()
+    #     zip = ZipFile("C:/Users/Sara Qi/Pictures/v05.zip", mode='w')
+    #     # zip = ZipFile(root.file, mode='w')
+    #     # zip.writestr("{}.{}", op)
 
-    download_btn = ttk.Button(root, text='Download', command=download)
+
+    download_btn = ttk.Button(root, text='Download', command=if_mutiple)
     download_btn.grid(column=3, row=16, sticky=E)
 
     # upload time function
