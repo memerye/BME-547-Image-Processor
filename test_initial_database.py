@@ -24,3 +24,16 @@ def test_validate_existing_id(u_id, expected):
     from initial_database import validate_existing_id
     result = validate_existing_id(u_id)
     assert result == expected
+
+
+def test_add_original_image_to_db():
+    test_input = {"user_id": "Bob1", "image": ["abc", "cd"],
+                  "name": ["abc.jpg", "cd.jpg"],
+                  "size": [[200, 200, 3], [200, 200, 3]],
+                  "time": ["2019 - 12 - 07 17: 12: 09.164933",
+                           "2019 - 12 - 08 17: 12: 09.164933"]}
+    from initial_database import add_original_image_to_db, ImageUser
+    add_original_image_to_db(test_input)
+    u = ImageUser.objects.raw({"_id": "Bob1"}).first()
+    expected = ["abc", "cd"]
+    assert expected == u.images["image"]
