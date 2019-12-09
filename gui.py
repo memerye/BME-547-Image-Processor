@@ -91,6 +91,7 @@ def main_window(username):
 
     # Upload button
     def upload_img():
+        from en_de_code import image_to_b64
         # open local directory
         root.file = filedialog.askopenfilename(multiple=True, filetypes=[
             ('Image files', '.png .jpg .jpeg .tif .zip',)])
@@ -105,7 +106,8 @@ def main_window(username):
             imgs = []
             for i in root.file:
                 img_array = read_img(i)
-                imgs.append(img_array)
+                encoded_img_array = image_to_b64(img_array)[0]
+                imgs.append(encoded_img_array)
         else:
             print('single file selected')
             # read zip files into numpy array
@@ -120,29 +122,35 @@ def main_window(username):
                     data = io.BytesIO(img_bytes)
                     img = Image.open(data)
                     img_array = np.uint8(img)
-                    imgs.append(img_array)
+                    encoded_img_array = image_to_b64(img_array)[0]
+                    imgs.append(encoded_img_array)
             # read non-zip files into numpy array
             else:
                 print('not zip')
-                imgs = read_img(root.file[0])
-                show_imgs = plt.imshow(imgs[0])
+                img_array = read_img(root.file[0])
+                imgs = [image_to_b64(img_array)[0]]
+                show_imgs = plt.imshow(img_array[0])
         print(imgs[0])
         print(np.shape(imgs))
         print(np.shape(imgs[0]))
-        # from en_de_code import image_to_b64
-        #
-        # file_label = ttk.Label(root, text='...{}'.format(root.file[-50::]),
-        #                        width=50)
-        # file_label.grid(column=2, row=3, columnspan=2)
+# remember to change encoded_img_array to string when sending to server!!
+# remember to also get size from image_to_b64
+        file_label = ttk.Label(root, text='{}'.format(filename_ls),
+                               width=50)  # [-50::]
+        file_label.grid(column=2, row=3, columnspan=2)
         return
 
     upld_btn = ttk.Button(root, text='Upload image file(s)',
                           command=upload_img)
     upld_btn.grid(column=1, row=3, sticky=W)
 
+    # def ck_multiple(ls):
+    #     if len(ls) != 1:
+    #         print('multiple files')
+
     # function for reading non-zip image file
     def read_img(img_path):
-        img_array = [np.uint8(np.array(Image.open(img_path)))]
+        img_array = np.uint8(np.array(Image.open(img_path)))
         return img_array
 
     # History button
