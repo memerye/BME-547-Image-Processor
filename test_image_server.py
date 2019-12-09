@@ -163,7 +163,15 @@ def test_validate_image_names(image_info, expected):
     ({"user_id": "123",
       "image": ["pseudo_encoeded1", "pseudo_encoeded2", "pseudo_encoeded3"],
       "name": ["01.jpg", "02.jpg", "03.jpg"],
-      "size": [[200, 300, 3], (100, 150, 3), [180, 180, 1]]}, False),
+      "size": [200, 300, 3]}, False),
+    ({"user_id": "123",
+      "image": ["pseudo_encoeded1", "pseudo_encoeded2", "pseudo_encoeded3"],
+      "name": ["01.jpg", "02.jpg", "03.jpg"],
+      "size": [[200], [300], [3]]}, False),
+    ({"user_id": "123",
+      "image": ["pseudo_encoeded1", "pseudo_encoeded2", "pseudo_encoeded3"],
+      "name": ["01.jpg", "02.jpg", "03.jpg"],
+      "size": [[20.5, 300, 3], [10.3, 150, 3], [180, 180, 1]]}, False),
 ])
 def test_validate_size(image_info, expected):
     """Test the function validate_size.

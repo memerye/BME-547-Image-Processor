@@ -175,7 +175,8 @@ def validate_size(image_info):
     """Validate the format of the size of the images.
 
     The "size" stores all of the images' size as a list.
-    The type of each size should be a list, e.g. [200, 300, 3].
+    The numbers of the size should all be int.
+    e.g. [[200, 300, 3], [100, 150, 1]].
 
     Args:
         image_info(dict): the posted image data.
@@ -189,11 +190,17 @@ def validate_size(image_info):
         assert type(size) == list
     except AssertionError:
         return False
-    for i in size:
+    for a_size in size:
         try:
-            assert type(i) == list
+            assert type(a_size) == list
+            assert len(a_size) == 2 or len(a_size) == 3
         except AssertionError:
             return False
+        for i in a_size:
+            try:
+                assert type(i) == int
+            except AssertionError:
+                return False
     return True
 
 
