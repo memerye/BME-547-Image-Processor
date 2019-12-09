@@ -33,3 +33,60 @@ class ImageProcessing(object):
         img_eq = exposure.equalize_hist(self.image)
         img_eq_uint8 = convert_image_to_uint8(img_eq)
         return img_eq_uint8, time()-start
+
+    def constr(self):
+        start = time()
+        img_min = self.image.min()
+        img_max = self.image.max()
+        img_constr = 255*((self.image-img_min)/(img_max-img_min))
+        img_constr_uint8 = convert_image_to_uint8(img_constr)
+        return img_constr_uint8, time()-start
+
+    def plotimages(self, img_raw, img_processed):
+        plt.subplot(2, 2, 1)
+        plt.imshow(img_raw)
+        plt.title("Raw Image")
+        plt.subplot(6, 2, 7)
+        img_hist, img_bins = exposure.histogram(img_raw[::][0], 3)
+        plt.plot(img_bins, img_hist, 'r')
+        plt.subplot(6, 2, 9)
+        img_hist, img_bins = exposure.histogram(img_raw[::][1], 3)
+        plt.plot(img_bins, img_hist, 'g')
+        plt.subplot(6, 2, 11)
+        img_hist, img_bins = exposure.histogram(img_raw[::][2], 3)
+        plt.plot(img_bins, img_hist, 'b')
+        plt.subplot(2, 2, 2)
+        plt.imshow(img_processed)
+        plt.title("Processed Image")
+        plt.subplot(6, 2, 8)
+        img_eq_hist, img_eq_bins = exposure.histogram(img_processed[::][0], 3)
+        plt.plot(img_eq_bins, img_eq_hist, 'r')
+        plt.subplot(6, 2, 10)
+        img_eq_hist, img_eq_bins = exposure.histogram(img_processed[::][1], 3)
+        plt.plot(img_eq_bins, img_eq_hist, 'g')
+        plt.subplot(6, 2, 12)
+        img_eq_hist, img_eq_bins = exposure.histogram(img_processed[::][2], 3)
+        plt.plot(img_eq_bins, img_eq_hist, 'b')
+        plt.show()
+        return None
+
+
+if __name__ == "__main__":
+    root = "/Users/liangyu/Downloads/Docs/BME/BME547/Lecture/" \
+           "image_processer/101_ObjectCategories/bonsai"
+    path = [root+'/image_0014.jpg', root+'/image_0015.jpg',
+            root+'/image_0016.jpg']
+    images = []
+    for i in path:
+        image = io.imread(i)
+        images.append(image)
+        I = ImageProcessing(image)
+        img = I.image
+        shape = I.shape
+        length = I.__len__()
+        img_processed, run_time = I.constr()
+        print(type(img))
+        print(shape)
+        print(length)
+        print(run_time)
+        I.plotimages(img, img_processed)
