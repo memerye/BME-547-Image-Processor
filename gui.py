@@ -112,22 +112,6 @@ def main_window(username):
         file_label.grid(column=2, row=3, columnspan=1, sticky=W)
         return
 
-    # function to check type of file selected
-    def ck_type(filename):
-        typ = ''
-        if len(filename) != 1:
-            for i in filename:
-                if '.zip' in i:
-                    typ = 'zip and multiple'
-                else:
-                    typ = 'multiple img'
-        else:
-            if '.zip' in filename[0]:
-                typ = 'zip'
-            else:
-                typ = 'img'
-        return typ
-
     def upload_img():
         print('uploading')
         from en_de_code import image_to_b64
@@ -345,6 +329,23 @@ def main_window(username):
 
     root.mainloop()
     return
+
+
+# function to check type of file selected
+def ck_type(filename):
+    typ = ''
+    if len(filename) != 1:
+        for i in filename:
+            if '.zip' in i:
+                typ = 'zip and multiple'
+            else:
+                typ = 'multiple img'
+    else:
+        if '.zip' in filename[0]:
+            typ = 'zip'
+        else:
+            typ = 'img'
+    return typ
 
 
 def user_data_window():
