@@ -1,6 +1,10 @@
 from tkinter import *
 from tkinter import ttk, filedialog
-
+import numpy as np
+from PIL import Image
+# from StringIO import StringIO
+from io import StringIO
+from zipfile36 import ZipFile
 
 # User login/create account
 def login_window():
@@ -216,8 +220,34 @@ def main_window(username):
 
     download_cb = ttk.Combobox(root, textvariable=download_opt)
     download_cb.grid(column=1, row=16, sticky=E)
-    download_cb["values"] = ("jpeg", "png", "tiff")
+    download_cb["values"] = ("jpeg", "png", "tiff","jpg")# no jpg
     download_cb.state(['readonly'])
+
+    # def if_mutiple():
+    #     if image is multiple:
+    #         root.file = filedialog. \
+    #             asksaveasfilename(title='Download Image',
+    #                               defaultextension='.zip',
+    #                               initialdir='/',
+    #                               initialfile='Image.zip',
+    #                               filetypes=[('zip', '*.zip')])
+    #
+    #         return
+    #     elif image is not multiple:
+    #         root.file = filedialog. \
+    #             asksaveasfilename(title='Download Image',
+    #                               defaultextension='.{}'.format(
+    #                                   download_opt.get()),
+    #                               initialdir='/',
+    #                               initialfile='Image.{}'
+    #                               .format(download_opt.get()),
+    #                               filetypes=[(download_opt.get(), '*.{}'
+    #                                           .format(download_opt.get()))])
+    # Receive image_read(list)
+    # f = StringIO()
+    # zip = ZipFile(f, 'w')
+    # zip.writestr('{}.{}'.format(filename, download_opt.get()), image_read.read())
+    # zip.close() # Close
 
     def download():
         root.file = filedialog.\
@@ -229,6 +259,14 @@ def main_window(username):
                               .format(download_opt.get()),
                               filetypes=[(download_opt.get(), '*.{}'
                                           .format(download_opt.get()))])
+        print(root.file)
+        imgs = [np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/123.jpg")))]
+        print(type(imgs))
+        new_im = Image.fromarray(imgs[0]) # imgs from server
+        new_im.save(root.file)
+        new_im.show()
+
+        
 
     download_btn = ttk.Button(root, text='Download', command=download)
     download_btn.grid(column=3, row=16, sticky=E)
