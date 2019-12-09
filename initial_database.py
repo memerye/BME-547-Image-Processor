@@ -132,7 +132,7 @@ def get_user_info(user_id):
     return user_info
 
 
-def history_info(user_id):
+def get_history_info(user_id):
     u_db = ImageUser.objects.raw({"_id": user_id}).first()
     history = {"user_id": user_id,
                "num": u_db.processed["num"],

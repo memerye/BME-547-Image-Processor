@@ -84,9 +84,9 @@ def test_get_user_info():
     assert result["invert"] == expected["invert"]
 
 
-def test_history_info():
-    from initial_database import history_info
-    result = history_info("Bob1")
+def test_get_history_info():
+    from initial_database import get_history_info
+    result = get_history_info("Bob1")
     expected = {"user_id": "Bob1",
                 "num": [1],
                 "operation": [0],
