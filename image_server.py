@@ -198,9 +198,9 @@ def validate_size(image_info):
 
 
 def validate_data_length(image_info):
-    """Validate the total length of the images, their names and their size.
+    """Validate the total lengths of the images, their names and their size.
 
-    The total length of the images, their names and their size should
+    The total lengths of the images, their names and their size should
     always be equal.
 
     Args:
@@ -217,6 +217,34 @@ def validate_data_length(image_info):
         return False
     else:
         return True
+
+
+@app.route("/api/upload_images", methods=["POST"])
+def add_images():
+    indata = request.get_json()
+    good_keys = validate_image_keys(indata)
+    if good_keys is False:
+        return "The dictionary keys are not correct.", 400
+    if validate_images(indata) is False:
+        return "Please upload the encoded images!", 400
+    if validate_image_names(indata) is False:
+        return "Please upload the valid image names!", 400
+    if validate_size(indata) is False:
+        return "The type of image size is not valid!", 400
+    if validate_data_length(indata) is False:
+        return "The total lengths of the images, their names and" \
+               "their size should always be equal.", 400
+    u_id = indata["user_id"]
+    if initial_database.validate_existing_id(u_id):
+        initial_database.add_original_image_to_db(indata)
+        #############################################
+        num = len(indata["image"])
+        logging.info("* ID {} has uploaded {} images."
+                     .format(u_id, num))
+        #############################################
+        return "Valid image data!"
+    else:
+        return "The user doesn't exist!", 400
 
 
 def init_server():
