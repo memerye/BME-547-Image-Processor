@@ -40,9 +40,12 @@ def login_window():
 
     # Create account button
     def create_account():
-        # from ** import **
-        # username exists
-        print('Username: {}'.format(username.get()))
+        # validate user
+        user_id = {'user_id': '{}'.format(username.get())}
+        from GUI_client import validate_user
+        exist = validate_user(user_id)
+        # if exist ==
+
         root.destroy()
         print('Account created successfully.')
         main_window(username.get())
@@ -68,7 +71,7 @@ def login_window():
 # Main window
 def main_window(username):
     root = Tk()
-    # root.title('Image Processor')
+    root.title('Image Processor')
     # canvas = Canvas(root)
     # scrollbar = ttk.Scrollbar(root, orient="v", command=canvas.yview)
     # scrollbar.grid(row=0, column=8, rowspan=22, sticky='ns')
@@ -105,7 +108,7 @@ def main_window(username):
         # check type of file selected
         root.type = ck_type(filename_ls)
         print(root.type)
-        file_label = ttk.Label(root, text='...{}'.format(root.file[0][-25::]),
+        file_label = ttk.Label(root, text='...{}'.format(root.file[0][-30::]),
                                width=30)
         file_label.grid(column=2, row=3, columnspan=1, sticky=W)
         return
@@ -220,11 +223,13 @@ def main_window(username):
     process_btn.grid(column=3, row=10, columnspan=1, sticky=E)
 
     # Image Display frame
+    display_label = ttk.Label(root, text='3. Display images and metadata')
+    display_label.grid(column=6, row=1, columnspan=10, sticky=W)
     img_frame = ttk.Frame(root, height=500, width=700)
     # img_frame.pack()
     # img_frame.columnconfigure(2, weight=1)
     # img_frame.rowconfigure(2, weight=1)
-    img_frame.grid(column=6, row=1, columnspan=10, rowspan=16)
+    img_frame.grid(column=6, row=2, columnspan=10, rowspan=16)
     # processed image frame
     img_pro_frame = ttk.LabelFrame(img_frame, text='Processed Image',
                                    height=250, width=300)
@@ -351,7 +356,7 @@ def ck_type(filename):
 def user_data_window():
     root = Tk()
     root.title('Your User Data Summary')
-    data_label = ttk.Label(root,
+    data_label = Label(root,
                            text='You have done ** things # number of times')
     data_label.grid(column=0, row=1)
     root.mainloop()
@@ -359,7 +364,7 @@ def user_data_window():
 
 
 def file_warning():
-    root = Tk()
+    root = Toplevel()
     root.title('Please select another set of files')
 
     original = Image.open("warning.jpg")
@@ -369,12 +374,11 @@ def file_warning():
     panel.create_image(0, 0, image=image, anchor=NW, tags="IMG")
     panel.grid(column=1, row=1)
 
-    warn_label1 = ttk.Label(root, text='You can either upload multiple image '
-                                       'files(.jpg .jpeg .png .tif)')
+    warn_label1 = Label(root, text='You can either upload multiple image '
+                                   'files(.jpg .jpeg .png .tif) '
+                                   'or a single ZIP archive file. '
+                                   'Not both.')
     warn_label1.grid(column=2, row=1, columnspan=1)
-    warn_label2 = ttk.Label(root, text='or a single ZIP archive file. '
-                                       'Not both.')
-    warn_label2.grid(column=2, row=2, columnspan=1, sticky=W)
 
     root.mainloop()
     return
@@ -382,3 +386,4 @@ def file_warning():
 
 if __name__ == '__main__':
     login_window()
+    # file_warning()
