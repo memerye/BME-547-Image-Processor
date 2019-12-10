@@ -28,5 +28,6 @@ def post_process_opt(info):
                       json=info)
     return None
 
+
 if __name__ == '__main__':
     request_check_id()
