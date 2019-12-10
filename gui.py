@@ -244,13 +244,7 @@ def main_window(username):
             img_decoded.append(img_array)
         return images_encoded, img_decoded
 
-    def if_mutiple():
-        # imgs = [np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/123.jpg")))]
-        # img1 = np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/h.jpg")))
-        # imgs.append(img1)
-        # imgs = open("C:/Users/Sara Qi/Pictures/123.jpg", "rb")
-        # b64_string = str(base64.b64encode(imgs.read()), encoding='utf-8')# assume list
-        # print(image_bytes)
+    def if_multiple():
         images_encoded, img_decoded = images()
         if len(images_encoded) > 1:
             root.file = filedialog. \
@@ -260,13 +254,6 @@ def main_window(username):
                                   initialfile='Image.zip',
                                   filetypes=[('zip', '*.zip')])
             write_to_zip(img_decoded, root.file)
-            # zip = ZipFile(root.file, mode='w')
-            # for i, j in enumerate(imgs):
-            #     img = img[i]
-            #     image_bytes = base64.b64decode(img) # (b64_string) original
-            #     y = 1 + y
-            #     zip.writestr("{}.{}".format(filename, download_opt.get()), image_bytes)# filename = namelist[i]
-            # zip.close()
             return
         elif len(images_encoded) == 1:
             root.file = filedialog. \
@@ -297,11 +284,11 @@ def main_window(username):
                 plt.axis('off')
                 plt.savefig(buf, bbox_inches='tight', pad_inches=0)
                 plt.close()
-                img_name = "fig_{}.jpg".format(n)
+                img_name = "fig_{}.{}".format(n, download_opt.get())
                 print("  Writing image {:s} in the archive".format(img_name))
                 zf.writestr(img_name, buf.getvalue())
 
-    download_btn = ttk.Button(root, text='Download', command=if_mutiple)
+    download_btn = ttk.Button(root, text='Download', command=if_multiple)
     download_btn.grid(column=3, row=16, sticky=E)
 
     # upload time function
