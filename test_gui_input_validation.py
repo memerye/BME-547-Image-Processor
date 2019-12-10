@@ -23,3 +23,26 @@ def test_ck_type(filename, expected):
     from gui import ck_type
     file_type = ck_type(filename)
     assert file_type == expected
+
+
+@pytest.mark.parametrize('index, expected', [
+    (0, 'Histogram Equalization'),
+    (1, 'Contrast Stretching'),
+    (2, 'Log Compression'),
+    (3, 'Invert Image'),
+    (4, False)
+])
+def test_cvt_proc_index(index, expected):
+    """Test the function cvt_proc_index that converts process index
+    into process name
+
+    Args:
+        index: a process index
+        expected: expected output process name
+
+    Returns:
+        Boolean
+    """
+    from gui import cvt_proc_index
+    name = cvt_proc_index(index)
+    assert name == expected
