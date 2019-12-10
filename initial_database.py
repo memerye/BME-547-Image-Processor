@@ -16,8 +16,8 @@ def init_mongodb():
     Returns:
         None
     """
-    connect("mongodb+srv://python_code:bme547final\
-        @bme547-reiux.mongodb.net/test?retryWrites=true&w=majority")
+    connect("mongodb+srv://python_code:bme547final"
+            "@bme547-reiux.mongodb.net/test?retryWrites=true&w=majority")
 
 
 class ImageUser(MongoModel):
