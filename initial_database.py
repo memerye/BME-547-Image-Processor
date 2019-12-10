@@ -78,7 +78,8 @@ def add_original_image_to_db(u_img):
 def add_processed_image_to_db(u_pro):
     """Add processed image to database as a dict.
     Args:
-        u_pro (dict): a dictionary containing the u_id and processed image info.
+        u_pro (dict): a dictionary containing
+        the u_id and processed image info.
     Returns:
         None
     """
@@ -104,15 +105,16 @@ def add_processed_image_to_db(u_pro):
     imageuser.processed["processed_img"].append(pro)
     imageuser.processed["timestamp"].append(str(datetime.now()))
     if oper_num == 0:
-        imageuser.metrics["histeq"][0] = imageuser.metrics["histeq"][0]+1
+        imageuser.metrics["histeq"][0] = imageuser.metrics["histeq"][0] + 1
     elif oper_num == 1:
-        imageuser.metrics["constr"][0] = imageuser.metrics["constr"][0]+1
+        imageuser.metrics["constr"][0] = imageuser.metrics["constr"][0] + 1
     elif oper_num == 2:
-        imageuser.metrics["logcom"][0] = imageuser.metrics["logcom"][0]+1
+        imageuser.metrics["logcom"][0] = imageuser.metrics["logcom"][0] + 1
     elif oper_num == 3:
-        imageuser.metrics["invert"][0] = imageuser.metrics["invert"][0]+1
+        imageuser.metrics["invert"][0] = imageuser.metrics["invert"][0] + 1
     imageuser.save()
     return None
+
 
 def get_rec_pro_img(u_id):
     """Get most recent processed image and output as a dictionary
@@ -152,11 +154,4 @@ def validate_existing_id(u_id):
 
 
 if __name__ == '__main__':
-    # init_mongodb()
-    client = pymongo.MongoClient("mongodb://python_code:bme547final@bme547-shard-00-00-reiux.mongodb.net:27017,bme547-shard-00-01-reiux.mongodb.net:27017,bme547-shard-00-02-reiux.mongodb.net:27017/test?ssl=true&replicaSet=bme547-shard-0&authSource=admin&retryWrites=true&w=majority")
-    db = client.test
-    collection=db['image_user']
-    u=collection.find_one({'_id': 'Bob1'})
-    x = u["processed"]
-    print(type(x))
-    print(x)
+    init_mongodb()
