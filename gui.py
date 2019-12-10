@@ -359,12 +359,14 @@ def main_window(username):
     exit_btn.grid(column=15, row=19)
 
     # process info include uploaded/processing time and image size
-    uptime_label = ttk.Label(root, text='Uploaded time: b')
-    uptime_label.grid(column=7, row=18, columnspan=1, sticky=W)
-    protime_label = ttk.Label(root, text='Processsing time: a')
-    protime_label.grid(column=11, row=18, columnspan=1, sticky=W)
-    size_label = ttk.Label(root, text='Image size: c')
-    size_label.grid(column=14, row=18, columnspan=1, sticky=W)
+    def process_info(ls):
+        uptime_label = ttk.Label(root, text='Uploaded time: {}'.format(ls[0]))
+        uptime_label.grid(column=7, row=18, columnspan=1, sticky=W)
+        protime_label = ttk.Label(root, text='Processsing time: {}'.format(ls[1]))
+        protime_label.grid(column=11, row=18, columnspan=1, sticky=W)
+        size_label = ttk.Label(root, text='Image size: {}'.format(ls[2]))
+        size_label.grid(column=14, row=18, columnspan=1, sticky=W)
+        return
 
     root.mainloop()
     return
