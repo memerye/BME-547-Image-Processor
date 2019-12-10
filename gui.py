@@ -4,7 +4,7 @@ from zipfile36 import ZipFile
 import os
 import numpy as np
 import io
-from PIL import Image
+from PIL import Image, ImageTk
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 
@@ -105,8 +105,6 @@ def main_window(username):
         # check type of file selected
         root.type = ck_type(filename_ls)
         print(root.type)
-        # if root.type == 'zip and multiple':
-        #     # open a warning window
         file_label = ttk.Label(root, text='...{}'.format(root.file[0][-25::]),
                                width=30)
         file_label.grid(column=2, row=3, columnspan=1, sticky=W)
@@ -142,6 +140,8 @@ def main_window(username):
             show_imgs = plt.imshow(img_array)
         else:
             print('cannot upload. wrong files selected.')
+            # Open a warning window
+            file_warning()
 # remember to change encoded_img_array to string when sending to server!!
 # remember to also get size from image_to_b64
         return
@@ -354,6 +354,28 @@ def user_data_window():
     data_label = ttk.Label(root,
                            text='You have done ** things # number of times')
     data_label.grid(column=0, row=1)
+    root.mainloop()
+    return
+
+
+def file_warning():
+    root = Tk()
+    root.title('Please select another set of files')
+
+    original = Image.open("warning.jpg")
+    resized = original.resize((30, 30), Image.ANTIALIAS)
+    image = ImageTk.PhotoImage(resized)
+    panel = Canvas(root, width=30, height=30)
+    panel.create_image(0, 0, image=image, anchor=NW, tags="IMG")
+    panel.grid(column=1, row=1)
+
+    warn_label1 = ttk.Label(root, text='You can either upload multiple image '
+                                       'files(.jpg .jpeg .png .tif)')
+    warn_label1.grid(column=2, row=1, columnspan=1)
+    warn_label2 = ttk.Label(root, text='or a single ZIP archive file. '
+                                       'Not both.')
+    warn_label2.grid(column=2, row=2, columnspan=1, sticky=W)
+
     root.mainloop()
     return
 
