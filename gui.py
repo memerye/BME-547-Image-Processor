@@ -89,7 +89,9 @@ def main_window(username):
     # View user data
     def user_data():
         print('Get data summary from database')
-        user_data_window()
+        from GUI_client import request_user_info
+        user_info = request_user_info(username)
+        user_data_window(user_info)
         return
 
     user_data_btn = ttk.Button(root, text='View my user data',
@@ -152,6 +154,7 @@ def main_window(username):
             file_warning()
 # remember to change encoded_img_array to string when sending to server!!
 # remember to also get size from image_to_b64
+
         return
 
     select_btn = ttk.Button(root, text='Select image file(s)',
