@@ -357,7 +357,7 @@ def user_data_window():
     root = Tk()
     root.title('Your User Data Summary')
     data_label = Label(root,
-                           text='You have done ** things # number of times')
+                       text='You have done ** things # number of times')
     data_label.grid(column=0, row=1)
     root.mainloop()
     return
