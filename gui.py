@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 def login_window():
     root = Tk()
     root.title('Create Account/User Login')
+    from GUI_client import request_check_id, post_user_id
 
     # Gap row/column
     gap_row = Label(root, text='  ')
@@ -42,7 +43,6 @@ def login_window():
     def create_account():
         # validate user
         user_id = {'user_id': username.get()}
-        from GUI_client import request_check_id, post_user_id
         exist = request_check_id(username.get())
         if exist:
             exist_label = Label(root,
@@ -61,9 +61,16 @@ def login_window():
 
     # Login button
     def login():
-        # open main window
-        root.destroy()
-        main_window(username.get())
+        exist = request_check_id(username.get())
+        if exist:
+            # open main window
+            root.destroy()
+            main_window(username.get())
+        else:
+            exist_label = Label(root,
+                                text='Username does not exist. '
+                                     'Please create an account.')
+            exist_label.grid(column=1, row=3, columnspan=3)
         return
 
     login_btn = ttk.Button(root, text='Login', command=login)
