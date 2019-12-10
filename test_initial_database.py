@@ -65,3 +65,19 @@ def test_add_processed_image_to_db():
     assert expected_name == u.processed["name"]
     assert expected_raw_img == u.processed["raw_img"]
     assert expected_processed_img == u.processed["processed_img"]
+
+
+def test_get_rec_pro_img():
+    test_input = "Bob1"
+    from initial_database import get_rec_pro_img
+    rec_pro = get_rec_pro_img(test_input)
+    del rec_pro["timestamp"]
+    expected = {
+       "user_id": "Bob1",
+       "operation": 0,
+        "size": [[200, 200, 3], [200, 200, 3]],
+        "run_time": [0.1, 0.2],
+        "name": ['aa.jpg', 'bb.jpg'],
+        "raw_img": ['abc', 'cd'],
+        "processed_img": ['cc', 'dd']}
+    assert expected == rec_pro

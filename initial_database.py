@@ -2,8 +2,10 @@
 from datetime import datetime
 from pymodm import MongoModel, fields
 from pymodm import connect
+import pymongo
 # Ignore warnings
 import warnings
+
 warnings.filterwarnings("ignore")
 
 
@@ -102,6 +104,25 @@ def add_processed_image_to_db(u_pro):
     imageuser.save()
     return None
 
+def get_rec_pro_img(u_id):
+    """Get most recent processed image and output as a dictionary
+    Args:
+        u_id: user id string variable
+    Returns:
+        A dictionary containing searching information
+    """
+    imageuser = ImageUser.objects.raw({"_id": u_id}).first()
+    rec_dict = {}
+    rec_dict["user_id"] = u_id
+    rec_dict["timestamp"] = imageuser.processed["timestamp"][-1]
+    rec_dict["operation"] = imageuser.processed["operation"][-1]
+    rec_dict["size"] = imageuser.processed["size"][-1]
+    rec_dict["run_time"] = imageuser.processed["run_time"][-1]
+    rec_dict["name"] = imageuser.processed["name"][-1]
+    rec_dict["raw_img"] = imageuser.processed["raw_img"][-1]
+    rec_dict["processed_img"] = imageuser.processed["processed_img"][-1]
+    return rec_dict
+
 
 def validate_existing_id(u_id):
     """Validate the existence of the user id in the database.
@@ -121,4 +142,11 @@ def validate_existing_id(u_id):
 
 
 if __name__ == '__main__':
-    init_mongodb()
+    # init_mongodb()
+    client = pymongo.MongoClient("mongodb://python_code:bme547final@bme547-shard-00-00-reiux.mongodb.net:27017,bme547-shard-00-01-reiux.mongodb.net:27017,bme547-shard-00-02-reiux.mongodb.net:27017/test?ssl=true&replicaSet=bme547-shard-0&authSource=admin&retryWrites=true&w=majority")
+    db = client.test
+    collection=db['image_user']
+    u=collection.find_one({'_id': 'Bob1'})
+    x = u["processed"]
+    print(type(x))
+    print(x)
