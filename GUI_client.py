@@ -17,5 +17,11 @@ def post_user_id(info):
     return None
 
 
+def request_user_info(ids):
+    r = requests.get("http://127.0.0.1:5000/api/user_info/{}".format(ids))
+    answer = r.json()
+    return answer
+
+
 if __name__ == '__main__':
     request_check_id()
