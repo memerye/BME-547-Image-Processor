@@ -7,6 +7,13 @@ import io
 from PIL import Image, ImageTk
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
+from skimage import io as skio
+from en_de_code import image_to_b64, b64_to_image
+import zipfile
+from io import BytesIO
+import base64
 
 
 # User login/create account
@@ -279,21 +286,67 @@ def main_window(username):
 
     download_cb = ttk.Combobox(root, textvariable=download_opt)
     download_cb.grid(column=1, row=16, sticky=E)
-    download_cb["values"] = ("jpeg", "png", "tiff")
+    download_cb["values"] = ("jpeg", "png", "tiff", "jpg")  # no jpg
     download_cb.state(['readonly'])
 
-    def download():
-        root.file = filedialog.\
-            asksaveasfilename(title='Download Image',
-                              defaultextension='.{}'.format(
-                                  download_opt.get()),
-                              initialdir='/',
-                              initialfile='Image.{}'
-                              .format(download_opt.get()),
-                              filetypes=[(download_opt.get(), '*.{}'
-                                          .format(download_opt.get()))])
+    def images():
+        root = "C:/Users/Sara Qi/Pictures/Screenshots"
+        path = [root + '/123.jpg', root + '/plant4.jpg']
+        images_encoded = []
+        img_decoded = []
+        for i in path:
+            img = skio.imread(i)
+            img_b64, img_size = image_to_b64(img)
+            images_encoded.append(str(img_b64))
+            img_array = b64_to_image(img_b64, img_size)
+            img_decoded.append(img_array)
+        return images_encoded, img_decoded
 
-    download_btn = ttk.Button(root, text='Download', command=download)
+    def if_multiple():
+        images_encoded, img_decoded = images()
+        if len(images_encoded) > 1:
+            root.file = filedialog. \
+                asksaveasfilename(title='Download Image',
+                                  defaultextension='.zip',
+                                  initialdir='/',
+                                  initialfile='Image.zip',
+                                  filetypes=[('zip', '*.zip')])
+            write_to_zip(img_decoded, root.file)
+            return
+        elif len(images_encoded) == 1:
+            root.file = filedialog. \
+                asksaveasfilename(title='Download Image',
+                                  defaultextension='.{}'.format(
+                                      download_opt.get()),
+                                  initialdir='/',
+                                  initialfile='Image.{}'
+                                  .format(download_opt.get()),
+                                  filetypes=[(download_opt.get(), '*.{}'
+                                              .format(download_opt.get()))])
+            new_im = Image.fromarray(imgs[0])  # imgs from server
+            new_im.save(root.file)
+            return
+        return
+
+    # need encoded image, file_name
+    def write_to_zip(img_decoded, zip_file_name):
+        n = 2
+        # images_encoded, img_decoded = images()
+        # zip_file_name = "C:/Users/Sara Qi/Pictures/export.zip"
+        print("Creating archive: {:s}".format(zip_file_name))
+        with zipfile.ZipFile(zip_file_name, mode="w") as zf:
+            for i in img_decoded:
+                n = n + 1
+                plt.imshow(i)
+                buf = io.BytesIO(i)
+                plt.axis('off')
+                plt.savefig(buf, bbox_inches='tight', pad_inches=0)
+                plt.close()
+                img_name = "fig_{}.{}".format(n, download_opt.get())
+                print("  Writing image {:s} in the archive".format(img_name))
+                zf.writestr(img_name, buf.getvalue())
+
+    download_btn = ttk.Button(root, text='Download', command=if_multiple)
     download_btn.grid(column=3, row=16, sticky=E)
 
     # # upload time function
