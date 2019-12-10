@@ -12,4 +12,3 @@ matplotlib
 scikit-image
 zipfile36
 Pillow
-io
