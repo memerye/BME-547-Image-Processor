@@ -438,6 +438,15 @@ def one_history_info(user_id, num):
         return "The user doesn't exist!", 400
 
 
+@app.route("/api/most_recent_processed_image/<user_id>", methods=["GET"])
+def recent_process_images(user_id):
+    if initial_database.validate_existing_id(user_id):
+        data = initial_database.get_rec_pro_img(user_id)
+        return jsonify(data)
+    else:
+        return "The user doesn't exist!", 400
+
+
 def init_server():
     """Initialize the logging configuration and database connection.
 
