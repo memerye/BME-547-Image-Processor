@@ -115,17 +115,16 @@ def main_window(username):
         root.file = filedialog.askopenfilename(multiple=True, filetypes=[
             ('Image files', '.png .jpg .jpeg .tif .zip',)])
         # save file names into a list
-        filename_ls = []
+        root.filename_ls = []
         for i in root.file:
             filename = os.path.basename(i)
-            filename_ls.append(filename)
+            root.filename_ls.append(filename)
         # check type of file selected
-        root.type = ck_type(filename_ls)
+        root.type = ck_type(root.filename_ls)
         print(root.type)
         file_label = ttk.Label(root, text='...{}'.format(root.file[0][-30::]),
                                width=30)
         file_label.grid(column=2, row=3, columnspan=1, sticky=W)
-        return
 
     def upload_img():
         uploading_label = ttk.Label(root, text='Uploading ... ', width=30)
@@ -135,13 +134,16 @@ def main_window(username):
         # check if multiple files are selected
         if root.type == 'multiple img':
             imgs = []
+            image_sizes = []
             for i in root.file:
                 img_array = read_img(i)
-                encoded_img_array = image_to_b64(img_array)[0]
+                encoded_img_array, image_size = image_to_b64(img_array)
                 imgs.append(encoded_img_array)
+                image_sizes.append(image_size)
         elif root.type == 'zip':
             # read zip files into numpy array
             imgs = []
+            image_sizes = []
             zip_ref = ZipFile(root.file[0], "r")
             # returns a list of file names in the archive
             directory = zip_ref.namelist()
@@ -150,21 +152,28 @@ def main_window(username):
                 data = io.BytesIO(img_bytes)
                 img = Image.open(data)
                 img_array = np.uint8(img)
-                encoded_img_array = image_to_b64(img_array)[0]
+                encoded_img_array, image_size = image_to_b64(img_array)
+                image_sizes.append(image_size)
                 imgs.append(encoded_img_array)
             # read non-zip files into numpy array
         elif root.type == 'img':
             img_array = read_img(root.file[0])
-            imgs = [image_to_b64(img_array)[0]]
+            encoded_img_array, image_size = image_to_b64(img_array)
+            imgs = [encoded_img_array]
+            image_sizes = [image_size]
             show_imgs = plt.imshow(img_array)
         else:
             print('cannot upload. wrong files selected.')
             # Open a warning window
             file_warning()
 # remember to also get size from image_to_b64
+            return None
+        info = post_img_json(imgs, image_sizes)
+        from GUI_client import post_img_GUI
+        post_img_GUI(info)
         uploaded_label = ttk.Label(root, text='Upload complete. ', width=30)
         uploaded_label.grid(column=2, row=3, columnspan=1, sticky=W)
-        return
+        return imgs, image_sizes
 
     select_btn = ttk.Button(root, text='Select image file(s)',
                             command=select_img)
@@ -172,6 +181,14 @@ def main_window(username):
     upld_btn = ttk.Button(root, text='Upload',
                           command=upload_img)
     upld_btn.grid(column=3, row=3, sticky=E)
+
+    def post_img_json(imgs, image_sizes):
+        post_img = {}
+        post_img["user_id"] = username
+        post_img["image"] = imgs
+        post_img["name"] = root.filename_ls
+        post_img["size"] = image_sizes
+        return post_img
 
     # function for reading non-zip image file
     def read_img(img_path):
@@ -235,22 +252,31 @@ def main_window(username):
     def process():
         print('Process {} requested'.format(process_opt.get()))
         if process_opt.get() == 'Histogram Equalization':
+            option = 0
             print("he")
-            return
         elif process_opt.get() == 'Contrast Stretching':
+            option = 1
             print("cs")
-            return
         elif process_opt.get() == 'Log Compression':
+            option = 2
             print("lc")
-            return
         elif process_opt.get() == 'Invert Image':
+            option = 3
             print("ii")
-            return
-        return
+        return option
 
     # Process button
     process_btn = ttk.Button(root, text='Process', command=process)
     process_btn.grid(column=3, row=10, columnspan=1, sticky=E)
+
+    def post_opt_json(option):
+        post_opt = {}
+        post_opt["user_id"] = username
+        post_opt["operation"] = option
+        post_opt["raw_img"] = imgs
+        post_opt["name"] = root.filename_ls
+        post_opt["size"] = image_sizes
+        return post_opt
 
     # Image Display frame
     display_label = ttk.Label(root, text='3. Display images and metadata')

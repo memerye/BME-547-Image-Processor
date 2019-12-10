@@ -17,6 +17,18 @@ def post_user_id(info):
     return None
 
 
+def post_img_GUI(info):
+    r = requests.post("http://127.0.0.1:5000/api/upload_images",
+                      json=info)
+    return None
+
+
+def post_process_opt(info):
+    r = requests.post("http://127.0.0.1:5000/api/process",
+                      json=info)
+    return None
+
+
 def request_user_info(ids):
     r = requests.get("http://127.0.0.1:5000/api/user_info/{}".format(ids))
     answer = r.json()
