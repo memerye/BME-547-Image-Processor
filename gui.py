@@ -41,19 +41,24 @@ def login_window():
     # Create account button
     def create_account():
         # validate user
-        user_id = {'user_id': username.get()}
-        from GUI_client import request_check_id, post_user_id
-        exist = request_check_id(username.get())
-        if exist:
-            exist_label = Label(root,
-                                text='Username already exists. '
-                                     'Login or enter a new username.')
-            exist_label.grid(column=1, row=3, columnspan=3)
+        if username.get() == '':
+            id_error_label = Label(root,
+                                   text='Please enter a username. ')
+            id_error_label.grid(column=1, row=3, columnspan=3)
         else:
-            post_user_id(user_id)
-            root.destroy()
-            print('Account created successfully.')
-            main_window(username.get())
+            user_id = {'user_id': username.get()}
+            from GUI_client import request_check_id, post_user_id
+            exist = request_check_id(username.get())
+            if exist:
+                exist_label = Label(root,
+                                    text='Username already exists. '
+                                         'Login or enter a new username.')
+                exist_label.grid(column=1, row=3, columnspan=3)
+            else:
+                post_user_id(user_id)
+                root.destroy()
+                print('Account created successfully.')
+                main_window(username.get())
         return
 
     ca_btn = ttk.Button(root, text='Create Account', command=create_account)
@@ -152,7 +157,6 @@ def main_window(username):
             print('cannot upload. wrong files selected.')
             # Open a warning window
             file_warning()
-# remember to change encoded_img_array to string when sending to server!!
 # remember to also get size from image_to_b64
 
         return
@@ -170,8 +174,7 @@ def main_window(username):
         return img_array
 
     # History button
-    def history():
-        print('Retrieve')
+    def proc_history():
         # 1/time.../image.../operation
         from GUI_client import request_history_info
         history_info = request_history_info(username)
@@ -185,12 +188,11 @@ def main_window(username):
                         history_info['name'][i])
             hist_ls.append(hist)
         hist_tuple = tuple(hist_ls)
-        print(hist_tuple)
         # outputs history into pull down menu
         hist_combo['values'] = hist_tuple
         return
 
-    hist_btn = ttk.Button(root, text='Choose from history', command=history)
+    hist_btn = ttk.Button(root, text='Choose from history', command=proc_history)
     hist_btn.grid(column=1, row=4, sticky=W)
 
     # History pull down
@@ -198,6 +200,17 @@ def main_window(username):
     hist_combo = ttk.Combobox(root, textvariable=history)
     hist_combo.grid(column=2, row=4, sticky=W)
     hist_combo.state(['readonly'])
+
+    # Retrieve selected history info
+    def retrieve():
+        print(int(history.get()[0]))
+        from GUI_client import request_one_history_info
+        one_history = request_one_history_info(username, int(history.get()[0]))
+
+        return
+
+    retrieve_btn = ttk.Button(root, text='Retrieve', command=retrieve)
+    retrieve_btn.grid(column=3, row=4, sticky=E)
 
     # process option
     process_opt = StringVar(None, 'Histogram Equalization')
