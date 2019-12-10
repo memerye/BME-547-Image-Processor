@@ -106,17 +106,16 @@ def main_window(username):
         root.file = filedialog.askopenfilename(multiple=True, filetypes=[
             ('Image files', '.png .jpg .jpeg .tif .zip',)])
         # save file names into a list
-        filename_ls = []
+        root.filename_ls = []
         for i in root.file:
             filename = os.path.basename(i)
-            filename_ls.append(filename)
+            root.filename_ls.append(filename)
         # check type of file selected
-        root.type = ck_type(filename_ls)
+        root.type = ck_type(root.filename_ls)
         print(root.type)
         file_label = ttk.Label(root, text='...{}'.format(root.file[0][-30::]),
                                width=30)
         file_label.grid(column=2, row=3, columnspan=1, sticky=W)
-        return
 
     def upload_img():
         print('uploading')
@@ -124,13 +123,16 @@ def main_window(username):
         # check if multiple files are selected
         if root.type == 'multiple img':
             imgs = []
+            image_sizes = []
             for i in root.file:
                 img_array = read_img(i)
-                encoded_img_array = image_to_b64(img_array)[0]
+                encoded_img_array, image_size = image_to_b64(img_array)
                 imgs.append(encoded_img_array)
+                image_sizes.append(image_size)
         elif root.type == 'zip':
             # read zip files into numpy array
             imgs = []
+            image_sizes = []
             zip_ref = ZipFile(root.file[0], "r")
             # returns a list of file names in the archive
             directory = zip_ref.namelist()
@@ -139,12 +141,15 @@ def main_window(username):
                 data = io.BytesIO(img_bytes)
                 img = Image.open(data)
                 img_array = np.uint8(img)
-                encoded_img_array = image_to_b64(img_array)[0]
+                encoded_img_array, image_size = image_to_b64(img_array)
+                image_sizes.append(image_size)
                 imgs.append(encoded_img_array)
             # read non-zip files into numpy array
         elif root.type == 'img':
             img_array = read_img(root.file[0])
-            imgs = [image_to_b64(img_array)[0]]
+            encoded_img_array, image_size = image_to_b64(img_array)
+            imgs = [encoded_img_array]
+            image_sizes = [image_size]
             show_imgs = plt.imshow(img_array)
         else:
             print('cannot upload. wrong files selected.')
@@ -152,7 +157,11 @@ def main_window(username):
             file_warning()
 # remember to change encoded_img_array to string when sending to server!!
 # remember to also get size from image_to_b64
-        return
+            return None
+        info = post_img_json(imgs, image_sizes)
+        from GUI_client import post_img_GUI
+        post_img_GUI(info)
+        return imgs, image_sizes
 
     select_btn = ttk.Button(root, text='Select image file(s)',
                             command=select_img)
@@ -161,10 +170,20 @@ def main_window(username):
                           command=upload_img)
     upld_btn.grid(column=3, row=3, sticky=E)
 
+    def post_img_json(imgs, image_sizes):
+        post_img = {}
+        post_img["user_id"] = username
+        post_img["image"] = imgs
+        post_img["name"] = root.filename_ls
+        post_img["size"] = image_sizes
+        return post_img
+
+
     # function for reading non-zip image file
     def read_img(img_path):
         img_array = np.uint8(np.array(Image.open(img_path)))
         return img_array
+
 
     # History button
     def history():
@@ -173,6 +192,7 @@ def main_window(username):
         donor_center_combo['values'] = ('values will be output of history',
                                         'None')
         return
+
 
     hist_btn = ttk.Button(root, text='Choose from history', command=history)
     hist_btn.grid(column=1, row=4, sticky=W)
