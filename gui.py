@@ -172,9 +172,22 @@ def main_window(username):
     # History button
     def history():
         print('Retrieve')
+        # 1/time.../image.../operation
+        from GUI_client import request_history_info
+        history_info = request_history_info(username)
+        hist_ls = []
+        for i in range(len(history_info['name'])):
+            op = cvt_proc_index(history_info['operation'][i])
+            hist = '{}/{}/{}/{}' \
+                .format(i + 1,
+                        history_info['timestamp'][i],
+                        op,
+                        history_info['name'][i])
+            hist_ls.append(hist)
+        hist_tuple = tuple(hist_ls)
+        print(hist_tuple)
         # outputs history into pull down menu
-        donor_center_combo['values'] = ('values will be output of history',
-                                        'None')
+        hist_combo['values'] = hist_tuple
         return
 
     hist_btn = ttk.Button(root, text='Choose from history', command=history)
@@ -182,9 +195,9 @@ def main_window(username):
 
     # History pull down
     history = StringVar()
-    donor_center_combo = ttk.Combobox(root, textvariable=history)
-    donor_center_combo.grid(column=2, row=4, sticky=W)
-    donor_center_combo.state(['readonly'])
+    hist_combo = ttk.Combobox(root, textvariable=history)
+    hist_combo.grid(column=2, row=4, sticky=W)
+    hist_combo.state(['readonly'])
 
     # process option
     process_opt = StringVar(None, 'Histogram Equalization')
