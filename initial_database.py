@@ -10,6 +10,12 @@ warnings.filterwarnings("ignore")
 
 
 def init_mongodb():
+    """Connect the mongodb
+    Args:
+        None
+    Returns:
+        None
+    """
     connect("mongodb+srv://python_code:bme547final\
         @bme547-reiux.mongodb.net/test?retryWrites=true&w=majority")
 
@@ -23,6 +29,12 @@ class ImageUser(MongoModel):
 
 
 def add_new_user_to_db(user_info):
+    """Add new user to the database and initialize user info in database
+    Args:
+        u_info (dict): a dictionary containing u_id
+    Returns:
+        None
+    """
     u_id = user_info["user_id"]
     u_time = str(datetime.now())
     key_list_metrics = ("img_num", "histeq", "constr", "logcom", "invert")
@@ -39,12 +51,11 @@ def add_new_user_to_db(user_info):
 
 
 def add_original_image_to_db(u_img):
-    """Validate the existence of the user id in the database.
+    """Add original image to the database as a dict.
     Args:
-        u_id (string): the patient id.
+        u_img (dict): a dictionary containing original image info and u_id
     Returns:
-        bool: False if the id doesn't exist in the database;
-        True if the id has been registered in the database.
+        None
     """
     u_id = u_img["user_id"]
     image_list = u_img["image"]
@@ -65,12 +76,11 @@ def add_original_image_to_db(u_img):
 
 
 def add_processed_image_to_db(u_pro):
-    """Validate the existence of the user id in the database.
+    """Add processed image to database as a dict.
     Args:
-        u_id (string): the patient id.
+        u_pro (dict): a dictionary containing the u_id and processed image info.
     Returns:
-        bool: False if the id doesn't exist in the database;
-        True if the id has been registered in the database.
+        None
     """
     u_id = u_pro["user_id"]
     oper_num = u_pro["operation"]
