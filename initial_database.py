@@ -39,8 +39,9 @@ def add_new_user_to_db(user_info):
     u_time = str(datetime.now())
     key_list_metrics = ("img_num", "histeq", "constr", "logcom", "invert")
     key_list_images = ("image", "name", "size", "time")
-    key_list_processed = ("num", "timestamp", "operation", "size",
-                          "run_time", "name", "raw_img", "processed_img")
+    key_list_processed = ("num", "operation", "up_time",
+                          "processed_time", "size", "run_time",
+                          "name", "raw_img", "processed_img")
     u = ImageUser(user_id=u_id,
                   created_timestamp=u_time,
                   metrics=dict.fromkeys(key_list_metrics, [0]),
@@ -102,25 +103,28 @@ def add_processed_image_to_db(u_pro):
     """
     u_id = u_pro["user_id"]
     oper_num = u_pro["operation"]
+    up_time = u_pro["up_time"]
     size = u_pro["size"]
     run = u_pro["run_time"]
     name = u_pro["name"]
     raw = u_pro["raw_img"]
     pro = u_pro["processed_img"]
+    processed_time = u_pro["processed_time"]
     imageuser = ImageUser.objects.raw({"_id": u_id}).first()
     if len(imageuser.processed["num"]):
         cur_ind = imageuser.processed["num"][-1]
     else:
-        cur_ind = 0
-    imageuser.processed["operation"].append(oper_num)
-    cur_ind += 1
+        cur_ind = 1
     imageuser.processed["num"].append(cur_ind)
+    imageuser.processed["operation"].append(oper_num)
+    imageuser.processed["up_time"].append(up_time)
+    cur_ind += 1
     imageuser.processed["size"].append(size)
     imageuser.processed["run_time"].append(run)
     imageuser.processed["name"].append(name)
     imageuser.processed["raw_img"].append(raw)
     imageuser.processed["processed_img"].append(pro)
-    imageuser.processed["timestamp"].append(str(datetime.now()))
+    imageuser.processed["processed_time"].append(processed_time)
     if oper_num == 0:
         imageuser.metrics["histeq"][0] = imageuser.metrics["histeq"][0] + 1
     elif oper_num == 1:
@@ -143,7 +147,7 @@ def get_rec_pro_img(u_id):
     imageuser = ImageUser.objects.raw({"_id": u_id}).first()
     rec_dict = {}
     rec_dict["user_id"] = u_id
-    rec_dict["timestamp"] = imageuser.processed["timestamp"][-1]
+    rec_dict["up_time"] = imageuser.processed["up_time"][-1]
     rec_dict["operation"] = imageuser.processed["operation"][-1]
     rec_dict["size"] = imageuser.processed["size"][-1]
     rec_dict["run_time"] = imageuser.processed["run_time"][-1]
@@ -169,7 +173,7 @@ def get_history_info(user_id):
     u_db = ImageUser.objects.raw({"_id": user_id}).first()
     history = {"user_id": user_id,
                "num": u_db.processed["num"],
-               "timestamp": u_db.processed["timestamp"],
+               "processed_time": u_db.processed["processed_time"],
                "operation": u_db.processed["operation"],
                "name": u_db.processed["name"]}
     return history
@@ -180,7 +184,7 @@ def retrieve_history_info(user_id, num):
     num = int(num)
     history = {"user_id": user_id,
                "num": num,
-               "timestamp": u_db.processed["timestamp"][num-1],
+               "up_time": u_db.processed["up_time"][num-1],
                "operation": u_db.processed["operation"][num-1],
                "size": u_db.processed["size"][num-1],
                "run_time": u_db.processed["run_time"][num-1],
