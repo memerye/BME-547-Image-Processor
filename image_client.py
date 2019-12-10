@@ -247,7 +247,22 @@ def request_user_info():
 def request_history_info():
     ids = ["1_a", "08563"]
     for p_id in ids:
-        r = requests.get("http://127.0.0.1:5000/api/history_info/{}".format(p_id))
+        r = requests.get("http://127.0.0.1:5000/api/history_info/{}"
+                         .format(p_id))
+        print(r)
+        print(r.text)
+        print(r.status_code)
+        if r.status_code == 200:
+            answer = r.json()
+            print(answer)
+
+
+def request_one_history_info():
+    ids = ["1_a", "08563"]
+    num = [2, 0]
+    for p_id, n in zip(ids, num):
+        r = requests.get("http://127.0.0.1:5000/api/history_info/{}/{}"
+                         .format(p_id, n))
         print(r)
         print(r.text)
         print(r.status_code)
@@ -263,3 +278,4 @@ if __name__ == '__main__':
     # process_test_imageset()
     request_user_info()
     request_history_info()
+    request_one_history_info()

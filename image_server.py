@@ -429,6 +429,15 @@ def history_info(user_id):
         return "The user doesn't exist!", 400
 
 
+@app.route("/api/history_info/<user_id>/<num>", methods=["GET"])
+def one_history_info(user_id, num):
+    if initial_database.validate_existing_id(user_id):
+        data = initial_database.retrieve_history_info(user_id, num)
+        return jsonify(data)
+    else:
+        return "The user doesn't exist!", 400
+
+
 def init_server():
     """Initialize the logging configuration and database connection.
 
