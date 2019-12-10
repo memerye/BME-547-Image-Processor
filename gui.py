@@ -302,18 +302,33 @@ def main_window(username):
             img_decoded.append(img_array)
         return images_encoded, img_decoded
 
+    def decode_down_img(img_decoded, size_img):
+        for num, i in enumerate(img_decoded):
+            img_array = b64_to_image(img_decoded[num], size_img[num])
+            img_decoded.append(img_array)
+        return img_decoded
+
     def if_multiple():
-        images_encoded, img_decoded = images()
-        if len(images_encoded) > 1:
+        from GUI_client import request_download_file
+        encoded_json = request_download_file("1_a")
+        # images_encoded, img_decoded = images() # get json from preview
+        size_img = encoded_json["size"]
+        ori_en = encoded_json["raw_img"]
+        process_en = encoded_json["processed_img"]
+        orig_name = encoded_json["name"]
+        ori_encoded = decode_down_img(ori_en, size_img)
+        process_encoded = decode_down_img(process_en, size_img)
+        if len(ori_encoded) > 1:
             root.file = filedialog. \
                 asksaveasfilename(title='Download Image',
                                   defaultextension='.zip',
                                   initialdir='/',
                                   initialfile='Image.zip',
                                   filetypes=[('zip', '*.zip')])
-            write_to_zip(img_decoded, root.file)
+            write_to_zip(ori_encoded, root.file, "ori", orig_name)
+            write_to_zip(process_encoded, root.file, "pro", orig_name)
             return
-        elif len(images_encoded) == 1:
+        elif len(ori_encoded) == 1:
             root.file = filedialog. \
                 asksaveasfilename(title='Download Image',
                                   defaultextension='.{}'.format(
@@ -323,38 +338,44 @@ def main_window(username):
                                   .format(download_opt.get()),
                                   filetypes=[(download_opt.get(), '*.{}'
                                               .format(download_opt.get()))])
-            new_im = Image.fromarray(imgs[0])  # imgs from server
+            new_im = Image.fromarray(ori_encoded[0])  # imgs from server
             new_im.save(root.file)
+            new_im = Image.fromarray(process_encoded[0])  # imgs from server
+            path = os.path.dirname(root.file)
+            file_n = os.path.basename(root.file)
+            new_im.save("{}/{}{}".format(path, "Processed_", file_n))
             return
         return
 
     # need encoded image, file_name
-    def write_to_zip(img_decoded, zip_file_name):
-        n = 2
+    def write_to_zip(img_decoded, zip_file_name, type, orig_name):
+        name_type = if_ori_or_pro(type)
         # images_encoded, img_decoded = images()
         # zip_file_name = "C:/Users/Sara Qi/Pictures/export.zip"
         print("Creating archive: {:s}".format(zip_file_name))
         with zipfile.ZipFile(zip_file_name, mode="w") as zf:
-            for i in img_decoded:
-                n = n + 1
+            for num, i in enumerate(img_decoded):
+                n = orig_name[num]
+                na = os.path.splitext(n)[0]
                 plt.imshow(i)
                 buf = io.BytesIO(i)
                 plt.axis('off')
                 plt.savefig(buf, bbox_inches='tight', pad_inches=0)
                 plt.close()
-                img_name = "fig_{}.{}".format(n, download_opt.get())
+                img_name = "{}{}.{}".format(na, name_type, download_opt.get())
                 print("  Writing image {:s} in the archive".format(img_name))
                 zf.writestr(img_name, buf.getvalue())
 
+    def if_ori_or_pro(type):
+        if type == "ori":
+            name = ""
+            return name
+        elif type == "pro":
+            name = "_processed"
+            return name
+
     download_btn = ttk.Button(root, text='Download', command=if_multiple)
     download_btn.grid(column=3, row=16, sticky=E)
-
-    # # upload time function
-    # def upload_time():
-    #     global time_upload
-    #     time_upload = str(datetime.datetime.now())
-    #     print(time_upload)
-    #     return
 
     # back to login function at main window
     def back_to_login():
