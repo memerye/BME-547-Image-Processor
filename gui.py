@@ -361,6 +361,20 @@ def ck_type(filename):
     return typ
 
 
+# function to convert process index to process name
+def cvt_proc_index(index):
+    if index == 0:
+        return 'Histogram Equalization'
+    elif index == 1:
+        return 'Contrast Stretching'
+    elif index == 2:
+        return 'Log Compression'
+    elif index == 3:
+        return 'Invert Image'
+    else:
+        return False
+
+
 def user_data_window(user_info):
     root = Tk()
     root.title('Your User Account Summary')
