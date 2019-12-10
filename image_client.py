@@ -166,12 +166,11 @@ def process_test_imageset():
     The pseudo-lists of image information contain errors of:
     (1) Wrong dictionary key
     (2) Wrong operation index
-    (3) Wrong format of timestamp
-    (4) Wrong format of image
-    (5) Wrong format of image name
-    (6) Wrong format of image size
-    (7) The lengths of images, their names and their size are not equal
-    (8) Not existed id
+    (3) Wrong format of image
+    (4) Wrong format of image name
+    (5) Wrong format of image size
+    (6) The lengths of images, their names and their size are not equal
+    (7) Not existed id
     Ultimately three valid processing image information will be added into
     the database with the id of "1_a".
 
@@ -200,69 +199,33 @@ def process_test_imageset():
         img = io.imread(i)
         images.append(img.tolist())
     u_info = [{"userid": "1_a", "operation": 0,
-               "up_time": ["2019-12-10 15:22:16.638007",
-                           "2019-12-10 15:22:17.638007",
-                           "2019-12-10 15:22:18.638007"],
                "raw_img": images_encoded[0:3],
                "size": size[0:3], "name": name[0:3]},
               {"user_id": "1_a", "operation": 10,
-               "up_time": ["2019-12-10 15:22:16.638007",
-                           "2019-12-10 15:22:17.638007",
-                           "2019-12-10 15:22:18.638007"],
-               "raw_img": images_encoded[0:3],
-               "size": size[0:3], "name": name[0:3]},
-              {"user_id": "1_a", "operation": 1,
-               "up_time": ["15:22:16.638007",
-                           "15:22:17.638007",
-                           "15:22:18.638007"],
                "raw_img": images_encoded[0:3],
                "size": size[0:3], "name": name[0:3]},
               {"user_id": "1_a", "operation": 0,
-               "up_time": ["2019-12-10 15:22:16.638007",
-                           "2019-12-10 15:22:17.638007",
-                           "2019-12-10 15:22:18.638007"],
                "raw_img": images[0:3],
                "size": size[0:3], "name": name[0:3]},
               {"user_id": "1_a", "operation": 0,
-               "up_time": ["2019-12-10 15:22:16.638007",
-                           "2019-12-10 15:22:17.638007",
-                           "2019-12-10 15:22:18.638007"],
                "raw_img": images_encoded[0:3],
                "size": size[0:3], "name": ["1", "3jpg", "png"]},
               {"user_id": "1_a", "operation": 0,
-               "up_time": ["2019-12-10 15:22:16.638007",
-                           "2019-12-10 15:22:17.638007",
-                           "2019-12-10 15:22:18.638007"],
                "raw_img": images_encoded[0:3],
                "size": [200, 300, 3], "name": name[0:3]},
               {"user_id": "1_a", "operation": 0,
-               "up_time": ["2019-12-10 15:22:16.638007",
-                           "2019-12-10 15:22:17.638007",
-                           "2019-12-10 15:22:18.638007"],
                "raw_img": images_encoded[0:2],
                "size": size[0:3], "name": name[0:3]},
               {"user_id": "none", "operation": 0,
-               "up_time": ["2019-12-10 15:22:16.638007",
-                           "2019-12-10 15:22:17.638007",
-                           "2019-12-10 15:22:18.638007"],
                "raw_img": images_encoded[0:3],
                "size": size[0:3], "name": name[0:3]},
               {"user_id": "1_a", "operation": 0,
-               "up_time": ["2019-12-10 15:22:16.638007",
-                           "2019-12-10 15:22:17.638007",
-                           "2019-12-10 15:22:18.638007"],
                "raw_img": images_encoded[0:3],
                "size": size[0:3], "name": name[0:3]},
               {"user_id": "1_a", "operation": 1,
-               "up_time": ["2019-12-10 15:22:16.638007",
-                           "2019-12-10 15:22:17.638007",
-                           "2019-12-10 15:22:18.638007"],
                "raw_img": images_encoded[3:6],
                "size": size[3:6], "name": name[3:6]},
               {"user_id": "1_a", "operation": 3,
-               "up_time": ["2019-12-10 15:22:16.638007",
-                           "2019-12-10 15:22:17.638007",
-                           "2019-12-10 15:22:18.638007"],
                "raw_img": images_encoded[6:9],
                "size": size[6:9], "name": name[6:9]}]
     for info in u_info:

@@ -109,35 +109,20 @@ def test_validate_data_length(image, name, size, expected):
 
 @pytest.mark.parametrize("image_info, expected", [
     ({"user_id": "123", "operation": 0,
-      "up_time": ["1:00", "1:01", "1:02"],
       "raw_img": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
       "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]],
       "name": ["01.jpg", "02.jpg", "03.jpg"]}, True),
     ({"userid": "123", "operation": 0,
-      "up_time": ["1:00", "1:01", "1:02"],
       "raw_img": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
       "size": [[200, 300, 3], [100, 150, 3], [180, 180, 1]],
       "name": ["01.jpg", "02.jpg", "03.jpg"]}, False),
     ({"user_id": "123", "operation": 0,
-      "up_time": ["1:00", "1:01", "1:02"],
       "raw_img": ["pseudo_encode1", "pseudo_encode2", "pseudo_encode3"],
       "name": ["01.jpg", "02.jpg", "03.jpg"]}, False)
 ])
 def test_validate_process_keys(image_info, expected):
     from image_server import validate_process_keys
     result = validate_process_keys(image_info)
-    assert result == expected
-
-
-@pytest.mark.parametrize("times, expected", [
-    (["2019-11-11 11:00:00.00"], True),
-    (["2020-11-11 11:00:00"], False),
-    ([2019], False),
-    ("2019-11-11 11:00:00.00", False)
-])
-def test_validate_time(times, expected):
-    from image_server import validate_time
-    result = validate_time(times)
     assert result == expected
 
 
