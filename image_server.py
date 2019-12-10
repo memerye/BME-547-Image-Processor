@@ -270,11 +270,9 @@ def add_images():
     u_id = indata["user_id"]
     if initial_database.validate_existing_id(u_id):
         initial_database.add_original_image_to_db(indata)
-        #############################################
         num = len(indata["image"])
         logging.info("* ID {} has uploaded {} images."
                      .format(u_id, num))
-        #############################################
         return "Valid image data!"
     else:
         return "The user doesn't exist!", 400
@@ -290,7 +288,7 @@ def validate_process_keys(process_info):
         bool: True if the keys are all valid;
         False if it contains wrong keys.
     """
-    expected_keys = ["user_id", "operation", "up_time",
+    expected_keys = ["user_id", "operation",
                      "raw_img", "size", "name"]
     flag = 0
     for key in process_info.keys():
@@ -298,32 +296,10 @@ def validate_process_keys(process_info):
             return False
         else:
             flag = flag+1
-    if flag == 6:
+    if flag == 5:
         return True
     else:
         return False
-
-
-def validate_time(up_time):
-    """Validate the tiemstamps.
-
-    The timestamps should follow the format of
-    "year-month-day hour:mimute:second.microsecond".
-
-    Args:
-        indata (list): the posted information for interval average.
-    Returns:
-        bool: True if the times are all valid;
-        False if it contains wrong format of times.
-    """
-    for i in up_time:
-        try:
-            datetime.strptime(i, '%Y-%m-%d %H:%M:%S.%f')
-        except TypeError:
-            return False
-        except ValueError:
-            return False
-    return True
 
 
 def validate_operation(process_info):
@@ -405,9 +381,6 @@ def img_process():
     op = validate_operation(indata)
     if op is False:
         return "This operation doesn't exist!", 400
-    up_time = indata["up_time"]
-    if validate_time(up_time) is False:
-        return "The format of timestamp is not valid!", 400
     raw_images = indata["raw_img"]
     if validate_images(raw_images) is False:
         return "Please upload the encoded images!", 400
@@ -434,12 +407,11 @@ def img_process():
             indata["processed_img"].append(processed_img_b64)
             indata["run_time"].append(run_time)
         indata["processed_time"] = str(datetime.now())
-        initial_database.add_processed_image_to_db(indata)
-        #############################################
         num = len(indata["processed_img"])
+        indata["up_time"] = initial_database.get_upload_time(u_id, num)
+        initial_database.add_processed_image_to_db(indata)
         logging.info("* ID {} has processed {} images."
                      .format(u_id, num))
-        #############################################
         return "Success process!"
     else:
         return "The user doesn't exist!", 400

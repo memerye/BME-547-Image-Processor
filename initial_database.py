@@ -231,5 +231,23 @@ def retrieve_history_info(user_id, num):
     return history
 
 
+def get_upload_time(user_id, num_img):
+    """Get the timestamp of uploaded image(s) when trying to process them.
+
+    Args:
+        user_id (string): user id string variable
+        num (int): the number of last uploaded image(s)
+
+    Returns:
+        A dictionary containing searching information
+    """
+    u_db = ImageUser.objects.raw({"_id": user_id}).first()
+    num = int(num_img)
+    up_time = u_db.images["time"][-num::]
+    return up_time
+
+
 if __name__ == '__main__':
     init_mongodb()
+    result = get_upload_time("1_a", 2)
+    print(result)
