@@ -22,6 +22,7 @@ def post_img_GUI(info):
                       json=info)
     return None
 
+
 def post_process_opt(info):
     r = requests.post("http://127.0.0.1:5000/api/process",
                       json=info)
