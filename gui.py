@@ -1,17 +1,19 @@
 from tkinter import *
 from tkinter import ttk, filedialog
+from zipfile36 import ZipFile
+import os
+import numpy as np
+import io
+from PIL import Image, ImageTk
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 from skimage import io as skio
 from en_de_code import image_to_b64, b64_to_image
 import zipfile
-import matplotlib.pyplot as plt
 from io import BytesIO
-from zipfile36 import ZipFile
 import base64
-import io
-from matplotlib import pyplot as plt
-import matplotlib.image as mpimg
 
 
 # User login/create account
@@ -45,9 +47,12 @@ def login_window():
 
     # Create account button
     def create_account():
-        # from ** import **
-        # username exists
-        print('Username: {}'.format(username.get()))
+        # validate user
+        user_id = {'user_id': '{}'.format(username.get())}
+        from GUI_client import validate_user
+        exist = validate_user(user_id)
+        # if exist ==
+
         root.destroy()
         print('Account created successfully.')
         main_window(username.get())
@@ -73,7 +78,7 @@ def login_window():
 # Main window
 def main_window(username):
     root = Tk()
-    # root.title('Image Processor')
+    root.title('Image Processor')
     # canvas = Canvas(root)
     # scrollbar = ttk.Scrollbar(root, orient="v", command=canvas.yview)
     # scrollbar.grid(row=0, column=8, rowspan=22, sticky='ns')
@@ -97,21 +102,71 @@ def main_window(username):
     action_label = ttk.Label(root, text='1. Choose an action to begin: ')
     action_label.grid(column=0, row=2, columnspan=2, sticky=W)
 
-    # Upload button
-    def upload_img():
+    # Select files to upload
+    def select_img():
         # open local directory
-        # right now, only one file can be selected
-        root.file = filedialog.askopenfilename(filetypes=[
+        root.file = filedialog.askopenfilename(multiple=True, filetypes=[
             ('Image files', '.png .jpg .jpeg .tif .zip',)])
-
-        file_label = ttk.Label(root, text='...{}'.format(root.file[-50::]),
-                               width=50)
-        file_label.grid(column=2, row=3, columnspan=2)
+        # save file names into a list
+        filename_ls = []
+        for i in root.file:
+            filename = os.path.basename(i)
+            filename_ls.append(filename)
+        # check type of file selected
+        root.type = ck_type(filename_ls)
+        print(root.type)
+        file_label = ttk.Label(root, text='...{}'.format(root.file[0][-30::]),
+                               width=30)
+        file_label.grid(column=2, row=3, columnspan=1, sticky=W)
         return
 
-    upld_btn = ttk.Button(root, text='Upload image file(s)',
+    def upload_img():
+        print('uploading')
+        from en_de_code import image_to_b64
+        # check if multiple files are selected
+        if root.type == 'multiple img':
+            imgs = []
+            for i in root.file:
+                img_array = read_img(i)
+                encoded_img_array = image_to_b64(img_array)[0]
+                imgs.append(encoded_img_array)
+        elif root.type == 'zip':
+            # read zip files into numpy array
+            imgs = []
+            zip_ref = ZipFile(root.file[0], "r")
+            # returns a list of file names in the archive
+            directory = zip_ref.namelist()
+            for i in directory:
+                img_bytes = zip_ref.read(i)
+                data = io.BytesIO(img_bytes)
+                img = Image.open(data)
+                img_array = np.uint8(img)
+                encoded_img_array = image_to_b64(img_array)[0]
+                imgs.append(encoded_img_array)
+            # read non-zip files into numpy array
+        elif root.type == 'img':
+            img_array = read_img(root.file[0])
+            imgs = [image_to_b64(img_array)[0]]
+            show_imgs = plt.imshow(img_array)
+        else:
+            print('cannot upload. wrong files selected.')
+            # Open a warning window
+            file_warning()
+# remember to change encoded_img_array to string when sending to server!!
+# remember to also get size from image_to_b64
+        return
+
+    select_btn = ttk.Button(root, text='Select image file(s)',
+                            command=select_img)
+    select_btn.grid(column=1, row=3, sticky=W)
+    upld_btn = ttk.Button(root, text='Upload',
                           command=upload_img)
-    upld_btn.grid(column=1, row=3, sticky=W)
+    upld_btn.grid(column=3, row=3, sticky=E)
+
+    # function for reading non-zip image file
+    def read_img(img_path):
+        img_array = np.uint8(np.array(Image.open(img_path)))
+        return img_array
 
     # History button
     def history():
@@ -175,11 +230,13 @@ def main_window(username):
     process_btn.grid(column=3, row=10, columnspan=1, sticky=E)
 
     # Image Display frame
+    display_label = ttk.Label(root, text='3. Display images and metadata')
+    display_label.grid(column=6, row=1, columnspan=10, sticky=W)
     img_frame = ttk.Frame(root, height=500, width=700)
     # img_frame.pack()
     # img_frame.columnconfigure(2, weight=1)
     # img_frame.rowconfigure(2, weight=1)
-    img_frame.grid(column=6, row=1, columnspan=10, rowspan=16)
+    img_frame.grid(column=6, row=2, columnspan=10, rowspan=16)
     # processed image frame
     img_pro_frame = ttk.LabelFrame(img_frame, text='Processed Image',
                                    height=250, width=300)
@@ -199,6 +256,7 @@ def main_window(username):
                                     height=250, width=300)
     hist_pro_frame.grid(column=2, row=2, columnspan=1)
     # previous/next frame
+
     prev_frame = ttk.Frame(root, height=600, width=10)
     prev_frame.grid(column=5, row=8)
     next_frame = ttk.Frame(root, height=600, width=10)
@@ -291,7 +349,7 @@ def main_window(username):
     download_btn = ttk.Button(root, text='Download', command=if_multiple)
     download_btn.grid(column=3, row=16, sticky=E)
 
-    # upload time function
+    # # upload time function
     # def upload_time():
     #     global time_upload
     #     time_upload = str(datetime.datetime.now())
@@ -331,15 +389,54 @@ def main_window(username):
     return
 
 
+# function to check type of file selected
+def ck_type(filename):
+    typ = ''
+    if len(filename) != 1:
+        for i in filename:
+            if '.zip' in i:
+                typ = 'zip and multiple'
+            else:
+                typ = 'multiple img'
+    else:
+        if '.zip' in filename[0]:
+            typ = 'zip'
+        else:
+            typ = 'img'
+    return typ
+
+
 def user_data_window():
     root = Tk()
     root.title('Your User Data Summary')
-    data_label = ttk.Label(root,
-                           text='You have done ** things # number of times')
+    data_label = Label(root,
+                       text='You have done ** things # number of times')
     data_label.grid(column=0, row=1)
+    root.mainloop()
+    return
+
+
+def file_warning():
+    root = Toplevel()
+    root.title('Please select another set of files')
+
+    original = Image.open("warning.jpg")
+    resized = original.resize((30, 30), Image.ANTIALIAS)
+    image = ImageTk.PhotoImage(resized)
+    panel = Canvas(root, width=30, height=30)
+    panel.create_image(0, 0, image=image, anchor=NW, tags="IMG")
+    panel.grid(column=1, row=1)
+
+    warn_label1 = Label(root, text='You can either upload multiple image '
+                                   'files(.jpg .jpeg .png .tif) '
+                                   'or a single ZIP archive file. '
+                                   'Not both.')
+    warn_label1.grid(column=2, row=1, columnspan=1)
+
     root.mainloop()
     return
 
 
 if __name__ == '__main__':
     login_window()
+    # file_warning()
