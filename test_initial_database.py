@@ -65,3 +65,69 @@ def test_add_processed_image_to_db():
     assert expected_name == u.processed["name"]
     assert expected_raw_img == u.processed["raw_img"]
     assert expected_processed_img == u.processed["processed_img"]
+
+
+def test_get_rec_pro_img():
+    test_input = "Bob1"
+    from initial_database import get_rec_pro_img
+    rec_pro = get_rec_pro_img(test_input)
+    del rec_pro["timestamp"]
+    expected = {"user_id": "Bob1",
+                "operation": 0,
+                "size": [[200, 200, 3], [200, 200, 3]],
+                "run_time": [0.1, 0.2],
+                "name": ['aa.jpg', 'bb.jpg'],
+                "raw_img": ['abc', 'cd'],
+                "processed_img": ['cc', 'dd']}
+    assert expected == rec_pro
+
+
+def test_get_user_info():
+    from initial_database import get_user_info
+    result = get_user_info("Bob1")
+    expected = {"user_id": "Bob1",
+                "img_num": 2,
+                "histeq": 1,
+                "constr": 0,
+                "logcom": 0,
+                "invert": 0}
+    assert result["user_id"] == expected["user_id"]
+    assert result["img_num"] == expected["img_num"]
+    assert result["histeq"] == expected["histeq"]
+    assert result["constr"] == expected["constr"]
+    assert result["logcom"] == expected["logcom"]
+    assert result["invert"] == expected["invert"]
+
+
+def test_get_history_info():
+    from initial_database import get_history_info
+    result = get_history_info("Bob1")
+    expected = {"user_id": "Bob1",
+                "num": [1],
+                "operation": [0],
+                "name": [["aa.jpg", "bb.jpg"]]}
+    assert result["user_id"] == expected["user_id"]
+    assert result["num"] == expected["num"]
+    assert result["operation"] == expected["operation"]
+    assert result["name"] == expected["name"]
+
+
+def test_retrieve_history_info():
+    from initial_database import retrieve_history_info
+    result = retrieve_history_info("Bob1", 1)
+    expected = {"user_id": "Bob1",
+                "num": 1,
+                "operation": 0,
+                "size": [[200, 200, 3], [200, 200, 3]],
+                "run_time": [0.1, 0.2],
+                "name": ["aa.jpg", "bb.jpg"],
+                "raw_img": ["abc", "cd"],
+                "processed_img": ["cc", "dd"]}
+    assert result["user_id"] == expected["user_id"]
+    assert result["num"] == expected["num"]
+    assert result["operation"] == expected["operation"]
+    assert result["size"] == expected["size"]
+    assert result["run_time"] == expected["run_time"]
+    assert result["name"] == expected["name"]
+    assert result["raw_img"] == expected["raw_img"]
+    assert result["processed_img"] == expected["processed_img"]
