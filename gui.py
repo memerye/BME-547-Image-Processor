@@ -41,14 +41,19 @@ def login_window():
     # Create account button
     def create_account():
         # validate user
-        user_id = {'user_id': '{}'.format(username.get())}
-        from GUI_client import validate_user
-        exist = validate_user(user_id)
-        # if exist ==
-
-        root.destroy()
-        print('Account created successfully.')
-        main_window(username.get())
+        user_id = {'user_id': username.get()}
+        from GUI_client import request_check_id, post_user_id
+        exist = request_check_id(username.get())
+        if exist:
+            exist_label = Label(root,
+                                text='Username already exists. '
+                                     'Login or enter a new username.')
+            exist_label.grid(column=1, row=3, columnspan=3)
+        else:
+            post_user_id(user_id)
+            root.destroy()
+            print('Account created successfully.')
+            main_window(username.get())
         return
 
     ca_btn = ttk.Button(root, text='Create Account', command=create_account)
