@@ -142,5 +142,18 @@ def get_history_info(user_id):
     return history
 
 
+def retrieve_history_info(user_id, num):
+    u_db = ImageUser.objects.raw({"_id": user_id}).first()
+    num = int(num)
+    history = {"user_id": user_id,
+               "num": num,
+               "timestamp": u_db.processed["timestamp"][num-1],
+               "operation": u_db.processed["operation"][num-1],
+               "name": u_db.processed["name"][num-1],
+               "raw_img": u_db.processed["raw_img"][num-1],
+               "processed_img": u_db.processed["processed_img"][num-1]}
+    return history
+
+
 if __name__ == '__main__':
     init_mongodb()

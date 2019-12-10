@@ -95,3 +95,20 @@ def test_get_history_info():
     assert result["num"] == expected["num"]
     assert result["operation"] == expected["operation"]
     assert result["name"] == expected["name"]
+
+
+def test_retrieve_history_info():
+    from initial_database import retrieve_history_info
+    result = retrieve_history_info("Bob1", 1)
+    expected = {"user_id": "Bob1",
+                "num": 1,
+                "operation": 0,
+                "name": ["aa.jpg", "bb.jpg"],
+                "raw_img": ["abc", "cd"],
+                "processed_img": ["cc", "dd"]}
+    assert result["user_id"] == expected["user_id"]
+    assert result["num"] == expected["num"]
+    assert result["operation"] == expected["operation"]
+    assert result["name"] == expected["name"]
+    assert result["raw_img"] == expected["raw_img"]
+    assert result["processed_img"] == expected["processed_img"]
