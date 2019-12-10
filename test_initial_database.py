@@ -45,21 +45,25 @@ def test_add_original_image_to_db():
 def test_add_processed_image_to_db():
     test_input = {"user_id": "Bob1",
                   "operation": 0,
+                  "up_time": ["13:10", "13:11"],
                   "size": [[200, 200, 3], [200, 200, 3]],
                   "run_time": [0.1, 0.2],
                   "name": ["aa.jpg", "bb.jpg"],
                   "raw_img": ["abc", "cd"],
-                  "processed_img": ["cc", "dd"]}
+                  "processed_img": ["cc", "dd"],
+                  "processed_time": ["14:00", "14:01"]}
     from initial_database import add_processed_image_to_db, ImageUser
     add_processed_image_to_db(test_input)
     u = ImageUser.objects.raw({"_id": "Bob1"}).first()
     expected_operation = [0]
+    expected_up_time = [["13:10", "13:11"]]
     expected_size = [[[200, 200, 3], [200, 200, 3]]]
     expected_run_time = [[0.1, 0.2]]
     expected_name = [["aa.jpg", "bb.jpg"]]
     expected_raw_img = [["abc", "cd"]]
     expected_processed_img = [["cc", "dd"]]
     assert expected_operation == u.processed["operation"]
+    assert expected_up_time == u.processed["up_time"]
     assert expected_size == u.processed["size"]
     assert expected_run_time == u.processed["run_time"]
     assert expected_name == u.processed["name"]
@@ -71,8 +75,8 @@ def test_get_rec_pro_img():
     test_input = "Bob1"
     from initial_database import get_rec_pro_img
     rec_pro = get_rec_pro_img(test_input)
-    del rec_pro["timestamp"]
     expected = {"user_id": "Bob1",
+                "up_time": ["13:10", "13:11"],
                 "operation": 0,
                 "size": [[200, 200, 3], [200, 200, 3]],
                 "run_time": [0.1, 0.2],
@@ -104,12 +108,11 @@ def test_get_history_info():
     result = get_history_info("Bob1")
     expected = {"user_id": "Bob1",
                 "num": [1],
+                "processed_time": [["14:00", "14:01"]],
                 "operation": [0],
                 "name": [["aa.jpg", "bb.jpg"]]}
-    assert result["user_id"] == expected["user_id"]
-    assert result["num"] == expected["num"]
-    assert result["operation"] == expected["operation"]
-    assert result["name"] == expected["name"]
+
+    assert result == expected
 
 
 def test_retrieve_history_info():
@@ -117,17 +120,11 @@ def test_retrieve_history_info():
     result = retrieve_history_info("Bob1", 1)
     expected = {"user_id": "Bob1",
                 "num": 1,
+                "up_time": ["13:10", "13:11"],
                 "operation": 0,
                 "size": [[200, 200, 3], [200, 200, 3]],
                 "run_time": [0.1, 0.2],
                 "name": ["aa.jpg", "bb.jpg"],
                 "raw_img": ["abc", "cd"],
                 "processed_img": ["cc", "dd"]}
-    assert result["user_id"] == expected["user_id"]
-    assert result["num"] == expected["num"]
-    assert result["operation"] == expected["operation"]
-    assert result["size"] == expected["size"]
-    assert result["run_time"] == expected["run_time"]
-    assert result["name"] == expected["name"]
-    assert result["raw_img"] == expected["raw_img"]
-    assert result["processed_img"] == expected["processed_img"]
+    assert result == expected
