@@ -358,12 +358,29 @@ def ck_type(filename):
     return typ
 
 
-def user_data_window():
+def user_data_window(user_info):
     root = Tk()
-    root.title('Your User Data Summary')
+    root.title('Your User Account Summary')
     data_label = Label(root,
-                       text='You have done ** things # number of times')
-    data_label.grid(column=0, row=1)
+                       text=' Time Created: '
+                            '{} '.format(user_info['create_time']))
+    data_label.grid(column=0, row=1, sticky=W)
+    data_label = Label(root,
+                       text=' Histogram Equalization: '
+                            '{} '.format(user_info['histeq']))
+    data_label.grid(column=0, row=2, sticky=W)
+    data_label = Label(root,
+                       text=' Contrast Stretching: '
+                            '{} '.format(user_info['constr']))
+    data_label.grid(column=0, row=3, sticky=W)
+    data_label = Label(root,
+                       text=' Log Compression: '
+                            '{} '.format(user_info['logcom']))
+    data_label.grid(column=0, row=4, sticky=W)
+    data_label = Label(root,
+                       text=' Invert Image: '
+                            '{} '.format(user_info['invert']))
+    data_label.grid(column=0, row=5, sticky=W)
     root.mainloop()
     return
 
