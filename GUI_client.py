@@ -7,7 +7,7 @@ import os
 def request_check_id(x):
     r = requests.get("http://127.0.0.1:5000/api/check_id/{}".format(x))
     answer = r.json()
-    # print(answer["result"])
+    print(answer["result"])
     return answer["result"]
 
 
@@ -30,5 +30,12 @@ def request_history_info(ids):
     return answer
 
 
+def request_one_history_info(ids, num):
+    r = requests.get("http://127.0.0.1:5000/api/history_info/{}/{}"
+                     .format(ids, num))
+    answer = r.json()
+    return answer
+
+
 if __name__ == '__main__':
-    request_check_id()
+    request_one_history_info('1_a', '1')
