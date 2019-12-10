@@ -230,22 +230,31 @@ def main_window(username):
     def process():
         print('Process {} requested'.format(process_opt.get()))
         if process_opt.get() == 'Histogram Equalization':
+            option = 0
             print("he")
-            return
         elif process_opt.get() == 'Contrast Stretching':
+            option = 1
             print("cs")
-            return
         elif process_opt.get() == 'Log Compression':
+            option = 2
             print("lc")
-            return
         elif process_opt.get() == 'Invert Image':
+            option = 3
             print("ii")
-            return
-        return
+        return option
 
     # Process button
     process_btn = ttk.Button(root, text='Process', command=process)
     process_btn.grid(column=3, row=10, columnspan=1, sticky=E)
+
+    def post_opt_json(option):
+        post_opt = {}
+        post_opt["user_id"] = username
+        post_opt["operation"] = option
+        post_opt["raw_img"] = imgs
+        post_opt["name"] = root.filename_ls
+        post_opt["size"] = image_sizes
+        return post_opt
 
     # Image Display frame
     display_label = ttk.Label(root, text='3. Display images and metadata')
