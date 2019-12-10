@@ -67,16 +67,21 @@ def login_window():
 
     # Login button
     def login():
-        exist = request_check_id(username.get())
-        if exist:
-            # open main window
-            root.destroy()
-            main_window(username.get())
+        if username.get() == '':
+            id_error_label = Label(root,
+                                   text='Please enter a username. ')
+            id_error_label.grid(column=1, row=3, columnspan=3)
         else:
-            exist_label = Label(root,
-                                text='Username does not exist. '
-                                     'Please create an account.')
-            exist_label.grid(column=1, row=3, columnspan=3)
+            exist = request_check_id(username.get())
+            if exist:
+                # open main window
+                root.destroy()
+                main_window(username.get())
+            else:
+                exist_label = Label(root,
+                                    text='Username does not exist. '
+                                         'Please create an account.')
+                exist_label.grid(column=1, row=3, columnspan=3)
         return
 
     login_btn = ttk.Button(root, text='Login', command=login)
@@ -161,6 +166,7 @@ def main_window(username):
             # read non-zip files into numpy array
         elif root.type == 'img':
             img_array = read_img(root.file[0])
+            print(np.shape(img_array))
             imgs = [image_to_b64(img_array)[0]]
             show_imgs = plt.imshow(img_array)
         else:
@@ -181,6 +187,7 @@ def main_window(username):
 
     # function for reading non-zip image file
     def read_img(img_path):
+        print(Image.open(img_path).size)
         img_array = np.uint8(np.array(Image.open(img_path)))
         return img_array
 
@@ -203,7 +210,8 @@ def main_window(username):
         hist_combo['values'] = hist_tuple
         return
 
-    hist_btn = ttk.Button(root, text='Choose from history', command=proc_history)
+    hist_btn = ttk.Button(root, text='Choose from history',
+                          command=proc_history)
     hist_btn.grid(column=1, row=4, sticky=W)
 
     # History pull down
@@ -376,11 +384,14 @@ def main_window(username):
 
     # process info include uploaded/processing time and image size
     def process_info(ls):
-        uptime_label = ttk.Label(root, text='Uploaded time: {}'.format(ls[0]))
+        uptime_label = ttk.Label(root,
+                                 text='Uploaded time: {}'.format(ls[0]))
         uptime_label.grid(column=7, row=18, columnspan=1, sticky=W)
-        protime_label = ttk.Label(root, text='Processsing time: {}'.format(ls[1]))
+        protime_label = ttk.Label(root,
+                                  text='Processsing time: {}'.format(ls[1]))
         protime_label.grid(column=11, row=18, columnspan=1, sticky=W)
-        size_label = ttk.Label(root, text='Image size: {}'.format(ls[2]))
+        size_label = ttk.Label(root,
+                               text='Image size: {}'.format(ls[2]))
         size_label.grid(column=14, row=18, columnspan=1, sticky=W)
         return
 
