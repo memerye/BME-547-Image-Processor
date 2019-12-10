@@ -206,7 +206,7 @@ def main_window(username):
         print(int(history.get()[0]))
         from GUI_client import request_one_history_info
         one_history = request_one_history_info(username, int(history.get()[0]))
-
+        img_display(one_history)
         return
 
     retrieve_btn = ttk.Button(root, text='Retrieve', command=retrieve)
@@ -256,6 +256,11 @@ def main_window(username):
     process_btn = ttk.Button(root, text='Process', command=process)
     process_btn.grid(column=3, row=10, columnspan=1, sticky=E)
 
+    # Image Display
+    def img_display(one_history):
+        from en_de_code import b64_to_image
+
+        return
     # Image Display frame
     display_label = ttk.Label(root, text='3. Display images and metadata')
     display_label.grid(column=6, row=1, columnspan=10, sticky=W)
