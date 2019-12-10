@@ -46,7 +46,7 @@ def test_add_processed_image_to_db():
     test_input = {"user_id": "Bob1",
                   "operation": 0,
                   "size": [[200, 200, 3], [200, 200, 3]],
-                  "run_time": [0.1, 0.2],
+                  "run_time": 0.1,
                   "name": ["aa.jpg", "bb.jpg"],
                   "raw_img": ["abc", "cd"],
                   "processed_img": ["cc", "dd"]}
@@ -55,7 +55,7 @@ def test_add_processed_image_to_db():
     u = ImageUser.objects.raw({"_id": "Bob1"}).first()
     expected_operation = [0]
     expected_size = [[[200, 200, 3], [200, 200, 3]]]
-    expected_run_time = [[0.1, 0.2]]
+    expected_run_time = [0.1]
     expected_name = [["aa.jpg", "bb.jpg"]]
     expected_raw_img = [["abc", "cd"]]
     expected_processed_img = [["cc", "dd"]]
@@ -103,6 +103,8 @@ def test_retrieve_history_info():
     expected = {"user_id": "Bob1",
                 "num": 1,
                 "operation": 0,
+                "size": [[200, 200, 3], [200, 200, 3]],
+                "run_time": 0.1,
                 "name": ["aa.jpg", "bb.jpg"],
                 "raw_img": ["abc", "cd"],
                 "processed_img": ["cc", "dd"]}

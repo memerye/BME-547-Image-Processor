@@ -149,6 +149,8 @@ def retrieve_history_info(user_id, num):
                "num": num,
                "timestamp": u_db.processed["timestamp"][num-1],
                "operation": u_db.processed["operation"][num-1],
+               "size": u_db.processed["size"][num-1],
+               "run_time": u_db.processed["run_time"][num-1],
                "name": u_db.processed["name"][num-1],
                "raw_img": u_db.processed["raw_img"][num-1],
                "processed_img": u_db.processed["processed_img"][num-1]}
