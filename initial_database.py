@@ -50,6 +50,23 @@ def add_new_user_to_db(user_info):
     return None
 
 
+def validate_existing_id(u_id):
+    """Validate the existence of the user id in the database.
+    Args:
+        u_id (string): the patient id.
+    Returns:
+        bool: False if the id doesn't exist in the database;
+        True if the id has been registered in the database.
+    """
+    id_list = []
+    for u in ImageUser.objects.raw({}):
+        id_list.append(u.user_id)
+    if u_id in id_list:
+        return True
+    else:
+        return False
+
+
 def add_original_image_to_db(u_img):
     """Add original image to the database as a dict.
     Args:
@@ -136,21 +153,39 @@ def get_rec_pro_img(u_id):
     return rec_dict
 
 
-def validate_existing_id(u_id):
-    """Validate the existence of the user id in the database.
-    Args:
-        u_id (string): the patient id.
-    Returns:
-        bool: False if the id doesn't exist in the database;
-        True if the id has been registered in the database.
-    """
-    id_list = []
-    for u in ImageUser.objects.raw({}):
-        id_list.append(u.user_id)
-    if u_id in id_list:
-        return True
-    else:
-        return False
+def get_user_info(user_id):
+    u_db = ImageUser.objects.raw({"_id": user_id}).first()
+    user_info = {"user_id": user_id,
+                 "create_time": u_db.created_timestamp,
+                 "img_num": u_db.metrics["img_num"][0],
+                 "histeq": u_db.metrics["histeq"][0],
+                 "constr": u_db.metrics["constr"][0],
+                 "logcom": u_db.metrics["logcom"][0],
+                 "invert": u_db.metrics["invert"][0]}
+    return user_info
+
+
+def get_history_info(user_id):
+    u_db = ImageUser.objects.raw({"_id": user_id}).first()
+    history = {"user_id": user_id,
+               "num": u_db.processed["num"],
+               "timestamp": u_db.processed["timestamp"],
+               "operation": u_db.processed["operation"],
+               "name": u_db.processed["name"]}
+    return history
+
+
+def retrieve_history_info(user_id, num):
+    u_db = ImageUser.objects.raw({"_id": user_id}).first()
+    num = int(num)
+    history = {"user_id": user_id,
+               "num": num,
+               "timestamp": u_db.processed["timestamp"][num-1],
+               "operation": u_db.processed["operation"][num-1],
+               "name": u_db.processed["name"][num-1],
+               "raw_img": u_db.processed["raw_img"][num-1],
+               "processed_img": u_db.processed["processed_img"][num-1]}
+    return history
 
 
 if __name__ == '__main__':
