@@ -224,15 +224,18 @@ def main_window(username):
 
     download_cb = ttk.Combobox(root, textvariable=download_opt)
     download_cb.grid(column=1, row=16, sticky=E)
-    download_cb["values"] = ("jpeg", "png", "tiff","jpg")# no jpg
+    download_cb["values"] = ("jpeg", "png", "tiff", "jpg")  # no jpg
     download_cb.state(['readonly'])
 
     def if_mutiple():
-        # imgs = [np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/123.jpg")))]
-        # img1 = np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/h.jpg")))
+        # imgs = [np.uint8(np.array(Image.open
+        # ("C:/Users/Sara Qi/Pictures/123.jpg")))]
+        # img1 = np.uint8(np.array(Image.open
+        # ("C:/Users/Sara Qi/Pictures/h.jpg")))
         # imgs.append(img1)
         imgs = open("C:/Users/Sara Qi/Pictures/123.jpg", "rb")
-        b64_string = str(base64.b64encode(imgs.read()), encoding='utf-8')# assume list
+        b64_string = str(base64.b64encode(imgs.read()),
+                         encoding='utf-8')  # assume list
         print(image_bytes)
 
         if len(imgs) > 1:
@@ -245,9 +248,12 @@ def main_window(username):
             zip = ZipFile(root.file, mode='w')
             for i, j in enumerate(imgs):
                 img = img[i]
-                image_bytes = base64.b64decode(img) # (b64_string) original
+                image_bytes = base64.b64decode(img)  # (b64_string) original
                 y = 1 + y
-                zip.writestr("{}.{}".format(filename, download_opt.get()), image_bytes)# filename = namelist[i]
+                zip.writestr("{}.{}"
+                             .format(filename,
+                                     download_opt.get()), image_bytes)
+                # filename = namelist[i]
             zip.close()
             return
         elif len(imgs) == 1:
