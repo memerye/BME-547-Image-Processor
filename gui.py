@@ -128,7 +128,9 @@ def main_window(username):
         return
 
     def upload_img():
-        print('uploading')
+        uploading_label = ttk.Label(root, text='Uploading ... ', width=30)
+        uploading_label.grid(column=2, row=3, columnspan=1, sticky=W)
+
         from en_de_code import image_to_b64
         # check if multiple files are selected
         if root.type == 'multiple img':
@@ -159,9 +161,9 @@ def main_window(username):
             print('cannot upload. wrong files selected.')
             # Open a warning window
             file_warning()
-# remember to change encoded_img_array to string when sending to server!!
 # remember to also get size from image_to_b64
-
+        uploaded_label = ttk.Label(root, text='Upload complete. ', width=30)
+        uploaded_label.grid(column=2, row=3, columnspan=1, sticky=W)
         return
 
     select_btn = ttk.Button(root, text='Select image file(s)',
