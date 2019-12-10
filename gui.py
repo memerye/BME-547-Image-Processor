@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 def login_window():
     root = Tk()
     root.title('Create Account/User Login')
+    from GUI_client import request_check_id, post_user_id
 
     # Gap row/column
     gap_row = Label(root, text='  ')
@@ -42,7 +43,6 @@ def login_window():
     def create_account():
         # validate user
         user_id = {'user_id': username.get()}
-        from GUI_client import request_check_id, post_user_id
         exist = request_check_id(username.get())
         if exist:
             exist_label = Label(root,
@@ -61,9 +61,16 @@ def login_window():
 
     # Login button
     def login():
-        # open main window
-        root.destroy()
-        main_window(username.get())
+        exist = request_check_id(username.get())
+        if exist:
+            # open main window
+            root.destroy()
+            main_window(username.get())
+        else:
+            exist_label = Label(root,
+                                text='Username does not exist. '
+                                     'Please create an account.')
+            exist_label.grid(column=1, row=3, columnspan=3)
         return
 
     login_btn = ttk.Button(root, text='Login', command=login)
@@ -89,7 +96,9 @@ def main_window(username):
     # View user data
     def user_data():
         print('Get data summary from database')
-        user_data_window()
+        from GUI_client import request_user_info
+        user_info = request_user_info(username)
+        user_data_window(user_info)
         return
 
     user_data_btn = ttk.Button(root, text='View my user data',
@@ -118,7 +127,9 @@ def main_window(username):
         file_label.grid(column=2, row=3, columnspan=1, sticky=W)
 
     def upload_img():
-        print('uploading')
+        uploading_label = ttk.Label(root, text='Uploading ... ', width=30)
+        uploading_label.grid(column=2, row=3, columnspan=1, sticky=W)
+
         from en_de_code import image_to_b64
         # check if multiple files are selected
         if root.type == 'multiple img':
@@ -155,12 +166,13 @@ def main_window(username):
             print('cannot upload. wrong files selected.')
             # Open a warning window
             file_warning()
-# remember to change encoded_img_array to string when sending to server!!
 # remember to also get size from image_to_b64
             return None
         info = post_img_json(imgs, image_sizes)
         from GUI_client import post_img_GUI
         post_img_GUI(info)
+        uploaded_label = ttk.Label(root, text='Upload complete. ', width=30)
+        uploaded_label.grid(column=2, row=3, columnspan=1, sticky=W)
         return imgs, image_sizes
 
     select_btn = ttk.Button(root, text='Select image file(s)',
@@ -186,9 +198,22 @@ def main_window(username):
     # History button
     def history():
         print('Retrieve')
+        # 1/time.../image.../operation
+        from GUI_client import request_history_info
+        history_info = request_history_info(username)
+        hist_ls = []
+        for i in range(len(history_info['name'])):
+            op = cvt_proc_index(history_info['operation'][i])
+            hist = '{}/{}/{}/{}' \
+                .format(i + 1,
+                        history_info['timestamp'][i],
+                        op,
+                        history_info['name'][i])
+            hist_ls.append(hist)
+        hist_tuple = tuple(hist_ls)
+        print(hist_tuple)
         # outputs history into pull down menu
-        donor_center_combo['values'] = ('values will be output of history',
-                                        'None')
+        hist_combo['values'] = hist_tuple
         return
 
     hist_btn = ttk.Button(root, text='Choose from history', command=history)
@@ -196,9 +221,9 @@ def main_window(username):
 
     # History pull down
     history = StringVar()
-    donor_center_combo = ttk.Combobox(root, textvariable=history)
-    donor_center_combo.grid(column=2, row=4, sticky=W)
-    donor_center_combo.state(['readonly'])
+    hist_combo = ttk.Combobox(root, textvariable=history)
+    hist_combo.grid(column=2, row=4, sticky=W)
+    hist_combo.state(['readonly'])
 
     # process option
     process_opt = StringVar(None, 'Histogram Equalization')
@@ -384,12 +409,43 @@ def ck_type(filename):
     return typ
 
 
-def user_data_window():
+# function to convert process index to process name
+def cvt_proc_index(index):
+    if index == 0:
+        return 'Histogram Equalization'
+    elif index == 1:
+        return 'Contrast Stretching'
+    elif index == 2:
+        return 'Log Compression'
+    elif index == 3:
+        return 'Invert Image'
+    else:
+        return False
+
+
+def user_data_window(user_info):
     root = Tk()
-    root.title('Your User Data Summary')
+    root.title('Your User Account Summary')
     data_label = Label(root,
-                       text='You have done ** things # number of times')
-    data_label.grid(column=0, row=1)
+                       text=' Time Created: '
+                            '{} '.format(user_info['create_time']))
+    data_label.grid(column=0, row=1, sticky=W)
+    data_label = Label(root,
+                       text=' Histogram Equalization: '
+                            '{} '.format(user_info['histeq']))
+    data_label.grid(column=0, row=2, sticky=W)
+    data_label = Label(root,
+                       text=' Contrast Stretching: '
+                            '{} '.format(user_info['constr']))
+    data_label.grid(column=0, row=3, sticky=W)
+    data_label = Label(root,
+                       text=' Log Compression: '
+                            '{} '.format(user_info['logcom']))
+    data_label.grid(column=0, row=4, sticky=W)
+    data_label = Label(root,
+                       text=' Invert Image: '
+                            '{} '.format(user_info['invert']))
+    data_label.grid(column=0, row=5, sticky=W)
     root.mainloop()
     return
 
