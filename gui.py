@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 def login_window():
     root = Tk()
     root.title('Create Account/User Login')
+    from GUI_client import request_check_id, post_user_id
 
     # Gap row/column
     gap_row = Label(root, text='  ')
@@ -66,9 +67,16 @@ def login_window():
 
     # Login button
     def login():
-        # open main window
-        root.destroy()
-        main_window(username.get())
+        exist = request_check_id(username.get())
+        if exist:
+            # open main window
+            root.destroy()
+            main_window(username.get())
+        else:
+            exist_label = Label(root,
+                                text='Username does not exist. '
+                                     'Please create an account.')
+            exist_label.grid(column=1, row=3, columnspan=3)
         return
 
     login_btn = ttk.Button(root, text='Login', command=login)
@@ -126,7 +134,9 @@ def main_window(username):
         return
 
     def upload_img():
-        print('uploading')
+        uploading_label = ttk.Label(root, text='Uploading ... ', width=30)
+        uploading_label.grid(column=2, row=3, columnspan=1, sticky=W)
+
         from en_de_code import image_to_b64
         # check if multiple files are selected
         if root.type == 'multiple img':
@@ -158,7 +168,8 @@ def main_window(username):
             # Open a warning window
             file_warning()
 # remember to also get size from image_to_b64
-
+        uploaded_label = ttk.Label(root, text='Upload complete. ', width=30)
+        uploaded_label.grid(column=2, row=3, columnspan=1, sticky=W)
         return
 
     select_btn = ttk.Button(root, text='Select image file(s)',
