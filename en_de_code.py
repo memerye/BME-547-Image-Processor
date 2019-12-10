@@ -5,10 +5,8 @@ import io
 
 def image_to_b64(img):
     """Encode the unit8 image to base64
-
     Args:
         img (ndarray): The image array, dtype=np.uint8
-
     Returns:
         string: The encoded string for the images
         tuple: The size of the image
@@ -20,11 +18,9 @@ def image_to_b64(img):
 
 def b64_to_image(base64_string, size):
     """Decode the base64 to uint8 image
-
     Args:
         base64_string (string): The encoded string for the images
         size (tuple): The size of the image
-
     Returns:
         ndarray: The decoded image
     """
