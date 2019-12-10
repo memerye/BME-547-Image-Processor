@@ -178,12 +178,10 @@ def main_window(username):
         post_img["size"] = image_sizes
         return post_img
 
-
     # function for reading non-zip image file
     def read_img(img_path):
         img_array = np.uint8(np.array(Image.open(img_path)))
         return img_array
-
 
     # History button
     def history():
@@ -192,7 +190,6 @@ def main_window(username):
         donor_center_combo['values'] = ('values will be output of history',
                                         'None')
         return
-
 
     hist_btn = ttk.Button(root, text='Choose from history', command=history)
     hist_btn.grid(column=1, row=4, sticky=W)
