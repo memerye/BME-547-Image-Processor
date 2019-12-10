@@ -6,6 +6,7 @@ from pymodm import connect
 import initial_database
 from image_processing import ImageProcessing
 from en_de_code import image_to_b64, b64_to_image
+from datetime import datetime
 
 # Ignore warnings
 import warnings
@@ -289,17 +290,40 @@ def validate_process_keys(process_info):
         bool: True if the keys are all valid;
         False if it contains wrong keys.
     """
-    expected_keys = ["user_id", "operation", "raw_img", "size", "name"]
+    expected_keys = ["user_id", "operation", "up_time",
+                     "raw_img", "size", "name"]
     flag = 0
     for key in process_info.keys():
         if key not in expected_keys:
             return False
         else:
             flag = flag+1
-    if flag == 5:
+    if flag == 6:
         return True
     else:
         return False
+
+
+def validate_time(up_time):
+    """Validate the tiemstamps.
+
+    The timestamps should follow the format of
+    "year-month-day hour:mimute:second.microsecond".
+
+    Args:
+        indata (list): the posted information for interval average.
+    Returns:
+        bool: True if the times are all valid;
+        False if it contains wrong format of times.
+    """
+    for i in up_time:
+        try:
+            datetime.strptime(i, '%Y-%m-%d %H:%M:%S.%f')
+        except TypeError:
+            return False
+        except ValueError:
+            return False
+    return True
 
 
 def validate_operation(process_info):
@@ -374,8 +398,11 @@ def img_process():
     op = validate_operation(indata)
     if op is False:
         return "This operation doesn't exist!", 400
-    images = indata["raw_img"]
-    if validate_images(images) is False:
+    up_time = indata["up_time"]
+    if validate_time(up_time) is False:
+        return "The format of timestamp is not valid!", 400
+    raw_images = indata["raw_img"]
+    if validate_images(raw_images) is False:
         return "Please upload the encoded images!", 400
     names = indata["name"]
     if validate_image_names(names) is False:
@@ -383,23 +410,23 @@ def img_process():
     size = indata["size"]
     if validate_size(size) is False:
         return "The type of image size is not valid!", 400
-    if validate_data_length(images, names, size) is False:
+    if validate_data_length(raw_images, names, size) is False:
         return "The total lengths of the images, their names and" \
                "their size should always be equal.", 400
     u_id = validate_id(indata)
     indata["user_id"] = u_id
-    u_raw_img = indata["raw_img"]
     u_size = indata["size"]
     indata["processed_img"] = []
     indata["run_time"] = []
     if initial_database.validate_existing_id(u_id):
-        for img_i, size_i in zip(u_raw_img, u_size):
+        for img_i, size_i in zip(raw_images, u_size):
             size_i_tuple = tuple(size_i)
             img = b64_to_image(img_i, size_i_tuple)
             processed_img, run_time = process_image(img, op)
             processed_img_b64, _ = image_to_b64(processed_img)
             indata["processed_img"].append(processed_img_b64)
             indata["run_time"].append(run_time)
+        indata["processed_time"] = str(datetime.now())
         initial_database.add_processed_image_to_db(indata)
         #############################################
         num = len(indata["processed_img"])
