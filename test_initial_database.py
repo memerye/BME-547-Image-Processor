@@ -113,10 +113,6 @@ def test_get_history_info():
                 "name": [["aa.jpg", "bb.jpg"]]}
 
     assert result == expected
-    # assert result["user_id"] == expected["user_id"]
-    # assert result["num"] == expected["num"]
-    # assert result["operation"] == expected["operation"]
-    # assert result["name"] == expected["name"]
 
 
 def test_retrieve_history_info():
