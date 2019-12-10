@@ -2,6 +2,10 @@ from tkinter import *
 from tkinter import ttk, filedialog
 import numpy as np
 from PIL import Image
+from skimage import io as skio
+from en_de_code import image_to_b64, b64_to_image
+import zipfile
+import matplotlib.pyplot as plt
 from io import BytesIO
 from zipfile36 import ZipFile
 import base64
@@ -227,45 +231,44 @@ def main_window(username):
     download_cb["values"] = ("jpeg", "png", "tiff", "jpg")  # no jpg
     download_cb.state(['readonly'])
 
-    root1 = "C:/Users/Sara Qi/Pictures/Screenshots"
-    path = [root1 + '/123.jpg', root1 + '/plant4.jpg']
-    images_encoded = []
-    img_decoded = []
-    for i in path:
-        img = skio.imread(i)
-        img_b64, img_size = image_to_b64(img)
-        images_encoded.append(str(img_b64))
+    def images():
+        root = "C:/Users/Sara Qi/Pictures/Screenshots"
+        path = [root + '/123.jpg', root + '/plant4.jpg']
+        images_encoded = []
+        img_decoded = []
+        for i in path:
+            img = skio.imread(i)
+            img_b64, img_size = image_to_b64(img)
+            images_encoded.append(str(img_b64))
+            img_array = b64_to_image(img_b64, img_size)
+            img_decoded.append(img_array)
+        return images_encoded, img_decoded
 
     def if_mutiple():
-        # imgs = [np.uint8(np.array(Image.open
-        # ("C:/Users/Sara Qi/Pictures/123.jpg")))]
-        # img1 = np.uint8(np.array(Image.open
-        # ("C:/Users/Sara Qi/Pictures/h.jpg")))
+        # imgs = [np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/123.jpg")))]
+        # img1 = np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/h.jpg")))
         # imgs.append(img1)
-        imgs = open("C:/Users/Sara Qi/Pictures/123.jpg", "rb")
-        b64_string = str(base64.b64encode(imgs.read()),
-                         encoding='utf-8')  # assume list
-        print(image_bytes)
-
-        if len(imgs) > 1:
+        # imgs = open("C:/Users/Sara Qi/Pictures/123.jpg", "rb")
+        # b64_string = str(base64.b64encode(imgs.read()), encoding='utf-8')# assume list
+        # print(image_bytes)
+        images_encoded, img_decoded = images()
+        if len(images_encoded) > 1:
             root.file = filedialog. \
                 asksaveasfilename(title='Download Image',
                                   defaultextension='.zip',
                                   initialdir='/',
                                   initialfile='Image.zip',
                                   filetypes=[('zip', '*.zip')])
-            zip = ZipFile(root.file, mode='w')
-            for i, j in enumerate(imgs):
-                img = img[i]
-                image_bytes = base64.b64decode(img)  # (b64_string) original
-                y = 1 + y
-                zip.writestr("{}.{}"
-                             .format(filename,
-                                     download_opt.get()), image_bytes)
-                # filename = namelist[i]
-            zip.close()
+            write_to_zip(img_decoded, root.file)
+            # zip = ZipFile(root.file, mode='w')
+            # for i, j in enumerate(imgs):
+            #     img = img[i]
+            #     image_bytes = base64.b64decode(img) # (b64_string) original
+            #     y = 1 + y
+            #     zip.writestr("{}.{}".format(filename, download_opt.get()), image_bytes)# filename = namelist[i]
+            # zip.close()
             return
-        elif len(imgs) == 1:
+        elif len(images_encoded) == 1:
             root.file = filedialog. \
                 asksaveasfilename(title='Download Image',
                                   defaultextension='.{}'.format(
@@ -280,30 +283,23 @@ def main_window(username):
             return
         return
 
-    #
-    # def download():
-    #     root.file = filedialog.\
-    #         asksaveasfilename(title='Download Image',
-    #                           defaultextension='.{}'.format(
-    #                               download_opt.get()),
-    #                           initialdir='/',
-    #                           initialfile='Image.{}'
-    #                           .format(download_opt.get()),
-    #                           filetypes=[(download_opt.get(), '*.{}'
-    #                                       .format(download_opt.get()))])
-    #
-    #     imgs = [np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/123.jpg")))]
-    #     img = imgs[0]
-    #     op = str(base64.b64encode(img.tobytes()))
-    #     oi = img.tobytes()
-    #     str = img.tostring()
-    #     new_im = Image.fromarray(imgs[0])  # imgs from server
-    #     new_im.save("C:/Users/Sara Qi/Pictures/1789.jpg")
-    #     f = BytesIO()
-    #     zip = ZipFile("C:/Users/Sara Qi/Pictures/v05.zip", mode='w')
-    #     # zip = ZipFile(root.file, mode='w')
-    #     # zip.writestr("{}.{}", op)
-
+    # need encoded image, file_name
+    def write_to_zip(img_decoded, zip_file_name):
+        n = 2
+        # images_encoded, img_decoded = images()
+        # zip_file_name = "C:/Users/Sara Qi/Pictures/export.zip"
+        print("Creating archive: {:s}".format(zip_file_name))
+        with zipfile.ZipFile(zip_file_name, mode="w") as zf:
+            for i in img_decoded:
+                n = n + 1
+                plt.imshow(i)
+                buf = io.BytesIO(i)
+                plt.axis('off')
+                plt.savefig(buf, bbox_inches='tight', pad_inches=0)
+                plt.close()
+                img_name = "fig_{}.jpg".format(n)
+                print("  Writing image {:s} in the archive".format(img_name))
+                zf.writestr(img_name, buf.getvalue())
 
     download_btn = ttk.Button(root, text='Download', command=if_mutiple)
     download_btn.grid(column=3, row=16, sticky=E)
