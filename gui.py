@@ -5,11 +5,13 @@ from PIL import Image
 from io import BytesIO
 from zipfile36 import ZipFile
 import base64
+import io
+from matplotlib import pyplot as plt
+import matplotlib.image as mpimg
 
 
 # User login/create account
 def login_window():
-
     root = Tk()
     root.title('Create Account/User Login')
 
@@ -226,11 +228,13 @@ def main_window(username):
     download_cb.state(['readonly'])
 
     def if_mutiple():
-        imgs = [np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/123.jpg")))]
-        img1 = np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/h.jpg")))
-        imgs.append(img1)
-        print(type(imgs))
-        print(len(imgs))
+        # imgs = [np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/123.jpg")))]
+        # img1 = np.uint8(np.array(Image.open("C:/Users/Sara Qi/Pictures/h.jpg")))
+        # imgs.append(img1)
+        imgs = open("C:/Users/Sara Qi/Pictures/123.jpg", "rb")
+        b64_string = str(base64.b64encode(imgs.read()), encoding='utf-8')# assume list
+        print(image_bytes)
+
         if len(imgs) > 1:
             root.file = filedialog. \
                 asksaveasfilename(title='Download Image',
@@ -238,16 +242,13 @@ def main_window(username):
                                   initialdir='/',
                                   initialfile='Image.zip',
                                   filetypes=[('zip', '*.zip')])
-            y=1
-            for i in imgs:
-                img = i
-                op = str(base64.b64encode(img.tobytes()))
-                zip = ZipFile(root.file, mode='w')
-                y=1+y
-                zip.writestr("{}.jpg".format(y), op)
-                zip.close()
-
-
+            zip = ZipFile(root.file, mode='w')
+            for i, j in enumerate(imgs):
+                img = img[i]
+                image_bytes = base64.b64decode(img) # (b64_string) original
+                y = 1 + y
+                zip.writestr("{}.{}".format(filename, download_opt.get()), image_bytes)# filename = namelist[i]
+            zip.close()
             return
         elif len(imgs) == 1:
             root.file = filedialog. \
@@ -259,8 +260,9 @@ def main_window(username):
                                   .format(download_opt.get()),
                                   filetypes=[(download_opt.get(), '*.{}'
                                               .format(download_opt.get()))])
-        new_im = Image.fromarray(imgs[0])  # imgs from server
-        new_im.save(root.file)
+            new_im = Image.fromarray(imgs[0])  # imgs from server
+            new_im.save(root.file)
+            return
         return
 
     #

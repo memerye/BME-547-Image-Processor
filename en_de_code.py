@@ -1,29 +1,26 @@
 import base64
 import numpy as np
+import io
 
 
 def image_to_b64(img):
     """Encode the unit8 image to base64
-
     Args:
         img (ndarray): The image array, dtype=np.uint8
-
     Returns:
         string: The encoded string for the images
         tuple: The size of the image
     """
     size = img.shape
-    b64_string = base64.b64encode(img.tobytes())
-    return b64_string, size
+    b64_bytes = str(base64.b64encode(img.tobytes()), encoding='utf-8')
+    return b64_bytes, size
 
 
 def b64_to_image(base64_string, size):
     """Decode the base64 to uint8 image
-
     Args:
         base64_string (string): The encoded string for the images
         size (tuple): The size of the image
-
     Returns:
         ndarray: The decoded image
     """
