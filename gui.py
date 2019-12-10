@@ -227,6 +227,15 @@ def main_window(username):
     download_cb["values"] = ("jpeg", "png", "tiff", "jpg")  # no jpg
     download_cb.state(['readonly'])
 
+    root1 = "C:/Users/Sara Qi/Pictures/Screenshots"
+    path = [root1 + '/123.jpg', root1 + '/plant4.jpg']
+    images_encoded = []
+    img_decoded = []
+    for i in path:
+        img = skio.imread(i)
+        img_b64, img_size = image_to_b64(img)
+        images_encoded.append(str(img_b64))
+
     def if_mutiple():
         # imgs = [np.uint8(np.array(Image.open
         # ("C:/Users/Sara Qi/Pictures/123.jpg")))]
