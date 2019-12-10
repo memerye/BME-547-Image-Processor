@@ -11,8 +11,10 @@ warnings.filterwarnings("ignore")
 
 def init_mongodb():
     """Connect the mongodb
+
     Args:
         None
+
     Returns:
         None
     """
@@ -30,8 +32,10 @@ class ImageUser(MongoModel):
 
 def add_new_user_to_db(user_info):
     """Add new user to the database and initialize user info in database
+
     Args:
         u_info (dict): a dictionary containing u_id
+
     Returns:
         None
     """
@@ -39,8 +43,9 @@ def add_new_user_to_db(user_info):
     u_time = str(datetime.now())
     key_list_metrics = ("img_num", "histeq", "constr", "logcom", "invert")
     key_list_images = ("image", "name", "size", "time")
-    key_list_processed = ("num", "timestamp", "operation", "size",
-                          "run_time", "name", "raw_img", "processed_img")
+    key_list_processed = ("num", "operation", "up_time",
+                          "processed_time", "size", "run_time",
+                          "name", "raw_img", "processed_img")
     u = ImageUser(user_id=u_id,
                   created_timestamp=u_time,
                   metrics=dict.fromkeys(key_list_metrics, [0]),
@@ -52,8 +57,10 @@ def add_new_user_to_db(user_info):
 
 def validate_existing_id(u_id):
     """Validate the existence of the user id in the database.
+
     Args:
         u_id (string): the patient id.
+
     Returns:
         bool: False if the id doesn't exist in the database;
         True if the id has been registered in the database.
@@ -69,8 +76,10 @@ def validate_existing_id(u_id):
 
 def add_original_image_to_db(u_img):
     """Add original image to the database as a dict.
+
     Args:
         u_img (dict): a dictionary containing original image info and u_id
+
     Returns:
         None
     """
@@ -94,33 +103,38 @@ def add_original_image_to_db(u_img):
 
 def add_processed_image_to_db(u_pro):
     """Add processed image to database as a dict.
+
     Args:
         u_pro (dict): a dictionary containing
         the u_id and processed image info.
+
     Returns:
         None
     """
     u_id = u_pro["user_id"]
     oper_num = u_pro["operation"]
+    up_time = u_pro["up_time"]
     size = u_pro["size"]
     run = u_pro["run_time"]
     name = u_pro["name"]
     raw = u_pro["raw_img"]
     pro = u_pro["processed_img"]
+    processed_time = u_pro["processed_time"]
     imageuser = ImageUser.objects.raw({"_id": u_id}).first()
     if len(imageuser.processed["num"]):
-        cur_ind = imageuser.processed["num"][-1]
+        cur_ind = imageuser.processed["num"][-1]+1
     else:
-        cur_ind = 0
-    imageuser.processed["operation"].append(oper_num)
-    cur_ind += 1
+        cur_ind = 1
     imageuser.processed["num"].append(cur_ind)
+    imageuser.processed["operation"].append(oper_num)
+    imageuser.processed["up_time"].append(up_time)
+    cur_ind += 1
     imageuser.processed["size"].append(size)
     imageuser.processed["run_time"].append(run)
     imageuser.processed["name"].append(name)
     imageuser.processed["raw_img"].append(raw)
     imageuser.processed["processed_img"].append(pro)
-    imageuser.processed["timestamp"].append(str(datetime.now()))
+    imageuser.processed["processed_time"].append(processed_time)
     if oper_num == 0:
         imageuser.metrics["histeq"][0] = imageuser.metrics["histeq"][0] + 1
     elif oper_num == 1:
@@ -135,15 +149,17 @@ def add_processed_image_to_db(u_pro):
 
 def get_rec_pro_img(u_id):
     """Get most recent processed image and output as a dictionary
+
     Args:
-        u_id: user id string variable
+        u_id (string): user id string variable
+
     Returns:
         A dictionary containing searching information
     """
     imageuser = ImageUser.objects.raw({"_id": u_id}).first()
     rec_dict = {}
     rec_dict["user_id"] = u_id
-    rec_dict["timestamp"] = imageuser.processed["timestamp"][-1]
+    rec_dict["up_time"] = imageuser.processed["up_time"][-1]
     rec_dict["operation"] = imageuser.processed["operation"][-1]
     rec_dict["size"] = imageuser.processed["size"][-1]
     rec_dict["run_time"] = imageuser.processed["run_time"][-1]
@@ -154,6 +170,14 @@ def get_rec_pro_img(u_id):
 
 
 def get_user_info(user_id):
+    """Get the user information from database
+
+    Args:
+        user_id (string): user id string variable
+
+    Returns:
+        A dictionary containing searching information
+    """
     u_db = ImageUser.objects.raw({"_id": user_id}).first()
     user_info = {"user_id": user_id,
                  "create_time": u_db.created_timestamp,
@@ -166,21 +190,38 @@ def get_user_info(user_id):
 
 
 def get_history_info(user_id):
+    """Get all of history operation information by this user from database
+
+    Args:
+        user_id (string): user id string variable
+
+    Returns:
+        A dictionary containing searching information
+    """
     u_db = ImageUser.objects.raw({"_id": user_id}).first()
     history = {"user_id": user_id,
                "num": u_db.processed["num"],
-               "timestamp": u_db.processed["timestamp"],
+               "processed_time": u_db.processed["processed_time"],
                "operation": u_db.processed["operation"],
                "name": u_db.processed["name"]}
     return history
 
 
 def retrieve_history_info(user_id, num):
+    """Retrieve one of the history operation.
+
+    Args:
+        user_id (string): user id string variable
+        num (int): the index of operation that user want to retrieve
+
+    Returns:
+        A dictionary containing searching information
+    """
     u_db = ImageUser.objects.raw({"_id": user_id}).first()
     num = int(num)
     history = {"user_id": user_id,
                "num": num,
-               "timestamp": u_db.processed["timestamp"][num-1],
+               "up_time": u_db.processed["up_time"][num-1],
                "operation": u_db.processed["operation"][num-1],
                "size": u_db.processed["size"][num-1],
                "run_time": u_db.processed["run_time"][num-1],
