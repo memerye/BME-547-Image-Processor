@@ -54,7 +54,7 @@ Link to deployed web service in yourREADME.md.
 
 
 
-  ![login window](login.png)
+  ![login window](login.jpg)
 
 * The login interface allows user to type in their own username to access their unique account. 
   * If there is no username in the database, the user can click `Create Account` to create an account in the database. If the user exists in the database, they will have the choice to login or user a different username.
