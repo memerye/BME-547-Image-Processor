@@ -54,7 +54,7 @@ Link to deployed web service in yourREADME.md.
 
 
 
-  ![login window](11.jpg)
+  ![login window](login.png)
 
 * The login interface allows user to type in their own username to access their unique account. 
   * If there is no username in the database, the user can click `Create Account` to create an account in the database. If the user exists in the database, they will have the choice to login or user a different username.
@@ -77,7 +77,7 @@ Link to deployed web service in yourREADME.md.
 * The `Select Image File(s)` button will allow the user to choose an image(in the format of .jpg .jpeg .png .tif), multiple images or a zip archive file. 
   * Selecting multiple .zip files or .zip file mixed with image cells, a warning window will popup during upload.
   
-  ![warning](file warning.png)
+  ![warning](file_warning.png)
   
   * In case the user wants to select a different set of images, they can click on the `Select Image File(s)` button again.
 * Clicking the `Upload` button will send the selected images to the server. 
