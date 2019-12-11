@@ -2,14 +2,14 @@ from tkinter import *
 from tkinter import ttk, filedialog
 from zipfile36 import ZipFile
 import os
-import numpy as np
 import io
 from PIL import Image, ImageTk
 import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
 from skimage import io as skio
+from skimage import exposure
+from time import time
+import matplotlib.pyplot as plt
 from en_de_code import image_to_b64, b64_to_image
 import zipfile
 from io import BytesIO
@@ -49,18 +49,24 @@ def login_window():
     # Create account button
     def create_account():
         # validate user
-        user_id = {'user_id': username.get()}
-        exist = request_check_id(username.get())
-        if exist:
-            exist_label = Label(root,
-                                text='Username already exists. '
-                                     'Login or enter a new username.')
-            exist_label.grid(column=1, row=3, columnspan=3)
+        if username.get() == '':
+            id_error_label = Label(root,
+                                   text='Please enter a username. ')
+            id_error_label.grid(column=1, row=3, columnspan=3)
         else:
-            post_user_id(user_id)
-            root.destroy()
-            print('Account created successfully.')
-            main_window(username.get())
+            user_id = {'user_id': username.get()}
+            from GUI_client import request_check_id, post_user_id
+            exist = request_check_id(username.get())
+            if exist:
+                exist_label = Label(root,
+                                    text='Username already exists. '
+                                         'Login or enter a new username.')
+                exist_label.grid(column=1, row=3, columnspan=3)
+            else:
+                post_user_id(user_id)
+                root.destroy()
+                print('Account created successfully.')
+                main_window(username.get())
         return
 
     ca_btn = ttk.Button(root, text='Create Account', command=create_account)
@@ -68,16 +74,21 @@ def login_window():
 
     # Login button
     def login():
-        exist = request_check_id(username.get())
-        if exist:
-            # open main window
-            root.destroy()
-            main_window(username.get())
+        if username.get() == '':
+            id_error_label = Label(root,
+                                   text='Please enter a username. ')
+            id_error_label.grid(column=1, row=3, columnspan=3)
         else:
-            exist_label = Label(root,
-                                text='Username does not exist. '
-                                     'Please create an account.')
-            exist_label.grid(column=1, row=3, columnspan=3)
+            exist = request_check_id(username.get())
+            if exist:
+                # open main window
+                root.destroy()
+                main_window(username.get())
+            else:
+                exist_label = Label(root,
+                                    text='Username does not exist. '
+                                         'Please create an account.')
+                exist_label.grid(column=1, row=3, columnspan=3)
         return
 
     login_btn = ttk.Button(root, text='Login', command=login)
@@ -118,7 +129,7 @@ def main_window(username):
 
     # Images upload/choose from history
     action_label = ttk.Label(root, text='1. Choose an action to begin: ')
-    action_label.grid(column=0, row=2, columnspan=2, sticky=W)
+    action_label.grid(column=0, row=3, columnspan=2, sticky=W)
 
     # Select files to upload
     def select_img():
@@ -135,11 +146,11 @@ def main_window(username):
         print(root.type)
         file_label = ttk.Label(root, text='...{}'.format(root.file[0][-30::]),
                                width=30)
-        file_label.grid(column=2, row=3, columnspan=1, sticky=W)
+        file_label.grid(column=2, row=4, columnspan=1, sticky=W)
 
     def upload_img():
         uploading_label = ttk.Label(root, text='Uploading ... ', width=30)
-        uploading_label.grid(column=2, row=3, columnspan=1, sticky=W)
+        uploading_label.grid(column=2, row=4, columnspan=1, sticky=W)
         root.imgs = []
         root.image_sizes = []
         from en_de_code import image_to_b64
@@ -178,7 +189,6 @@ def main_window(username):
             print('cannot upload. wrong files selected.')
             # Open a warning window
             file_warning()
-# remember to also get size from image_to_b64
             return None
         global raw_images, sizes, names
         raw_images = root.imgs
@@ -188,16 +198,13 @@ def main_window(username):
         from GUI_client import post_img_GUI
         post_img_GUI(info)
         uploaded_label = ttk.Label(root, text='Upload complete. ', width=30)
-        uploaded_label.grid(column=2, row=3, columnspan=1, sticky=W)
-
-
+        uploaded_label.grid(column=2, row=4, columnspan=1, sticky=W)
     select_btn = ttk.Button(root, text='Select image file(s)',
                             command=select_img)
-    select_btn.grid(column=1, row=3, sticky=W)
+    select_btn.grid(column=1, row=4, sticky=W)
     upld_btn = ttk.Button(root, text='Upload',
                           command=upload_img)
-    upld_btn.grid(column=3, row=3, sticky=E)
-
+    upld_btn.grid(column=3, row=4, sticky=E)
 
     def post_img_json():
         global raw_images, sizes, names
@@ -210,12 +217,12 @@ def main_window(username):
 
     # function for reading non-zip image file
     def read_img(img_path):
+        print(Image.open(img_path).size)
         img_array = np.uint8(np.array(Image.open(img_path)))
         return img_array
 
     # History button
-    def history():
-        print('Retrieve')
+    def proc_history():
         # 1/time.../image.../operation
         from GUI_client import request_history_info
         history_info = request_history_info(username)
@@ -224,29 +231,52 @@ def main_window(username):
             op = cvt_proc_index(history_info['operation'][i])
             hist = '{}/{}/{}/{}' \
                 .format(i + 1,
-                        history_info['timestamp'][i],
+                        history_info['processed_time'][i],
                         op,
                         history_info['name'][i])
             hist_ls.append(hist)
         hist_tuple = tuple(hist_ls)
-        print(hist_tuple)
         # outputs history into pull down menu
         hist_combo['values'] = hist_tuple
         return
 
-    hist_btn = ttk.Button(root, text='Choose from history', command=history)
-    hist_btn.grid(column=1, row=4, sticky=W)
+    hist_btn = ttk.Button(root, text='Choose from history',
+                          command=proc_history)
+    hist_btn.grid(column=1, row=5, sticky=W)
 
     # History pull down
     history = StringVar()
     hist_combo = ttk.Combobox(root, textvariable=history)
-    hist_combo.grid(column=2, row=4, sticky=W)
+    hist_combo.grid(column=2, row=5, sticky=W)
     hist_combo.state(['readonly'])
+
+    # Retrieve selected history info
+    def retrieve():
+        print(int(history.get()[0]))
+        from GUI_client import request_one_history_info
+        from en_de_code import b64_to_image
+        root.one_history = request_one_history_info(username,
+                                                    int(history.get()[0]))
+        ls = []
+        for i in range(len(root.one_history['name'])):
+            print(i)
+            hist_imgs = '{}/history: {}' \
+                .format(i + 1,
+                        root.one_history['name'][i])
+            ls.append(hist_imgs)
+        hist_tuple = tuple(ls)
+        print(hist_tuple)
+        # outputs history into pull down menu
+        hist_display_combo['values'] = hist_tuple
+        return
+
+    retrieve_btn = ttk.Button(root, text='Retrieve', command=retrieve)
+    retrieve_btn.grid(column=3, row=5, sticky=E)
 
     # process option
     process_opt = StringVar(None, 'Histogram Equalization')
     pro_label = ttk.Label(root, text='2. Choose a process option: ')
-    pro_label.grid(column=0, row=6, columnspan=2, sticky=W)
+    pro_label.grid(column=0, row=7, columnspan=2, sticky=W)
 
     # process option select button
     botton1 = ttk.Radiobutton(root, text='Histogram Equalization',
@@ -281,15 +311,27 @@ def main_window(username):
         elif process_opt.get() == 'Invert Image':
             option = 3
             print("ii")
-        from GUI_client import post_process_opt
+        from GUI_client import post_process_opt,\
+            request_recent_process_images
         opt_info = post_opt_json(option)
         post_process_opt(opt_info)
+        root.recent_process = request_recent_process_images()
+        ls = []
+        for i in range(len(root.recent_process['name'])):
+            print(i)
+            hist_imgs = '{}/iupload: {}' \
+                .format(i + 1,
+                        root.recent_process['name'][i])
+            ls.append(hist_imgs)
+        hist_tuple = tuple(ls)
+        # outputs history into pull down menu
+        hist_display_combo['values'] = hist_tuple
         print(opt_info)
         return option
 
     # Process button
     process_btn = ttk.Button(root, text='Process', command=process)
-    process_btn.grid(column=3, row=10, columnspan=1, sticky=E)
+    process_btn.grid(column=3, row=8, columnspan=1, sticky=E)
 
     def post_opt_json(option):
         global raw_images, sizes, names
@@ -300,55 +342,31 @@ def main_window(username):
                     "name": names}
         return post_opt
 
-    # Image Display frame
+    # Image Display
     display_label = ttk.Label(root, text='3. Display images and metadata')
-    display_label.grid(column=6, row=1, columnspan=10, sticky=W)
-    img_frame = ttk.Frame(root, height=500, width=700)
-    # img_frame.pack()
-    # img_frame.columnconfigure(2, weight=1)
-    # img_frame.rowconfigure(2, weight=1)
-    img_frame.grid(column=6, row=2, columnspan=10, rowspan=16)
-    # processed image frame
-    img_pro_frame = ttk.LabelFrame(img_frame, text='Processed Image',
-                                   height=250, width=300)
-    img_pro_frame.grid(column=1, row=1, columnspan=1)
-    # original image frame
-    img_orig_frame = ttk.LabelFrame(img_frame, text='Original Image',
-                                    height=250, width=300)
-    img_orig_frame.grid(column=2, row=1, columnspan=1)
-    # histogram for processed image frame
-    hist_pro_frame = ttk.LabelFrame(img_frame,
-                                    text='Processed Img. Histogram',
-                                    height=250, width=300)
-    hist_pro_frame.grid(column=1, row=2, columnspan=1)
-    # histogram for original image frame
-    hist_pro_frame = ttk.LabelFrame(img_frame,
-                                    text='Original Img. Histogram',
-                                    height=250, width=300)
-    hist_pro_frame.grid(column=2, row=2, columnspan=1)
-    # previous/next frame
+    display_label.grid(column=0, row=11, columnspan=2, sticky=W)
+    # root.img_frame = ttk.Frame(root, height=600, width=600)
+    # root.img_frame.grid(column=6, row=2, columnspan=10, rowspan=16)
 
-    prev_frame = ttk.Frame(root, height=600, width=10)
-    prev_frame.grid(column=5, row=8)
-    next_frame = ttk.Frame(root, height=600, width=10)
-    next_frame.grid(column=16, row=8)
+    hist_display = StringVar()
+    hist_display_combo = ttk.Combobox(root, textvariable=hist_display)
+    hist_display_combo.grid(column=1, row=12)
+    hist_display_combo.state(['readonly'])
 
-    # previous/next button
-    def previous_img():
-        print('get previous image from server')
-        print('display images')
+    def image_display():
+        ind = int(hist_display.get()[0])
+        if hist_display.get()[2:9] == 'history':
+            act = root.one_history
+        else:
+            act = root.recent_process
+        process_info = display_info(ind-1, act)
+        image_display_window(ind, act,
+                             process_info)
         return
 
-    def next_img():
-        print('get previous image from server')
-        print('display images')
-        return
-
-    prev_btn = ttk.Button(prev_frame, text='<',
-                          width=1, command=previous_img)
-    prev_btn.grid(column=1, row=1)
-    next_btn = ttk.Button(next_frame, text='>', width=1, command=next_img)
-    next_btn.grid(column=1, row=1)
+    process_btn = ttk.Button(root, text='Display',
+                             command=image_display)
+    process_btn.grid(column=3, row=12, columnspan=1, sticky=E)
 
     # Download Section
     download_opt = StringVar(None, 'jpeg')
@@ -356,7 +374,7 @@ def main_window(username):
     download_label.grid(column=0, row=14, columnspan=2, sticky=W)
 
     download_cb = ttk.Combobox(root, textvariable=download_opt)
-    download_cb.grid(column=1, row=16, sticky=E)
+    download_cb.grid(column=1, row=15, sticky=E)
     download_cb["values"] = ("jpeg", "png", "tiff", "jpg")  # no jpg
     download_cb.state(['readonly'])
 
@@ -434,7 +452,7 @@ def main_window(username):
             zf.close()
 
     download_btn = ttk.Button(root, text='Download', command=if_multiple)
-    download_btn.grid(column=3, row=16, sticky=E)
+    download_btn.grid(column=3, row=15, sticky=E)
 
     # back to login function at main window
     def back_to_login():
@@ -445,7 +463,7 @@ def main_window(username):
     # back to login button
     back_to_login_btn = ttk.Button(root, text='Back to Login',
                                    command=back_to_login)
-    back_to_login_btn.grid(column=14, row=19, sticky=E)
+    back_to_login_btn.grid(column=2, row=17, sticky=E)
 
     # exit function at main window
     def exit():
@@ -455,27 +473,45 @@ def main_window(username):
     # exit button
     exit_btn = ttk.Button(root, text='Exit',
                           command=exit)
-    exit_btn.grid(column=15, row=19)
-
-    # from GUI_client import request_download_file
-    # encoded_json = request_download_file(username)
-    # uptime = encoded_json["up_time"][0]
-    # protime = encoded_json["run_time"][0]
-    # imgsize = encoded_json["size"][0]
-    # size_a = imgsize[0]
-    # size_b = imgsize[1]
+    exit_btn.grid(column=3, row=17)
 
     # # process info include uploaded/processing time and image size
-    # uptime_label = ttk.Label(root, text='Uploaded time: {}'.format(uptime))
-    # uptime_label.grid(column=7, row=18, columnspan=1, sticky=W)
-    # protime_label = ttk.Label(root,
-    #                           text='Processing time: {}s'
-    #                           .format(protime))
-    # protime_label.grid(column=11, row=18, columnspan=1, sticky=W)
-    # size_label = ttk.Label(root,
-    #                        text='Image size: {}x{}'
-    #                        .format(size_a, size_b))
-    # size_label.grid(column=14, row=18, columnspan=1, sticky=W)
+    # def process_info(ls):
+    #     uptime_label = ttk.Label(root,
+    #                              text='Uploaded time: {}'.format(ls[0]))
+    #     uptime_label.grid(column=7, row=18, columnspan=1, sticky=W)
+    #     protime_label = ttk.Label(root,
+    #                               text='Processsing time: {}'.format(ls[1]))
+    #     protime_label.grid(column=11, row=18, columnspan=1, sticky=W)
+    #     size_label = ttk.Label(root,
+    #                            text='Image size: {}'.format(ls[2]))
+    #     size_label.grid(column=14, row=18, columnspan=1, sticky=W)
+    #     return
+
+    # gaps for aesthetic
+    gap_row = Label(root, text='  ')
+    gap_row.grid(column=0, row=0)
+
+    gap_row2 = Label(root, text='  ')
+    gap_row2.grid(column=0, row=2)
+
+    gap_row3 = Label(root, text='  ')
+    gap_row3.grid(column=0, row=6)
+
+    gap_row4 = Label(root, text='  ')
+    gap_row4.grid(column=0, row=10)
+
+    gap_row5 = Label(root, text='  ')
+    gap_row5.grid(column=0, row=13)
+
+    gap_row6 = Label(root, text='  ')
+    gap_row6.grid(column=0, row=16)
+
+    gap_row7 = Label(root, text='  ')
+    gap_row7.grid(column=0, row=18)
+
+    gap_col = Label(root, text='  ')
+    gap_col.grid(column=4, row=0)
 
     root.mainloop()
     return
@@ -510,6 +546,85 @@ def cvt_proc_index(index):
         return 'Invert Image'
     else:
         return False
+
+
+def plotimages(img_raw, img_processed):
+    color_list = ["r", "g", "b", "c", "m", "y", "k", "w"]
+    n = img_raw.shape[2]
+    fig = plt.figure()
+    fig.tight_layout(pad=0)
+    gs0 = fig.add_gridspec(2 * n, 2)
+    ax1 = fig.add_subplot(gs0[0:3, 0])
+    ax1.imshow(img_raw)
+    ax1.set_title("Raw Image")
+    ax1.set_axis_off()
+    ax2 = fig.add_subplot(gs0[0:3, 1])
+    ax2.imshow(img_processed)
+    ax2.set_title("Processed Image")
+    ax2.set_axis_off()
+    for s1 in range(n):
+        ax = fig.add_subplot(gs0[s1 + n, 0])
+        img_hist, img_bins = exposure.histogram(img_raw[:, :, s1])
+        ax.plot(img_bins, img_hist, color_list[s1])
+        ax = fig.add_subplot(gs0[s1 + n, 1])
+        img_hist, img_bins = exposure.histogram(img_processed[:, :, s1])
+        ax.plot(img_bins, img_hist, color_list[s1])
+    fig.canvas.draw()
+    s, (w, h) = fig.canvas.print_to_buffer()
+    # plt.show()
+    hist_img = np.fromstring(fig.canvas.tostring_rgb(),
+                             dtype="uint8").reshape((h, w, 3))
+    return hist_img
+
+
+def display_info(ind, act):
+    global uptime, protime, size_a, size_b
+    uptime = act["up_time"][ind]
+    protime = act["run_time"][ind]
+    imgsize = act["size"][ind]
+    size_a = imgsize[0]
+    size_b = imgsize[1]
+    return uptime, protime, size_a, size_b
+
+
+def image_display_window(ind, one_history, info):
+    root = Toplevel()
+    root.title('Display Images and Color Histograms')
+    i = ind - 1
+    from en_de_code import b64_to_image
+    raw = b64_to_image(one_history['raw_img'][i],
+                       one_history['size'][i])
+    processed = b64_to_image(one_history['processed_img'][i],
+                             one_history['size'][i])
+    hist_img = plotimages(raw, processed)
+    desired_size = 600
+    img_obj = Image.fromarray(hist_img)
+    old_size = img_obj.size
+    ratio = float(desired_size) / max(old_size)
+    new_size = tuple([int(x * ratio) for x in old_size])
+    im = img_obj.resize(new_size, Image.ANTIALIAS)
+    # create a new image and paste the resized on it
+    new_im = Image.new("RGB", (desired_size, desired_size),
+                       color=(255, 255, 255))
+    new_im.paste(im, ((desired_size - new_size[0]) // 2,
+                      (desired_size - new_size[1]) // 2))
+    image = ImageTk.PhotoImage(new_im)
+    panel = Canvas(root, width=600, height=600)
+    panel.create_image(0, 0, image=image, anchor=NW, tags="IMG")
+    panel.grid(column=0, row=0, columnspan=16)
+
+    uptime_label = ttk.Label(root, text='Uploaded time: {}'.format(info[0]))
+    uptime_label.grid(column=1, row=2, columnspan=2, sticky=W)
+    protime_label = ttk.Label(root,
+                              text='Processing time: {0:.5f}s'
+                              .format(info[1]))
+    protime_label.grid(column=7, row=2, columnspan=2, sticky=W)
+    size_label = ttk.Label(root,
+                           text='Image size: {}x{}'
+                           .format(info[2], info[3]))
+    size_label.grid(column=14, row=2, columnspan=2, sticky=W)
+    root.mainloop()
+    return
 
 
 def user_data_window(user_info):
@@ -561,5 +676,6 @@ def file_warning():
 
 
 if __name__ == '__main__':
+    # main_window('1_a')
     login_window()
     # file_warning()
