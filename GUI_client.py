@@ -10,7 +10,7 @@ def request_check_id(ids):
     Returns:
         bool: The existence of this id.
     """
-    r = requests.get("http://127.0.0.1:5000/api/check_id/{}".format(ids))
+    r = requests.get("http://vcm-11671.vm.duke.edu:5000/api/check_id/{}".format(ids))
     answer = r.json()
     return answer["result"]
 
@@ -24,7 +24,7 @@ def post_user_id(info):
     Returns:
         None
     """
-    r = requests.post("http://127.0.0.1:5000/api/new_user",
+    r = requests.post("http://vcm-11671.vm.duke.edu:5000/api/new_user",
                       json=info)
     return None
 
@@ -38,7 +38,7 @@ def post_img_GUI(info):
     Returns:
         None
     """
-    r = requests.post("http://127.0.0.1:5000/api/upload_images",
+    r = requests.post("http://vcm-11671.vm.duke.edu:5000/api/upload_images",
                       json=info)
     return None
 
@@ -57,7 +57,7 @@ def request_user_info(ids):
     Returns:
         json: return the user information to client.
     """
-    r = requests.get("http://127.0.0.1:5000/api/user_info/{}".format(ids))
+    r = requests.get("http://vcm-11671.vm.duke.edu:5000/api/user_info/{}".format(ids))
     answer = r.json()
     return answer
 
@@ -71,7 +71,7 @@ def post_process_opt(info):
     Returns:
         None
     """
-    r = requests.post("http://127.0.0.1:5000/api/process",
+    r = requests.post("http://vcm-11671.vm.duke.edu:5000/api/process",
                       json=info)
     return None
 
@@ -92,7 +92,7 @@ def request_history_info(ids):
     Returns:
         json: return the history information to client.
     """
-    r = requests.get("http://127.0.0.1:5000/api/history_info/{}"
+    r = requests.get("http://vcm-11671.vm.duke.edu:5000/api/history_info/{}"
                      .format(ids))
     answer = r.json()
     print(answer)
@@ -121,7 +121,7 @@ def request_one_history_info(ids, num):
     Returns:
         json: return the history information under this index.
     """
-    r = requests.get("http://127.0.0.1:5000/api/history_info/{}/{}"
+    r = requests.get("http://vcm-11671.vm.duke.edu:5000/api/history_info/{}/{}"
                      .format(ids, num))
     answer = r.json()
     print(answer)
@@ -147,7 +147,7 @@ def request_recent_process_images(ids):
          json: return information about the result of recent
          processed images.
      """
-    r = requests.get("http://127.0.0.1:5000/api/"
+    r = requests.get("http://vcm-11671.vm.duke.edu:5000/api/"
                      "most_recent_processed_image/{}".format(ids))
     answer = r.json()
     return answer
