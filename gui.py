@@ -100,10 +100,11 @@ def login_window():
 
 # Main window
 def main_window(username):
-    global raw_images, sizes, names
+    global raw_images, sizes, names, act
     raw_images = []
     sizes = []
     names = []
+    act = None
     root = Tk()
     root.title('Image Processor')
     # canvas = Canvas(root)
@@ -315,7 +316,7 @@ def main_window(username):
             request_recent_process_images
         opt_info = post_opt_json(option)
         post_process_opt(opt_info)
-        root.recent_process = request_recent_process_images()
+        root.recent_process = request_recent_process_images(username)
         ls = []
         for i in range(len(root.recent_process['name'])):
             print(i)
@@ -327,7 +328,7 @@ def main_window(username):
         # outputs history into pull down menu
         hist_display_combo['values'] = hist_tuple
         print(opt_info)
-        return option
+        return
 
     # Process button
     process_btn = ttk.Button(root, text='Process', command=process)
@@ -354,13 +355,14 @@ def main_window(username):
     hist_display_combo.state(['readonly'])
 
     def image_display():
+        global act
         ind = int(hist_display.get()[0])
         if hist_display.get()[2:9] == 'history':
             act = root.one_history
         else:
             act = root.recent_process
         process_info = display_info(ind-1, act)
-        image_display_window(ind, act,
+        image_display_window(ind-1, act,
                              process_info)
         return
 
@@ -386,8 +388,10 @@ def main_window(username):
         return img_decoded_list
 
     def if_multiple():
-        from GUI_client import request_download_file
-        encoded_json = request_download_file(username)
+        global act
+        # from GUI_client import request_recent_process_images
+        # encoded_json = request_recent_process_images(username)
+        encoded_json = act
         size_img = encoded_json["size"]
         ori_en = encoded_json["raw_img"]
         process_en = encoded_json["processed_img"]
@@ -427,6 +431,8 @@ def main_window(username):
         print("Creating archive: {:s}".format(zip_file_name))
         with zipfile.ZipFile(zip_file_name, mode="w") as zf:
             for num, i in enumerate(ori_encoded):
+                plt.clf()
+                # plt.figure()
                 n = orig_name[num]
                 na = os.path.splitext(n)[0]
                 plt.imshow(i)

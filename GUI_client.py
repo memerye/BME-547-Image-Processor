@@ -81,4 +81,9 @@ def request_recent_process_images(ids):
     r = requests.get("http://127.0.0.1:5000/api/"
                      "most_recent_processed_image/{}".format(ids))
     answer = r.json()
+    print(answer)
     return answer
+
+
+if __name__ == '__main__':
+    a = request_recent_process_images("1_a")
