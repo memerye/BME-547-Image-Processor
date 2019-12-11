@@ -10,7 +10,8 @@ def request_check_id(ids):
     Returns:
         bool: The existence of this id.
     """
-    r = requests.get("http://vcm-11671.vm.duke.edu:5000/api/check_id/{}".format(ids))
+    r = requests.get("http://vcm-11671.vm.duke.edu:5000/"
+                     "api/check_id/{}".format(ids))
     answer = r.json()
     return answer["result"]
 
@@ -57,7 +58,8 @@ def request_user_info(ids):
     Returns:
         json: return the user information to client.
     """
-    r = requests.get("http://vcm-11671.vm.duke.edu:5000/api/user_info/{}".format(ids))
+    r = requests.get("http://vcm-11671.vm.duke.edu:5000/"
+                     "api/user_info/{}".format(ids))
     answer = r.json()
     return answer
 
