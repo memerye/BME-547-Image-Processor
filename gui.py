@@ -2,14 +2,14 @@ from tkinter import *
 from tkinter import ttk, filedialog
 from zipfile36 import ZipFile
 import os
-import numpy as np
 import io
 from PIL import Image, ImageTk
 import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
 from skimage import io as skio
+from skimage import exposure
+from time import time
+import matplotlib.pyplot as plt
 from en_de_code import image_to_b64, b64_to_image
 import zipfile
 from io import BytesIO
@@ -208,7 +208,7 @@ def main_window(username):
             op = cvt_proc_index(history_info['operation'][i])
             hist = '{}/{}/{}/{}' \
                 .format(i + 1,
-                        history_info['timestamp'][i],
+                        history_info['processed_time'][i],
                         op,
                         history_info['name'][i])
             hist_ls.append(hist)
@@ -231,8 +231,41 @@ def main_window(username):
     def retrieve():
         print(int(history.get()[0]))
         from GUI_client import request_one_history_info
-        one_history = request_one_history_info(username, int(history.get()[0]))
-        img_display(one_history)
+        from en_de_code import b64_to_image
+        root.one_history = request_one_history_info(username,
+                                                    int(history.get()[0]))
+        ls = []
+        for i in range(len(root.one_history['name'])):
+            print(i)
+            hist_imgs = '{}/history: {}' \
+                .format(i + 1,
+                        root.one_history['name'][i])
+            ls.append(hist_imgs)
+        hist_tuple = tuple(ls)
+        print(hist_tuple)
+        # outputs history into pull down menu
+        hist_display_combo['values'] = hist_tuple
+        # default, plot first image
+        # raw = b64_to_image(root.one_history['raw_img'][0],
+        #                    root.one_history['size'][0])
+        # processed = b64_to_image(root.one_history['processed_img'][0],
+        #                          root.one_history['size'][0])
+        # hist_img = plotimages(raw, processed)
+        # desired_size = 600
+        # img_obj = Image.fromarray(hist_img)
+        # old_size = img_obj.size
+        # ratio = float(desired_size) / max(old_size)
+        # new_size = tuple([int(x * ratio) for x in old_size])
+        # im = img_obj.resize(new_size, Image.ANTIALIAS)
+        # # create a new image and paste the resized on it
+        # new_im = Image.new("RGB", (desired_size, desired_size),
+        #                    color=(255, 255, 255))
+        # new_im.paste(im, ((desired_size - new_size[0]) // 2,
+        #                   (desired_size - new_size[1]) // 2))
+        # image = ImageTk.PhotoImage(new_im)
+        # panel = Canvas(img_frame, width=100, height=100)
+        # panel.create_image(0, 0, image=image, anchor=NW, tags="IMG")
+        # panel.grid(column=0, row=4)
         return
 
     retrieve_btn = ttk.Button(root, text='Retrieve', command=retrieve)
@@ -265,77 +298,115 @@ def main_window(username):
     def process():
         print('Process {} requested'.format(process_opt.get()))
         if process_opt.get() == 'Histogram Equalization':
+            option = 0
             print("he")
-            return
         elif process_opt.get() == 'Contrast Stretching':
+            option = 1
             print("cs")
-            return
         elif process_opt.get() == 'Log Compression':
+            option = 2
             print("lc")
-            return
         elif process_opt.get() == 'Invert Image':
+            option = 3
             print("ii")
-            return
-        return
+        from GUI_client import post_process_opt,\
+            request_recent_process_images
+        opt_info = post_opt_json(option)
+        post_process_opt(opt_info)
+        root.recent_process = request_recent_process_images()
+        ls = []
+        for i in range(len(root.recent_process['name'])):
+            print(i)
+            hist_imgs = '{}/iupload: {}' \
+                .format(i + 1,
+                        root.recent_process['name'][i])
+            ls.append(hist_imgs)
+        hist_tuple = tuple(ls)
+        print(hist_tuple)
+        # outputs history into pull down menu
+        hist_display_combo['values'] = hist_tuple
+        print(opt_info)
+        return option
 
     # Process button
     process_btn = ttk.Button(root, text='Process', command=process)
     process_btn.grid(column=3, row=10, columnspan=1, sticky=E)
 
+    def post_opt_json(option):
+        global raw_images, sizes, names
+        post_opt = {"user_id": username,
+                    "operation": option,
+                    "raw_img": raw_images,
+                    "size": sizes,
+                    "name": names}
+        return post_opt
+
     # Image Display
-    def img_display(one_history):
-        from en_de_code import b64_to_image
-
-        return
-    # Image Display frame
     display_label = ttk.Label(root, text='3. Display images and metadata')
-    display_label.grid(column=6, row=1, columnspan=10, sticky=W)
-    img_frame = ttk.Frame(root, height=500, width=700)
-    # img_frame.pack()
-    # img_frame.columnconfigure(2, weight=1)
-    # img_frame.rowconfigure(2, weight=1)
-    img_frame.grid(column=6, row=2, columnspan=10, rowspan=16)
-    # processed image frame
-    img_pro_frame = ttk.LabelFrame(img_frame, text='Processed Image',
-                                   height=250, width=300)
-    img_pro_frame.grid(column=1, row=1, columnspan=1)
-    # original image frame
-    img_orig_frame = ttk.LabelFrame(img_frame, text='Original Image',
-                                    height=250, width=300)
-    img_orig_frame.grid(column=2, row=1, columnspan=1)
-    # histogram for processed image frame
-    hist_pro_frame = ttk.LabelFrame(img_frame,
-                                    text='Processed Img. Histogram',
-                                    height=250, width=300)
-    hist_pro_frame.grid(column=1, row=2, columnspan=1)
-    # histogram for original image frame
-    hist_pro_frame = ttk.LabelFrame(img_frame,
-                                    text='Original Img. Histogram',
-                                    height=250, width=300)
-    hist_pro_frame.grid(column=2, row=2, columnspan=1)
-    # previous/next frame
+    display_label.grid(column=0, row=11, columnspan=2, sticky=W)
+    # root.img_frame = ttk.Frame(root, height=600, width=600)
+    # root.img_frame.grid(column=6, row=2, columnspan=10, rowspan=16)
 
-    prev_frame = ttk.Frame(root, height=600, width=10)
-    prev_frame.grid(column=5, row=8)
-    next_frame = ttk.Frame(root, height=600, width=10)
-    next_frame.grid(column=16, row=8)
+    hist_display = StringVar()
+    hist_display_combo = ttk.Combobox(root, textvariable=hist_display)
+    hist_display_combo.grid(column=1, row=12)
+    hist_display_combo.state(['readonly'])
 
-    # previous/next button
-    def previous_img():
-        print('get previous image from server')
-        print('display images')
+    def image_display():
+        ind = int(hist_display.get()[0])
+        if hist_display.get()[2:9] == 'history':
+            act = root.one_history
+        else:
+            act = root.recent_process
+        process_info = display_info(ind-1, act)
+        image_display_window(ind, act,
+                             process_info)
         return
 
-    def next_img():
-        print('get previous image from server')
-        print('display images')
-        return
+    process_btn = ttk.Button(root, text='Display',
+                             command=image_display)
+    process_btn.grid(column=3, row=12, columnspan=1, sticky=E)
+    # # processed image frame
+    # img_pro_frame = ttk.LabelFrame(img_frame, text='Processed Image',
+    #                                height=300, width=300)
+    # img_pro_frame.grid(column=1, row=1, columnspan=1)
+    # # original image frame
+    # img_orig_frame = ttk.LabelFrame(img_frame, text='Original Image',
+    #                                 height=250, width=300)
+    # img_orig_frame.grid(column=2, row=1, columnspan=1)
+    # # histogram for processed image frame
+    # hist_pro_frame = ttk.LabelFrame(img_frame,
+    #                                 text='Processed Img. Histogram',
+    #                                 height=250, width=300)
+    # hist_pro_frame.grid(column=1, row=2, columnspan=1)
+    # # histogram for original image frame
+    # hist_pro_frame = ttk.LabelFrame(img_frame,
+    #                                 text='Original Img. Histogram',
+    #                                 height=250, width=300)
+    # hist_pro_frame.grid(column=2, row=2, columnspan=1)
+    # # previous/next frame
+    #
+    # prev_frame = ttk.Frame(root, height=600, width=10)
+    # prev_frame.grid(column=5, row=8)
+    # next_frame = ttk.Frame(root, height=600, width=10)
+    # next_frame.grid(column=16, row=8)
 
-    prev_btn = ttk.Button(prev_frame, text='<',
-                          width=1, command=previous_img)
-    prev_btn.grid(column=1, row=1)
-    next_btn = ttk.Button(next_frame, text='>', width=1, command=next_img)
-    next_btn.grid(column=1, row=1)
+    # # previous/next button
+    # def previous_img():
+    #     print('get previous image from server')
+    #     print('display images')
+    #     return
+    #
+    # def next_img():
+    #     print('get previous image from server')
+    #     print('display images')
+    #     return
+    #
+    # prev_btn = ttk.Button(prev_frame, text='<',
+    #                       width=1, command=previous_img)
+    # prev_btn.grid(column=1, row=1)
+    # next_btn = ttk.Button(next_frame, text='>', width=1, command=next_img)
+    # next_btn.grid(column=1, row=1)
 
     # Download Section
     download_opt = StringVar(None, 'jpeg')
@@ -481,6 +552,85 @@ def cvt_proc_index(index):
         return 'Invert Image'
     else:
         return False
+
+
+def plotimages(img_raw, img_processed):
+    color_list = ["r", "g", "b", "c", "m", "y", "k", "w"]
+    n = img_raw.shape[2]
+    fig = plt.figure()
+    fig.tight_layout(pad=0)
+    gs0 = fig.add_gridspec(2 * n, 2)
+    ax1 = fig.add_subplot(gs0[0:3, 0])
+    ax1.imshow(img_raw)
+    ax1.set_title("Raw Image")
+    ax1.set_axis_off()
+    ax2 = fig.add_subplot(gs0[0:3, 1])
+    ax2.imshow(img_processed)
+    ax2.set_title("Processed Image")
+    ax2.set_axis_off()
+    for s1 in range(n):
+        ax = fig.add_subplot(gs0[s1 + n, 0])
+        img_hist, img_bins = exposure.histogram(img_raw[:, :, s1])
+        ax.plot(img_bins, img_hist, color_list[s1])
+        ax = fig.add_subplot(gs0[s1 + n, 1])
+        img_hist, img_bins = exposure.histogram(img_processed[:, :, s1])
+        ax.plot(img_bins, img_hist, color_list[s1])
+    fig.canvas.draw()
+    s, (w, h) = fig.canvas.print_to_buffer()
+    # plt.show()
+    hist_img = np.fromstring(fig.canvas.tostring_rgb(),
+                             dtype="uint8").reshape((h, w, 3))
+    return hist_img
+
+
+def display_info(ind, act):
+    global uptime, protime, size_a, size_b
+    uptime = act["up_time"][ind]
+    protime = act["run_time"][ind]
+    imgsize = act["size"][ind]
+    size_a = imgsize[0]
+    size_b = imgsize[1]
+    return uptime, protime, size_a, size_b
+
+
+def image_display_window(ind, one_history, info):
+    root = Toplevel()
+    root.title('Display Images and Color Histograms')
+    i = ind - 1
+    from en_de_code import b64_to_image
+    raw = b64_to_image(one_history['raw_img'][i],
+                       one_history['size'][i])
+    processed = b64_to_image(one_history['processed_img'][i],
+                             one_history['size'][i])
+    hist_img = plotimages(raw, processed)
+    desired_size = 600
+    img_obj = Image.fromarray(hist_img)
+    old_size = img_obj.size
+    ratio = float(desired_size) / max(old_size)
+    new_size = tuple([int(x * ratio) for x in old_size])
+    im = img_obj.resize(new_size, Image.ANTIALIAS)
+    # create a new image and paste the resized on it
+    new_im = Image.new("RGB", (desired_size, desired_size),
+                       color=(255, 255, 255))
+    new_im.paste(im, ((desired_size - new_size[0]) // 2,
+                      (desired_size - new_size[1]) // 2))
+    image = ImageTk.PhotoImage(new_im)
+    panel = Canvas(root, width=600, height=600)
+    panel.create_image(0, 0, image=image, anchor=NW, tags="IMG")
+    panel.grid(column=0, row=0, columnspan=16)
+
+    uptime_label = ttk.Label(root, text='Uploaded time: {}'.format(info[0]))
+    uptime_label.grid(column=1, row=2, columnspan=2, sticky=W)
+    protime_label = ttk.Label(root,
+                              text='Processing time: {0:.5f}s'
+                              .format(info[1]))
+    protime_label.grid(column=7, row=2, columnspan=2, sticky=W)
+    size_label = ttk.Label(root,
+                           text='Image size: {}x{}'
+                           .format(info[2], info[3]))
+    size_label.grid(column=14, row=2, columnspan=2, sticky=W)
+    root.mainloop()
+    return
 
 
 def user_data_window(user_info):
