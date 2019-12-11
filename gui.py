@@ -49,9 +49,9 @@ def login_window():
     def create_account():
         # validate user
         user_id = {'user_id': '{}'.format(username.get())}
-        from GUI_client import validate_user
-        exist = validate_user(user_id)
-        # if exist ==
+        # from GUI_client import validate_user
+        # exist = validate_user(user_id)
+        # # if exist ==
 
         root.destroy()
         print('Account created successfully.')
@@ -289,29 +289,16 @@ def main_window(username):
     download_cb["values"] = ("jpeg", "png", "tiff", "jpg")  # no jpg
     download_cb.state(['readonly'])
 
-    def images():
-        root = "C:/Users/Sara Qi/Pictures/Screenshots"
-        path = [root + '/123.jpg', root + '/plant4.jpg']
-        images_encoded = []
-        img_decoded = []
-        for i in path:
-            img = skio.imread(i)
-            img_b64, img_size = image_to_b64(img)
-            images_encoded.append(str(img_b64))
-            img_array = b64_to_image(img_b64, img_size)
-            img_decoded.append(img_array)
-        return images_encoded, img_decoded
-
     def decode_down_img(img_decoded, size_img):
+        img_decoded_list = []
         for num, i in enumerate(img_decoded):
-            img_array = b64_to_image(img_decoded[num], size_img[num])
-            img_decoded.append(img_array)
-        return img_decoded
+            img_array = b64_to_image(img_decoded[num], tuple(size_img[num]))
+            img_decoded_list.append(img_array)
+        return img_decoded_list
 
     def if_multiple():
         from GUI_client import request_download_file
-        encoded_json = request_download_file("1_a")
-        # images_encoded, img_decoded = images() # get json from preview
+        encoded_json = request_download_file(username)
         size_img = encoded_json["size"]
         ori_en = encoded_json["raw_img"]
         process_en = encoded_json["processed_img"]
@@ -325,8 +312,7 @@ def main_window(username):
                                   initialdir='/',
                                   initialfile='Image.zip',
                                   filetypes=[('zip', '*.zip')])
-            write_to_zip(ori_encoded, root.file, "ori", orig_name)
-            write_to_zip(process_encoded, root.file, "pro", orig_name)
+            write_to_zip(ori_encoded, process_encoded, root.file, orig_name)
             return
         elif len(ori_encoded) == 1:
             root.file = filedialog. \
@@ -338,23 +324,20 @@ def main_window(username):
                                   .format(download_opt.get()),
                                   filetypes=[(download_opt.get(), '*.{}'
                                               .format(download_opt.get()))])
-            new_im = Image.fromarray(ori_encoded[0])  # imgs from server
+            new_im = Image.fromarray(ori_encoded[0])
             new_im.save(root.file)
-            new_im = Image.fromarray(process_encoded[0])  # imgs from server
+            new_im = Image.fromarray(process_encoded[0])
             path = os.path.dirname(root.file)
             file_n = os.path.basename(root.file)
-            new_im.save("{}/{}{}".format(path, "Processed_", file_n))
+            new_im.save("{}/{}{}".format(path, "processed_", file_n))
             return
         return
 
     # need encoded image, file_name
-    def write_to_zip(img_decoded, zip_file_name, type, orig_name):
-        name_type = if_ori_or_pro(type)
-        # images_encoded, img_decoded = images()
-        # zip_file_name = "C:/Users/Sara Qi/Pictures/export.zip"
+    def write_to_zip(ori_encoded, process_encoded, zip_file_name, orig_name):
         print("Creating archive: {:s}".format(zip_file_name))
         with zipfile.ZipFile(zip_file_name, mode="w") as zf:
-            for num, i in enumerate(img_decoded):
+            for num, i in enumerate(ori_encoded):
                 n = orig_name[num]
                 na = os.path.splitext(n)[0]
                 plt.imshow(i)
@@ -362,17 +345,22 @@ def main_window(username):
                 plt.axis('off')
                 plt.savefig(buf, bbox_inches='tight', pad_inches=0)
                 plt.close()
-                img_name = "{}{}.{}".format(na, name_type, download_opt.get())
+                img_name = "{}.{}".format(na, download_opt.get())
                 print("  Writing image {:s} in the archive".format(img_name))
                 zf.writestr(img_name, buf.getvalue())
-
-    def if_ori_or_pro(type):
-        if type == "ori":
-            name = ""
-            return name
-        elif type == "pro":
-            name = "_processed"
-            return name
+            for num, i in enumerate(process_encoded):
+                n = orig_name[num]
+                na = os.path.splitext(n)[0]
+                plt.imshow(i)
+                buf = io.BytesIO(i)
+                plt.axis('off')
+                plt.savefig(buf, bbox_inches='tight', pad_inches=0)
+                plt.close()
+                img_name = "{}{}.{}".format(na, "_processed",
+                                            download_opt.get())
+                print("  Writing image {:s} in the archive".format(img_name))
+                zf.writestr(img_name, buf.getvalue())
+            zf.close()
 
     download_btn = ttk.Button(root, text='Download', command=if_multiple)
     download_btn.grid(column=3, row=16, sticky=E)
