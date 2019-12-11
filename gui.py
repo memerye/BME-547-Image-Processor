@@ -245,6 +245,7 @@ def main_window(username):
             zip_ref = ZipFile(root.file[0], "r")
             # returns a list of file names in the archive
             directory = zip_ref.namelist()
+            root.filename_ls = directory
             for i in directory:
                 img_bytes = zip_ref.read(i)
                 data = io.BytesIO(img_bytes)
@@ -259,7 +260,7 @@ def main_window(username):
             encoded_img_array, image_size = image_to_b64(img_array)
             root.imgs = [encoded_img_array]
             root.image_sizes = [image_size]
-            show_imgs = plt.imshow(img_array)
+            # show_imgs = plt.imshow(img_array)
         else:
             print('cannot upload. wrong files selected.')
             # Open a warning window
@@ -614,6 +615,7 @@ def main_window(username):
                 print("  Writing image {:s} in the archive".format(img_name))
                 zf.writestr(img_name, buf.getvalue())
             for num, i in enumerate(process_encoded):
+                plt.clf()
                 n = orig_name[num]
                 na = os.path.splitext(n)[0]
                 plt.imshow(i)
@@ -899,6 +901,10 @@ def user_data_window(user_info):
     data_label = Label(root,
                        text=' Time Created: '
                             '{} '.format(user_info['create_time']))
+    data_label.grid(column=0, row=0, sticky=W)
+    data_label = Label(root,
+                       text=' Total Uploaded Images: '
+                            '{} '.format(user_info['img_num']))
     data_label.grid(column=0, row=1, sticky=W)
     data_label = Label(root,
                        text=' Histogram Equalization: '
