@@ -457,17 +457,17 @@ def main_window(username):
     # size_a = imgsize[0]
     # size_b = imgsize[1]
 
-    # process info include uploaded/processing time and image size
-    uptime_label = ttk.Label(root, text='Uploaded time: {}'.format(uptime))
-    uptime_label.grid(column=7, row=18, columnspan=1, sticky=W)
-    protime_label = ttk.Label(root,
-                              text='Processing time: {}s'
-                              .format(protime))
-    protime_label.grid(column=11, row=18, columnspan=1, sticky=W)
-    size_label = ttk.Label(root,
-                           text='Image size: {}x{}'
-                           .format(size_a, size_b))
-    size_label.grid(column=14, row=18, columnspan=1, sticky=W)
+    # # process info include uploaded/processing time and image size
+    # uptime_label = ttk.Label(root, text='Uploaded time: {}'.format(uptime))
+    # uptime_label.grid(column=7, row=18, columnspan=1, sticky=W)
+    # protime_label = ttk.Label(root,
+    #                           text='Processing time: {}s'
+    #                           .format(protime))
+    # protime_label.grid(column=11, row=18, columnspan=1, sticky=W)
+    # size_label = ttk.Label(root,
+    #                        text='Image size: {}x{}'
+    #                        .format(size_a, size_b))
+    # size_label.grid(column=14, row=18, columnspan=1, sticky=W)
 
     root.mainloop()
     return
