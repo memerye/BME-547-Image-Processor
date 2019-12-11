@@ -65,10 +65,10 @@ Link to deployed web service in yourREADME.md.
 
 
 * After logging in, the user would enter the main interface showing below:
-  ![main window](33.jpg)
+  ![main window](main_window.png)
  
   * The user account will be displayed at the top of the window. The user can click on `View my user data` to see a summary of their account creation time and image processing history as shown below:
-  ![user data](33.jpg)
+  ![user data](user_summary.png)
   * To begin the image processing process, the user will choose one of two actions. 
     1. By clicking `Select Image File(s)` , the user can select file(s) locally to upload to the web-server. 
     2. The user can also `Choose from history` to retrieve history image data.
@@ -76,6 +76,9 @@ Link to deployed web service in yourREADME.md.
 #### Select Image File(s)/Upload
 * The `Select Image File(s)` button will allow the user to choose an image(in the format of .jpg .jpeg .png .tif), multiple images or a zip archive file. 
   * Selecting multiple .zip files or .zip file mixed with image cells, a warning window will popup during upload.
+  
+  ![warning](file warning.png)
+  
   * In case the user wants to select a different set of images, they can click on the `Select Image File(s)` button again.
 * Clicking the `Upload` button will send the selected images to the server. 
 * After uploading the raw image, the __graphical__ user interface 
@@ -91,7 +94,7 @@ perform on the uploaded image:
     - CPU time required to process the image(s)
     - Image size (e.g., X x Y pixels)
     
-    ![display window](33.jpg)
+    ![display window](display_window.png)
     
 #### Choose from history/Retrieve
 * The  `Choose from history` button will collect previous image processing actions of the user and display them as a list in the drop down box.
