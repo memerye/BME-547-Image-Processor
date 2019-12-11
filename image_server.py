@@ -6,6 +6,7 @@ from pymodm import connect
 import initial_database
 from image_processing import ImageProcessing
 from en_de_code import image_to_b64, b64_to_image
+from datetime import datetime
 
 # Ignore warnings
 import warnings
@@ -269,11 +270,9 @@ def add_images():
     u_id = indata["user_id"]
     if initial_database.validate_existing_id(u_id):
         initial_database.add_original_image_to_db(indata)
-        #############################################
         num = len(indata["image"])
         logging.info("* ID {} has uploaded {} images."
                      .format(u_id, num))
-        #############################################
         return "Valid image data!"
     else:
         return "The user doesn't exist!", 400
@@ -289,7 +288,8 @@ def validate_process_keys(process_info):
         bool: True if the keys are all valid;
         False if it contains wrong keys.
     """
-    expected_keys = ["user_id", "operation", "raw_img", "size", "name"]
+    expected_keys = ["user_id", "operation",
+                     "raw_img", "size", "name"]
     flag = 0
     for key in process_info.keys():
         if key not in expected_keys:
@@ -333,13 +333,19 @@ def validate_operation(process_info):
 def process_image(img, operation):
     """Process the image with specific operation.
 
+    The operation are encoded as:
+    0 - Histogram Equalization
+    1 - Contrast Stretching
+    2 - Log Compression
+    3 - Invert Image
+
     Args:
         img (ndarray): The posted processing image(s);
         operation (int): The operation index.
 
     Returns:
         ndarray: The processed images;
-        float: The time needed to processing all of image(s).
+        float: The time needed to processing this image.
     """
     I = ImageProcessing(img)
     if operation == 0:
@@ -362,7 +368,8 @@ def img_process():
     Before posting new processed images to database, the keys and
     the values in the posted json should all be validated first.
     If there is anything invalid in the posted json, the server
-    will return error status codes with reasons.
+    will return error status codes with reasons. The ultimately
+    processed images will be saved into the database.
 
     Returns:
         string: message to indicate the status of the server.
@@ -374,8 +381,8 @@ def img_process():
     op = validate_operation(indata)
     if op is False:
         return "This operation doesn't exist!", 400
-    images = indata["raw_img"]
-    if validate_images(images) is False:
+    raw_images = indata["raw_img"]
+    if validate_images(raw_images) is False:
         return "Please upload the encoded images!", 400
     names = indata["name"]
     if validate_image_names(names) is False:
@@ -383,29 +390,28 @@ def img_process():
     size = indata["size"]
     if validate_size(size) is False:
         return "The type of image size is not valid!", 400
-    if validate_data_length(images, names, size) is False:
+    if validate_data_length(raw_images, names, size) is False:
         return "The total lengths of the images, their names and" \
                "their size should always be equal.", 400
     u_id = validate_id(indata)
     indata["user_id"] = u_id
-    u_raw_img = indata["raw_img"]
     u_size = indata["size"]
     indata["processed_img"] = []
     indata["run_time"] = []
     if initial_database.validate_existing_id(u_id):
-        for img_i, size_i in zip(u_raw_img, u_size):
+        for img_i, size_i in zip(raw_images, u_size):
             size_i_tuple = tuple(size_i)
             img = b64_to_image(img_i, size_i_tuple)
             processed_img, run_time = process_image(img, op)
             processed_img_b64, _ = image_to_b64(processed_img)
             indata["processed_img"].append(processed_img_b64)
             indata["run_time"].append(run_time)
-        initial_database.add_processed_image_to_db(indata)
-        #############################################
+        indata["processed_time"] = str(datetime.now())
         num = len(indata["processed_img"])
+        indata["up_time"] = initial_database.get_upload_time(u_id, num)
+        initial_database.add_processed_image_to_db(indata)
         logging.info("* ID {} has processed {} images."
                      .format(u_id, num))
-        #############################################
         return "Success process!"
     else:
         return "The user doesn't exist!", 400
@@ -413,6 +419,22 @@ def img_process():
 
 @app.route("/api/user_info/<user_id>", methods=["GET"])
 def user_info(user_id):
+    """The client function of getting user information.
+
+    User information includes:
+    (1) user id
+    (2) how many images have been uploaded
+    (3) the total number of times of the various image processing steps.
+    If the user id doesn't exist, the server will return error
+    status codes with reasons.
+
+    Args:
+        user_id (string): The user id
+
+    Returns:
+        False if no existing patient.
+        json: a json message containing the information
+    """
     if initial_database.validate_existing_id(user_id):
         data = initial_database.get_user_info(user_id)
         return jsonify(data)
@@ -422,6 +444,24 @@ def user_info(user_id):
 
 @app.route("/api/history_info/<user_id>", methods=["GET"])
 def history_info(user_id):
+    """The client function of getting user history operation list.
+
+    User information includes:
+    (1) user id
+    (2) the indexes of the operation
+    (3) the timestamp when user process the imaeg(s)
+    (4) the operation name
+    (5) the image(s) name
+    If the user id doesn't exist, the server will return error
+    status codes with reasons.
+
+    Args:
+        user_id (string): The user id
+
+    Returns:
+        False if no existing patient.
+        json: a json message containing the information
+    """
     if initial_database.validate_existing_id(user_id):
         data = initial_database.get_history_info(user_id)
         return jsonify(data)
@@ -431,6 +471,29 @@ def history_info(user_id):
 
 @app.route("/api/history_info/<user_id>/<num>", methods=["GET"])
 def one_history_info(user_id, num):
+    """The client function of retrieve one of the history information
+
+    User information includes:
+    (1) user id
+    (2) the index of the operation
+    (3) uploaded time of the image(s)
+    (4) the operation name
+    (5) the size of the image(s)
+    (6) the CPU running time for each image processing
+    (7) the image name(s)
+    (8) the raw image(s)
+    (9) the processed image(s)
+    If the user id doesn't exist, the server will return error
+    status codes with reasons.
+
+    Args:
+        user_id (string): The user id
+        num (int): The index of the operation
+
+    Returns:
+        False if no existing patient.
+        json: a json message containing the information
+    """
     if initial_database.validate_existing_id(user_id):
         data = initial_database.retrieve_history_info(user_id, num)
         return jsonify(data)
@@ -440,6 +503,27 @@ def one_history_info(user_id, num):
 
 @app.route("/api/most_recent_processed_image/<user_id>", methods=["GET"])
 def recent_process_images(user_id):
+    """The client function of processing the images that just uploaded
+
+    User information includes:
+    (1) user id
+    (2) uploaded time of the image(s)
+    (3) the operation name
+    (4) the size of the image(s)
+    (5) the CPU running time for each image processing
+    (6) the image name(s)
+    (7) the raw image(s)
+    (8) the processed image(s)
+    If the user id doesn't exist, the server will return error
+    status codes with reasons.
+
+    Args:
+        user_id (string): The user id
+
+    Returns:
+        False if no existing patient.
+        json: a json message containing the information
+    """
     if initial_database.validate_existing_id(user_id):
         data = initial_database.get_rec_pro_img(user_id)
         return jsonify(data)

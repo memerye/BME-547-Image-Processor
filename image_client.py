@@ -166,11 +166,11 @@ def process_test_imageset():
     The pseudo-lists of image information contain errors of:
     (1) Wrong dictionary key
     (2) Wrong operation index
-    (2) Wrong format of image
-    (3) Wrong format of image name
-    (4) Wrong format of image size
-    (5) The lengths of images, their names and their size are not equal
-    (6) Not existed id
+    (3) Wrong format of image
+    (4) Wrong format of image name
+    (5) Wrong format of image size
+    (6) The lengths of images, their names and their size are not equal
+    (7) Not existed id
     Ultimately three valid processing image information will be added into
     the database with the id of "1_a".
 
@@ -234,6 +234,20 @@ def process_test_imageset():
 
 
 def request_user_info():
+    """The client function of getting user information.
+
+    User information includes:
+    (1) user id
+    (2) how many images have been uploaded
+    (3) the total number of times of the various image processing steps.
+    While user "08563" is not in the database,
+    and we can get the expected message from server.
+
+    The results will be printed out.
+
+    Returns:
+        None
+    """
     ids = ["1_a", "08563"]
     for p_id in ids:
         r = requests.get("http://127.0.0.1:5000/api/user_info/{}".format(p_id))
@@ -246,6 +260,22 @@ def request_user_info():
 
 
 def request_history_info():
+    """The client function of getting user history operation list.
+
+    User information includes:
+    (1) user id
+    (2) the indexes of the operation
+    (3) the timestamp when user process the imaeg(s)
+    (4) the operation name
+    (5) the image(s) name
+     While user "08563" is not in the database,
+     and we can get the expected message from server.
+
+     The results will be printed out.
+
+     Returns:
+         None
+     """
     ids = ["1_a", "08563"]
     for p_id in ids:
         r = requests.get("http://127.0.0.1:5000/api/history_info/{}"
@@ -259,6 +289,26 @@ def request_history_info():
 
 
 def request_one_history_info():
+    """The client function of retrieve one of the history information
+
+     User information includes:
+     (1) user id
+     (2) the index of the operation
+     (3) uploaded time of the image(s)
+     (4) the operation name
+     (5) the size of the image(s)
+     (6) the CPU running time for each image processing
+     (7) the image name(s)
+     (8) the raw image(s)
+     (9) the processed image(s)
+     While user "08563" is not in the database,
+     and we can get the expected message from server.
+
+     The results will be printed out.
+
+     Returns:
+         None
+     """
     ids = ["1_a", "08563"]
     num = [2, 0]
     for p_id, n in zip(ids, num):
@@ -273,6 +323,25 @@ def request_one_history_info():
 
 
 def request_recent_process_images():
+    """The client function of processing the images that just uploaded
+
+     User information includes:
+     (1) user id
+     (2) uploaded time of the image(s)
+     (3) the operation name
+     (4) the size of the image(s)
+     (5) the CPU running time for each image processing
+     (6) the image name(s)
+     (7) the raw image(s)
+     (8) the processed image(s)
+     While user "08563" is not in the database,
+     and we can get the expected message from server.
+
+     The results will be printed out.
+
+     Returns:
+         None
+     """
     ids = ["1_a", "08563"]
     for p_id in ids:
         r = requests.get("http://127.0.0.1:5000/api/"

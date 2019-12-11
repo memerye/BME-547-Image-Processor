@@ -42,5 +42,12 @@ def request_history_info(ids):
     return answer
 
 
+def request_download_file(ids):
+    r = requests.get("http://127.0.0.1:5000/api/most_recent_processed_image/{}"
+                     .format(ids))
+    answer = r.json()
+    return answer
+
+
 if __name__ == '__main__':
     request_check_id()

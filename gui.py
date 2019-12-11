@@ -7,6 +7,13 @@ import io
 from PIL import Image, ImageTk
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
+from skimage import io as skio
+from en_de_code import image_to_b64, b64_to_image
+import zipfile
+from io import BytesIO
+import base64
 
 
 # User login/create account
@@ -82,6 +89,10 @@ def login_window():
 
 # Main window
 def main_window(username):
+    global raw_images, sizes, names
+    raw_images = []
+    sizes = []
+    names = []
     root = Tk()
     root.title('Image Processor')
     # canvas = Canvas(root)
@@ -129,21 +140,22 @@ def main_window(username):
     def upload_img():
         uploading_label = ttk.Label(root, text='Uploading ... ', width=30)
         uploading_label.grid(column=2, row=3, columnspan=1, sticky=W)
-
+        root.imgs = []
+        root.image_sizes = []
         from en_de_code import image_to_b64
         # check if multiple files are selected
         if root.type == 'multiple img':
-            imgs = []
-            image_sizes = []
+            root.imgs = []
+            root.image_sizes = []
             for i in root.file:
                 img_array = read_img(i)
                 encoded_img_array, image_size = image_to_b64(img_array)
-                imgs.append(encoded_img_array)
-                image_sizes.append(image_size)
+                root.imgs.append(encoded_img_array)
+                root.image_sizes.append(image_size)
         elif root.type == 'zip':
             # read zip files into numpy array
-            imgs = []
-            image_sizes = []
+            root.imgs = []
+            root.image_sizes = []
             zip_ref = ZipFile(root.file[0], "r")
             # returns a list of file names in the archive
             directory = zip_ref.namelist()
@@ -153,14 +165,14 @@ def main_window(username):
                 img = Image.open(data)
                 img_array = np.uint8(img)
                 encoded_img_array, image_size = image_to_b64(img_array)
-                image_sizes.append(image_size)
-                imgs.append(encoded_img_array)
+                root.image_sizes.append(image_size)
+                root.imgs.append(encoded_img_array)
             # read non-zip files into numpy array
         elif root.type == 'img':
             img_array = read_img(root.file[0])
             encoded_img_array, image_size = image_to_b64(img_array)
-            imgs = [encoded_img_array]
-            image_sizes = [image_size]
+            root.imgs = [encoded_img_array]
+            root.image_sizes = [image_size]
             show_imgs = plt.imshow(img_array)
         else:
             print('cannot upload. wrong files selected.')
@@ -168,12 +180,16 @@ def main_window(username):
             file_warning()
 # remember to also get size from image_to_b64
             return None
-        info = post_img_json(imgs, image_sizes)
+        global raw_images, sizes, names
+        raw_images = root.imgs
+        sizes = root.image_sizes
+        names = root.filename_ls
+        info = post_img_json()
         from GUI_client import post_img_GUI
         post_img_GUI(info)
         uploaded_label = ttk.Label(root, text='Upload complete. ', width=30)
         uploaded_label.grid(column=2, row=3, columnspan=1, sticky=W)
-        return imgs, image_sizes
+
 
     select_btn = ttk.Button(root, text='Select image file(s)',
                             command=select_img)
@@ -182,12 +198,14 @@ def main_window(username):
                           command=upload_img)
     upld_btn.grid(column=3, row=3, sticky=E)
 
-    def post_img_json(imgs, image_sizes):
+
+    def post_img_json():
+        global raw_images, sizes, names
         post_img = {}
         post_img["user_id"] = username
-        post_img["image"] = imgs
-        post_img["name"] = root.filename_ls
-        post_img["size"] = image_sizes
+        post_img["image"] = raw_images
+        post_img["name"] = names
+        post_img["size"] = sizes
         return post_img
 
     # function for reading non-zip image file
@@ -263,6 +281,10 @@ def main_window(username):
         elif process_opt.get() == 'Invert Image':
             option = 3
             print("ii")
+        from GUI_client import post_process_opt
+        opt_info = post_opt_json(option)
+        post_process_opt(opt_info)
+        print(opt_info)
         return option
 
     # Process button
@@ -270,12 +292,12 @@ def main_window(username):
     process_btn.grid(column=3, row=10, columnspan=1, sticky=E)
 
     def post_opt_json(option):
-        post_opt = {}
-        post_opt["user_id"] = username
-        post_opt["operation"] = option
-        post_opt["raw_img"] = imgs
-        post_opt["name"] = root.filename_ls
-        post_opt["size"] = image_sizes
+        global raw_images, sizes, names
+        post_opt = {"user_id": username,
+                    "operation": option,
+                    "raw_img": raw_images,
+                    "size": sizes,
+                    "name": names}
         return post_opt
 
     # Image Display frame
@@ -335,29 +357,84 @@ def main_window(username):
 
     download_cb = ttk.Combobox(root, textvariable=download_opt)
     download_cb.grid(column=1, row=16, sticky=E)
-    download_cb["values"] = ("jpeg", "png", "tiff")
+    download_cb["values"] = ("jpeg", "png", "tiff", "jpg")  # no jpg
     download_cb.state(['readonly'])
 
-    def download():
-        root.file = filedialog.\
-            asksaveasfilename(title='Download Image',
-                              defaultextension='.{}'.format(
-                                  download_opt.get()),
-                              initialdir='/',
-                              initialfile='Image.{}'
-                              .format(download_opt.get()),
-                              filetypes=[(download_opt.get(), '*.{}'
-                                          .format(download_opt.get()))])
+    def decode_down_img(img_decoded, size_img):
+        img_decoded_list = []
+        for num, i in enumerate(img_decoded):
+            img_array = b64_to_image(img_decoded[num], tuple(size_img[num]))
+            img_decoded_list.append(img_array)
+        return img_decoded_list
 
-    download_btn = ttk.Button(root, text='Download', command=download)
+    def if_multiple():
+        from GUI_client import request_download_file
+        encoded_json = request_download_file(username)
+        size_img = encoded_json["size"]
+        ori_en = encoded_json["raw_img"]
+        process_en = encoded_json["processed_img"]
+        orig_name = encoded_json["name"]
+        ori_encoded = decode_down_img(ori_en, size_img)
+        process_encoded = decode_down_img(process_en, size_img)
+        if len(ori_encoded) > 1:
+            root.file = filedialog. \
+                asksaveasfilename(title='Download Image',
+                                  defaultextension='.zip',
+                                  initialdir='/',
+                                  initialfile='Image.zip',
+                                  filetypes=[('zip', '*.zip')])
+            write_to_zip(ori_encoded, process_encoded, root.file, orig_name)
+            return
+        elif len(ori_encoded) == 1:
+            root.file = filedialog. \
+                asksaveasfilename(title='Download Image',
+                                  defaultextension='.{}'.format(
+                                      download_opt.get()),
+                                  initialdir='/',
+                                  initialfile='Image.{}'
+                                  .format(download_opt.get()),
+                                  filetypes=[(download_opt.get(), '*.{}'
+                                              .format(download_opt.get()))])
+            new_im = Image.fromarray(ori_encoded[0])
+            new_im.save(root.file)
+            new_im = Image.fromarray(process_encoded[0])
+            path = os.path.dirname(root.file)
+            file_n = os.path.basename(root.file)
+            new_im.save("{}/{}{}".format(path, "processed_", file_n))
+            return
+        return
+
+    # need encoded image, file_name
+    def write_to_zip(ori_encoded, process_encoded, zip_file_name, orig_name):
+        print("Creating archive: {:s}".format(zip_file_name))
+        with zipfile.ZipFile(zip_file_name, mode="w") as zf:
+            for num, i in enumerate(ori_encoded):
+                n = orig_name[num]
+                na = os.path.splitext(n)[0]
+                plt.imshow(i)
+                buf = io.BytesIO(i)
+                plt.axis('off')
+                plt.savefig(buf, bbox_inches='tight', pad_inches=0)
+                plt.close()
+                img_name = "{}.{}".format(na, download_opt.get())
+                print("  Writing image {:s} in the archive".format(img_name))
+                zf.writestr(img_name, buf.getvalue())
+            for num, i in enumerate(process_encoded):
+                n = orig_name[num]
+                na = os.path.splitext(n)[0]
+                plt.imshow(i)
+                buf = io.BytesIO(i)
+                plt.axis('off')
+                plt.savefig(buf, bbox_inches='tight', pad_inches=0)
+                plt.close()
+                img_name = "{}{}.{}".format(na, "_processed",
+                                            download_opt.get())
+                print("  Writing image {:s} in the archive".format(img_name))
+                zf.writestr(img_name, buf.getvalue())
+            zf.close()
+
+    download_btn = ttk.Button(root, text='Download', command=if_multiple)
     download_btn.grid(column=3, row=16, sticky=E)
-
-    # # upload time function
-    # def upload_time():
-    #     global time_upload
-    #     time_upload = str(datetime.datetime.now())
-    #     print(time_upload)
-    #     return
 
     # back to login function at main window
     def back_to_login():
@@ -380,13 +457,25 @@ def main_window(username):
                           command=exit)
     exit_btn.grid(column=15, row=19)
 
-    # process info include uploaded/processing time and image size
-    uptime_label = ttk.Label(root, text='Uploaded time: b')
-    uptime_label.grid(column=7, row=18, columnspan=1, sticky=W)
-    protime_label = ttk.Label(root, text='Processsing time: a')
-    protime_label.grid(column=11, row=18, columnspan=1, sticky=W)
-    size_label = ttk.Label(root, text='Image size: c')
-    size_label.grid(column=14, row=18, columnspan=1, sticky=W)
+    # from GUI_client import request_download_file
+    # encoded_json = request_download_file(username)
+    # uptime = encoded_json["up_time"][0]
+    # protime = encoded_json["run_time"][0]
+    # imgsize = encoded_json["size"][0]
+    # size_a = imgsize[0]
+    # size_b = imgsize[1]
+
+    # # process info include uploaded/processing time and image size
+    # uptime_label = ttk.Label(root, text='Uploaded time: {}'.format(uptime))
+    # uptime_label.grid(column=7, row=18, columnspan=1, sticky=W)
+    # protime_label = ttk.Label(root,
+    #                           text='Processing time: {}s'
+    #                           .format(protime))
+    # protime_label.grid(column=11, row=18, columnspan=1, sticky=W)
+    # size_label = ttk.Label(root,
+    #                        text='Image size: {}x{}'
+    #                        .format(size_a, size_b))
+    # size_label.grid(column=14, row=18, columnspan=1, sticky=W)
 
     root.mainloop()
     return
