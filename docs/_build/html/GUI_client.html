@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>GUI_client module &#8212; Image Processor  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="image_client module" href="image_client.html" />
+    <link rel="prev" title="gui module" href="gui.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-GUI_client">
+<span id="gui-client-module"></span><h1>GUI_client module<a class="headerlink" href="#module-GUI_client" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="GUI_client.post_img_GUI">
+<code class="sig-prename descclassname">GUI_client.</code><code class="sig-name descname">post_img_GUI</code><span class="sig-paren">(</span><em class="sig-param">info</em><span class="sig-paren">)</span><a class="headerlink" href="#GUI_client.post_img_GUI" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client function of posting images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>info</strong> (<em>dict</em>) – The dictionary of image information.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="GUI_client.post_process_opt">
+<code class="sig-prename descclassname">GUI_client.</code><code class="sig-name descname">post_process_opt</code><span class="sig-paren">(</span><em class="sig-param">info</em><span class="sig-paren">)</span><a class="headerlink" href="#GUI_client.post_process_opt" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client function of posting processed images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>info</strong> (<em>dict</em>) – The dictionary of image information.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="GUI_client.post_user_id">
+<code class="sig-prename descclassname">GUI_client.</code><code class="sig-name descname">post_user_id</code><span class="sig-paren">(</span><em class="sig-param">info</em><span class="sig-paren">)</span><a class="headerlink" href="#GUI_client.post_user_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client function of posting a new user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>info</strong> (<em>dict</em>) – the dictionary of user’s information.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="GUI_client.request_check_id">
+<code class="sig-prename descclassname">GUI_client.</code><code class="sig-name descname">request_check_id</code><span class="sig-paren">(</span><em class="sig-param">ids</em><span class="sig-paren">)</span><a class="headerlink" href="#GUI_client.request_check_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client function of checking the existence of this id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ids</strong> (<em>string</em>) – the user id.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The existence of this id.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="GUI_client.request_history_info">
+<code class="sig-prename descclassname">GUI_client.</code><code class="sig-name descname">request_history_info</code><span class="sig-paren">(</span><em class="sig-param">ids</em><span class="sig-paren">)</span><a class="headerlink" href="#GUI_client.request_history_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client function of getting user history operation list.</p>
+<p>User information includes:
+(1) user id
+(2) the indexes of the operation
+(3) the timestamp when user process the imaeg(s)
+(4) the operation name
+(5) the image(s) name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ids</strong> (<em>string</em>) – the user id</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return the history information to client.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>json</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="GUI_client.request_one_history_info">
+<code class="sig-prename descclassname">GUI_client.</code><code class="sig-name descname">request_one_history_info</code><span class="sig-paren">(</span><em class="sig-param">ids</em>, <em class="sig-param">num</em><span class="sig-paren">)</span><a class="headerlink" href="#GUI_client.request_one_history_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client function of retrieve one of the history information</p>
+<blockquote>
+<div><p>User information includes:
+(1) user id
+(2) the index of the operation
+(3) uploaded time of the image(s)
+(4) the operation name
+(5) the size of the image(s)
+(6) the CPU running time for each image processing
+(7) the image name(s)
+(8) the raw image(s)
+(9) the processed image(s)</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ids</strong> (<em>string</em>) – the user id</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – get the history by providing the index of the</p></li>
+<li><p><strong>info</strong> (<em>history</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return the history information under this index.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>json</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="GUI_client.request_recent_process_images">
+<code class="sig-prename descclassname">GUI_client.</code><code class="sig-name descname">request_recent_process_images</code><span class="sig-paren">(</span><em class="sig-param">ids</em><span class="sig-paren">)</span><a class="headerlink" href="#GUI_client.request_recent_process_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client function of processing the images that just uploaded</p>
+<p>User information includes:
+(1) user id
+(2) uploaded time of the image(s)
+(3) the operation name
+(4) the size of the image(s)
+(5) the CPU running time for each image processing
+(6) the image name(s)
+(7) the raw image(s)
+(8) the processed image(s)
+While user “08563” is not in the database,
+and we can get the expected message from server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>return information about the result of recent
+processed images.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>json</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="GUI_client.request_user_info">
+<code class="sig-prename descclassname">GUI_client.</code><code class="sig-name descname">request_user_info</code><span class="sig-paren">(</span><em class="sig-param">ids</em><span class="sig-paren">)</span><a class="headerlink" href="#GUI_client.request_user_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client function of getting user information.</p>
+<p>User information includes:
+(1) user id
+(2) how many images have been uploaded
+(3) the total number of times of the various image processing steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ids</strong> (<em>string</em>) – the user id</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return the user information to client.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>json</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Image Processor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="en_de_code.html">en_de_code module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">gui module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">GUI_client module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_client.html">image_client module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_processing.html">image_processing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_server.html">image_server module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="initial_database.html">initial_database module</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="gui.html" title="previous chapter">gui module</a></li>
+      <li>Next: <a href="image_client.html" title="next chapter">image_client module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Liangyu Lucy Xiaoyu Ling.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/GUI_client.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
