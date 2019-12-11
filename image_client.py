@@ -234,12 +234,7 @@ def process_test_imageset():
 
 
 def request_user_info():
-    """The client function of getting user information.
-
-    User information includes:
-    (1) user id
-    (2) how many images have been uploaded
-    (3) the total number of times of the various image processing steps.
+    """
     While user "08563" is not in the database,
     and we can get the expected message from server.
 
