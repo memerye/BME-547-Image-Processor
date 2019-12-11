@@ -125,7 +125,7 @@ def main_window(username):
 
     # Images upload/choose from history
     action_label = ttk.Label(root, text='1. Choose an action to begin: ')
-    action_label.grid(column=0, row=2, columnspan=2, sticky=W)
+    action_label.grid(column=0, row=3, columnspan=2, sticky=W)
 
     # Select files to upload
     def select_img():
@@ -142,12 +142,12 @@ def main_window(username):
         print(root.type)
         file_label = ttk.Label(root, text='...{}'.format(root.file[0][-30::]),
                                width=30)
-        file_label.grid(column=2, row=3, columnspan=1, sticky=W)
+        file_label.grid(column=2, row=4, columnspan=1, sticky=W)
         return
 
     def upload_img():
         uploading_label = ttk.Label(root, text='Uploading ... ', width=30)
-        uploading_label.grid(column=2, row=3, columnspan=1, sticky=W)
+        uploading_label.grid(column=2, row=4, columnspan=1, sticky=W)
 
         from en_de_code import image_to_b64
         # check if multiple files are selected
@@ -182,15 +182,15 @@ def main_window(username):
             file_warning()
 # remember to also get size from image_to_b64
         uploaded_label = ttk.Label(root, text='Upload complete. ', width=30)
-        uploaded_label.grid(column=2, row=3, columnspan=1, sticky=W)
+        uploaded_label.grid(column=2, row=4, columnspan=1, sticky=W)
         return
 
     select_btn = ttk.Button(root, text='Select image file(s)',
                             command=select_img)
-    select_btn.grid(column=1, row=3, sticky=W)
+    select_btn.grid(column=1, row=4, sticky=W)
     upld_btn = ttk.Button(root, text='Upload',
                           command=upload_img)
-    upld_btn.grid(column=3, row=3, sticky=E)
+    upld_btn.grid(column=3, row=4, sticky=E)
 
     # function for reading non-zip image file
     def read_img(img_path):
@@ -219,12 +219,12 @@ def main_window(username):
 
     hist_btn = ttk.Button(root, text='Choose from history',
                           command=proc_history)
-    hist_btn.grid(column=1, row=4, sticky=W)
+    hist_btn.grid(column=1, row=5, sticky=W)
 
     # History pull down
     history = StringVar()
     hist_combo = ttk.Combobox(root, textvariable=history)
-    hist_combo.grid(column=2, row=4, sticky=W)
+    hist_combo.grid(column=2, row=5, sticky=W)
     hist_combo.state(['readonly'])
 
     # Retrieve selected history info
@@ -269,12 +269,12 @@ def main_window(username):
         return
 
     retrieve_btn = ttk.Button(root, text='Retrieve', command=retrieve)
-    retrieve_btn.grid(column=3, row=4, sticky=E)
+    retrieve_btn.grid(column=3, row=5, sticky=E)
 
     # process option
     process_opt = StringVar(None, 'Histogram Equalization')
     pro_label = ttk.Label(root, text='2. Choose a process option: ')
-    pro_label.grid(column=0, row=6, columnspan=2, sticky=W)
+    pro_label.grid(column=0, row=7, columnspan=2, sticky=W)
 
     # process option select button
     botton1 = ttk.Radiobutton(root, text='Histogram Equalization',
@@ -330,7 +330,7 @@ def main_window(username):
 
     # Process button
     process_btn = ttk.Button(root, text='Process', command=process)
-    process_btn.grid(column=3, row=10, columnspan=1, sticky=E)
+    process_btn.grid(column=3, row=8, columnspan=1, sticky=E)
 
     def post_opt_json(option):
         global raw_images, sizes, names
@@ -366,47 +366,6 @@ def main_window(username):
     process_btn = ttk.Button(root, text='Display',
                              command=image_display)
     process_btn.grid(column=3, row=12, columnspan=1, sticky=E)
-    # # processed image frame
-    # img_pro_frame = ttk.LabelFrame(img_frame, text='Processed Image',
-    #                                height=300, width=300)
-    # img_pro_frame.grid(column=1, row=1, columnspan=1)
-    # # original image frame
-    # img_orig_frame = ttk.LabelFrame(img_frame, text='Original Image',
-    #                                 height=250, width=300)
-    # img_orig_frame.grid(column=2, row=1, columnspan=1)
-    # # histogram for processed image frame
-    # hist_pro_frame = ttk.LabelFrame(img_frame,
-    #                                 text='Processed Img. Histogram',
-    #                                 height=250, width=300)
-    # hist_pro_frame.grid(column=1, row=2, columnspan=1)
-    # # histogram for original image frame
-    # hist_pro_frame = ttk.LabelFrame(img_frame,
-    #                                 text='Original Img. Histogram',
-    #                                 height=250, width=300)
-    # hist_pro_frame.grid(column=2, row=2, columnspan=1)
-    # # previous/next frame
-    #
-    # prev_frame = ttk.Frame(root, height=600, width=10)
-    # prev_frame.grid(column=5, row=8)
-    # next_frame = ttk.Frame(root, height=600, width=10)
-    # next_frame.grid(column=16, row=8)
-
-    # # previous/next button
-    # def previous_img():
-    #     print('get previous image from server')
-    #     print('display images')
-    #     return
-    #
-    # def next_img():
-    #     print('get previous image from server')
-    #     print('display images')
-    #     return
-    #
-    # prev_btn = ttk.Button(prev_frame, text='<',
-    #                       width=1, command=previous_img)
-    # prev_btn.grid(column=1, row=1)
-    # next_btn = ttk.Button(next_frame, text='>', width=1, command=next_img)
-    # next_btn.grid(column=1, row=1)
 
     # Download Section
     download_opt = StringVar(None, 'jpeg')
@@ -414,7 +373,7 @@ def main_window(username):
     download_label.grid(column=0, row=14, columnspan=2, sticky=W)
 
     download_cb = ttk.Combobox(root, textvariable=download_opt)
-    download_cb.grid(column=1, row=16, sticky=E)
+    download_cb.grid(column=1, row=15, sticky=E)
     download_cb["values"] = ("jpeg", "png", "tiff", "jpg")  # no jpg
     download_cb.state(['readonly'])
 
@@ -476,7 +435,7 @@ def main_window(username):
                 zf.writestr(img_name, buf.getvalue())
 
     download_btn = ttk.Button(root, text='Download', command=if_multiple)
-    download_btn.grid(column=3, row=16, sticky=E)
+    download_btn.grid(column=3, row=15, sticky=E)
 
     # # upload time function
     # def upload_time():
@@ -494,7 +453,7 @@ def main_window(username):
     # back to login button
     back_to_login_btn = ttk.Button(root, text='Back to Login',
                                    command=back_to_login)
-    back_to_login_btn.grid(column=14, row=19, sticky=E)
+    back_to_login_btn.grid(column=2, row=17, sticky=E)
 
     # exit function at main window
     def exit():
@@ -504,20 +463,45 @@ def main_window(username):
     # exit button
     exit_btn = ttk.Button(root, text='Exit',
                           command=exit)
-    exit_btn.grid(column=15, row=19)
+    exit_btn.grid(column=3, row=17)
 
-    # process info include uploaded/processing time and image size
-    def process_info(ls):
-        uptime_label = ttk.Label(root,
-                                 text='Uploaded time: {}'.format(ls[0]))
-        uptime_label.grid(column=7, row=18, columnspan=1, sticky=W)
-        protime_label = ttk.Label(root,
-                                  text='Processsing time: {}'.format(ls[1]))
-        protime_label.grid(column=11, row=18, columnspan=1, sticky=W)
-        size_label = ttk.Label(root,
-                               text='Image size: {}'.format(ls[2]))
-        size_label.grid(column=14, row=18, columnspan=1, sticky=W)
-        return
+    # # process info include uploaded/processing time and image size
+    # def process_info(ls):
+    #     uptime_label = ttk.Label(root,
+    #                              text='Uploaded time: {}'.format(ls[0]))
+    #     uptime_label.grid(column=7, row=18, columnspan=1, sticky=W)
+    #     protime_label = ttk.Label(root,
+    #                               text='Processsing time: {}'.format(ls[1]))
+    #     protime_label.grid(column=11, row=18, columnspan=1, sticky=W)
+    #     size_label = ttk.Label(root,
+    #                            text='Image size: {}'.format(ls[2]))
+    #     size_label.grid(column=14, row=18, columnspan=1, sticky=W)
+    #     return
+
+    # gaps for aesthetic
+    gap_row = Label(root, text='  ')
+    gap_row.grid(column=0, row=0)
+
+    gap_row2 = Label(root, text='  ')
+    gap_row2.grid(column=0, row=2)
+
+    gap_row3 = Label(root, text='  ')
+    gap_row3.grid(column=0, row=6)
+
+    gap_row4 = Label(root, text='  ')
+    gap_row4.grid(column=0, row=10)
+
+    gap_row5 = Label(root, text='  ')
+    gap_row5.grid(column=0, row=13)
+
+    gap_row6 = Label(root, text='  ')
+    gap_row6.grid(column=0, row=16)
+
+    gap_row7 = Label(root, text='  ')
+    gap_row7.grid(column=0, row=18)
+
+    gap_col = Label(root, text='  ')
+    gap_col.grid(column=4, row=0)
 
     root.mainloop()
     return
@@ -682,5 +666,6 @@ def file_warning():
 
 
 if __name__ == '__main__':
+    # main_window('1_a')
     login_window()
     # file_warning()
