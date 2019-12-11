@@ -7,12 +7,17 @@ import os
 def request_check_id(ids):
     r = requests.get("http://127.0.0.1:5000/api/check_id/{}".format(ids))
     answer = r.json()
-    print(answer["result"])
     return answer["result"]
 
 
 def post_user_id(info):
     r = requests.post("http://127.0.0.1:5000/api/new_user",
+                      json=info)
+    return None
+
+
+def post_img_GUI(info):
+    r = requests.post("http://127.0.0.1:5000/api/upload_images",
                       json=info)
     return None
 
@@ -77,7 +82,3 @@ def request_recent_process_images(ids):
                      "most_recent_processed_image/{}".format(ids))
     answer = r.json()
     return answer
-
-
-if __name__ == '__main__':
-    request_history_info('1_a')
