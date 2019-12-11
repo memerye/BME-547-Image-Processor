@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>gui module &#8212; Image Processor  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="GUI_client module" href="GUI_client.html" />
+    <link rel="prev" title="en_de_code module" href="en_de_code.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-gui">
+<span id="gui-module"></span><h1>gui module<a class="headerlink" href="#module-gui" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="gui.ck_type">
+<code class="sig-prename descclassname">gui.</code><code class="sig-name descname">ck_type</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#gui.ck_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to check type of file selected</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string</em>) – The name of the file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the type of the file</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="gui.cvt_proc_index">
+<code class="sig-prename descclassname">gui.</code><code class="sig-name descname">cvt_proc_index</code><span class="sig-paren">(</span><em class="sig-param">index</em><span class="sig-paren">)</span><a class="headerlink" href="#gui.cvt_proc_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>function that read the
+index of the selected process
+option and translate to method.</p>
+<dl class="simple">
+<dt>Arg:</dt><dd><p>index(int): image process option index (0,1,2,3)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>‘Histogram Equalization’:
+process option
+‘Contrast Stretching’:
+process option
+‘Log Compression’:
+process option
+‘Invert Image’:
+process option
+False(boolean): return false
+if the index does not present any
+process options.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="gui.display_info">
+<code class="sig-prename descclassname">gui.</code><code class="sig-name descname">display_info</code><span class="sig-paren">(</span><em class="sig-param">ind</em>, <em class="sig-param">act</em><span class="sig-paren">)</span><a class="headerlink" href="#gui.display_info" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>function that read upload and process</dt><dd><p>time and image size from json.</p>
+</dd>
+<dt>Arg:</dt><dd><p>ind(int): index position of
+the displayed image in the
+image list.
+act(dictionary): the dictionary
+read from most_recent_post.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>timestamp when
+the image is uploaded.
+protime(float): seconds that
+the image need to process
+size_a(int): column of the image
+size_b(int): row of the image</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>uptime(string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="gui.file_warning">
+<code class="sig-prename descclassname">gui.</code><code class="sig-name descname">file_warning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gui.file_warning" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Create the window that gives the warning message</dt><dd><p>when the user wrongly select the type of the image(s).</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="gui.image_display_window">
+<code class="sig-prename descclassname">gui.</code><code class="sig-name descname">image_display_window</code><span class="sig-paren">(</span><em class="sig-param">ind</em>, <em class="sig-param">one_history</em>, <em class="sig-param">info</em><span class="sig-paren">)</span><a class="headerlink" href="#gui.image_display_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the window that can display the
+original image and the processed image
+with its histogram.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="gui.login_window">
+<code class="sig-prename descclassname">gui.</code><code class="sig-name descname">login_window</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gui.login_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>The window created for login</p>
+<p>If a new user want to log in to the image processor,
+the input of the id is needed. If this id has existed
+in the database, the user would be inform in the window.
+While an old user, who has created the account before,
+can access the image processor by inputting the id in
+the box.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="gui.main_window">
+<code class="sig-prename descclassname">gui.</code><code class="sig-name descname">main_window</code><span class="sig-paren">(</span><em class="sig-param">username</em><span class="sig-paren">)</span><a class="headerlink" href="#gui.main_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the main window for the image processor that
+allows to process image(s) in multiple way.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>string</em>) – The user name of the account.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="gui.plotimages">
+<code class="sig-prename descclassname">gui.</code><code class="sig-name descname">plotimages</code><span class="sig-paren">(</span><em class="sig-param">img_raw</em>, <em class="sig-param">img_processed</em><span class="sig-paren">)</span><a class="headerlink" href="#gui.plotimages" title="Permalink to this definition">¶</a></dt>
+<dd><p>function that plot the histogram
+on the display window.</p>
+<dl class="simple">
+<dt>Arg:</dt><dd><p>img_raw(ndarray): a uint8 array of the original
+image data received from server
+img_processed(ndarray): a uint8 array of the
+processed image data received from server</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>an array of image with original and
+processed image with their corresponding histogram</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>hist_img(ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="gui.user_data_window">
+<code class="sig-prename descclassname">gui.</code><code class="sig-name descname">user_data_window</code><span class="sig-paren">(</span><em class="sig-param">user_info</em><span class="sig-paren">)</span><a class="headerlink" href="#gui.user_data_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the window that can visualize the user information</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Image Processor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="en_de_code.html">en_de_code module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">gui module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GUI_client.html">GUI_client module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_client.html">image_client module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_processing.html">image_processing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_server.html">image_server module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="initial_database.html">initial_database module</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="en_de_code.html" title="previous chapter">en_de_code module</a></li>
+      <li>Next: <a href="GUI_client.html" title="next chapter">GUI_client module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Liangyu Lucy Xiaoyu Ling.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/gui.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

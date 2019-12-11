@@ -1,0 +1,368 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>initial_database module &#8212; Image Processor  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="image_server module" href="image_server.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-initial_database">
+<span id="initial-database-module"></span><h1>initial_database module<a class="headerlink" href="#module-initial_database" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="initial_database.ImageUser">
+<em class="property">class </em><code class="sig-prename descclassname">initial_database.</code><code class="sig-name descname">ImageUser</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#initial_database.ImageUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymodm.base.models.MongoModel</span></code></p>
+<dl class="exception">
+<dt id="initial_database.ImageUser.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#initial_database.ImageUser.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymodm.errors.DoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="initial_database.ImageUser.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#initial_database.ImageUser.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymodm.errors.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="initial_database.ImageUser.created_timestamp">
+<code class="sig-name descname">created_timestamp</code><a class="headerlink" href="#initial_database.ImageUser.created_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>A field that stores unicode strings.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="initial_database.ImageUser.images">
+<code class="sig-name descname">images</code><a class="headerlink" href="#initial_database.ImageUser.images" title="Permalink to this definition">¶</a></dt>
+<dd><p>A field that stores a regular Python dictionary.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="initial_database.ImageUser.metrics">
+<code class="sig-name descname">metrics</code><a class="headerlink" href="#initial_database.ImageUser.metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>A field that stores a regular Python dictionary.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="initial_database.ImageUser.objects">
+<code class="sig-name descname">objects</code><a class="headerlink" href="#initial_database.ImageUser.objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>The default manager used for <code class="xref py py-class docutils literal notranslate"><span class="pre">MongoModel</span></code> instances.</p>
+<p>This implementation of <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseManager</span></code> uses
+<code class="xref py py-class docutils literal notranslate"><span class="pre">QuerySet</span></code> as its QuerySet class.</p>
+<p>This Manager class (accessed via the <code class="docutils literal notranslate"><span class="pre">objects</span></code> attribute on a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">MongoModel</span></code>) is used by default for all MongoModel classes,
+unless another Manager instance is supplied as an attribute within the
+MongoModel definition.</p>
+<p>Managers have two primary functions:</p>
+<ol class="arabic simple">
+<li><p>Construct <code class="xref py py-class docutils literal notranslate"><span class="pre">QuerySet</span></code> instances for use when
+querying or working with <code class="xref py py-class docutils literal notranslate"><span class="pre">MongoModel</span></code> instances in bulk.</p></li>
+<li><p>Define collection-level functionality that can be reused across different
+MongoModel types.</p></li>
+</ol>
+<p>If you created a custom QuerySet that makes certain queries easier, for
+example, you will need to create a custom Manager type that returns this
+queryset using the <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_queryset()</span></code>
+method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UserQuerySet</span><span class="p">(</span><span class="n">QuerySet</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Return only active users.&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">({</span><span class="s2">&quot;active&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">MongoModel</span><span class="p">):</span>
+    <span class="n">active</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">()</span>
+    <span class="c1"># Add our custom Manager.</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">Manager</span><span class="o">.</span><span class="n">from_queryset</span><span class="p">(</span><span class="n">UserQuerySet</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the above example, we added a <cite>users</cite> attribute on <cite>User</cite> so that we can
+use the <cite>active</cite> method on our new QuerySet type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">active_users</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">users</span><span class="o">.</span><span class="n">active</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If we wanted every method on the QuerySet to examine active users <em>only</em>, we
+can do that by customizing the Manager itself:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UserManager</span><span class="p">(</span><span class="n">Manager</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Override get_queryset, so that every QuerySet created will</span>
+        <span class="c1"># have this filter applied.</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">UserManager</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">()</span><span class="o">.</span><span class="n">raw</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;active&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">MongoModel</span><span class="p">):</span>
+    <span class="n">active</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">()</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">UserManager</span><span class="p">()</span>
+
+<span class="n">active_users</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">users</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="initial_database.ImageUser.processed">
+<code class="sig-name descname">processed</code><a class="headerlink" href="#initial_database.ImageUser.processed" title="Permalink to this definition">¶</a></dt>
+<dd><p>A field that stores a regular Python dictionary.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="initial_database.ImageUser.user_id">
+<code class="sig-name descname">user_id</code><a class="headerlink" href="#initial_database.ImageUser.user_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A field that stores unicode strings.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="initial_database.add_new_user_to_db">
+<code class="sig-prename descclassname">initial_database.</code><code class="sig-name descname">add_new_user_to_db</code><span class="sig-paren">(</span><em class="sig-param">user_info</em><span class="sig-paren">)</span><a class="headerlink" href="#initial_database.add_new_user_to_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add new user to the database and initialize user info in database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>u_info</strong> (<em>dict</em>) – a dictionary containing u_id</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="initial_database.add_original_image_to_db">
+<code class="sig-prename descclassname">initial_database.</code><code class="sig-name descname">add_original_image_to_db</code><span class="sig-paren">(</span><em class="sig-param">u_img</em><span class="sig-paren">)</span><a class="headerlink" href="#initial_database.add_original_image_to_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add original image to the database as a dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>u_img</strong> (<em>dict</em>) – a dictionary containing original image info and u_id</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="initial_database.add_processed_image_to_db">
+<code class="sig-prename descclassname">initial_database.</code><code class="sig-name descname">add_processed_image_to_db</code><span class="sig-paren">(</span><em class="sig-param">u_pro</em><span class="sig-paren">)</span><a class="headerlink" href="#initial_database.add_processed_image_to_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add processed image to database as a dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u_pro</strong> (<em>dict</em>) – a dictionary containing</p></li>
+<li><p><strong>u_id and processed image info.</strong> (<em>the</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="initial_database.get_history_info">
+<code class="sig-prename descclassname">initial_database.</code><code class="sig-name descname">get_history_info</code><span class="sig-paren">(</span><em class="sig-param">user_id</em><span class="sig-paren">)</span><a class="headerlink" href="#initial_database.get_history_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all of history operation information by this user from database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<em>string</em>) – user id string variable</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary containing searching information</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="initial_database.get_rec_pro_img">
+<code class="sig-prename descclassname">initial_database.</code><code class="sig-name descname">get_rec_pro_img</code><span class="sig-paren">(</span><em class="sig-param">u_id</em><span class="sig-paren">)</span><a class="headerlink" href="#initial_database.get_rec_pro_img" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get most recent processed image and output as a dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>u_id</strong> (<em>string</em>) – user id string variable</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary containing searching information</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="initial_database.get_upload_time">
+<code class="sig-prename descclassname">initial_database.</code><code class="sig-name descname">get_upload_time</code><span class="sig-paren">(</span><em class="sig-param">user_id</em>, <em class="sig-param">num_img</em><span class="sig-paren">)</span><a class="headerlink" href="#initial_database.get_upload_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the timestamp of uploaded image(s) when trying to process them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>string</em>) – user id string variable</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – the number of last uploaded image(s)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary containing searching information</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="initial_database.get_user_info">
+<code class="sig-prename descclassname">initial_database.</code><code class="sig-name descname">get_user_info</code><span class="sig-paren">(</span><em class="sig-param">user_id</em><span class="sig-paren">)</span><a class="headerlink" href="#initial_database.get_user_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the user information from database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<em>string</em>) – user id string variable</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary containing searching information</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="initial_database.init_mongodb">
+<code class="sig-prename descclassname">initial_database.</code><code class="sig-name descname">init_mongodb</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#initial_database.init_mongodb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect the mongodb</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="initial_database.retrieve_history_info">
+<code class="sig-prename descclassname">initial_database.</code><code class="sig-name descname">retrieve_history_info</code><span class="sig-paren">(</span><em class="sig-param">user_id</em>, <em class="sig-param">num</em><span class="sig-paren">)</span><a class="headerlink" href="#initial_database.retrieve_history_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve one of the history operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>string</em>) – user id string variable</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – the index of operation that user want to retrieve</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary containing searching information</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="initial_database.validate_existing_id">
+<code class="sig-prename descclassname">initial_database.</code><code class="sig-name descname">validate_existing_id</code><span class="sig-paren">(</span><em class="sig-param">u_id</em><span class="sig-paren">)</span><a class="headerlink" href="#initial_database.validate_existing_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate the existence of the user id in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>u_id</strong> (<em>string</em>) – the patient id.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>False if the id doesn’t exist in the database;
+True if the id has been registered in the database.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Image Processor</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="en_de_code.html">en_de_code module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">gui module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GUI_client.html">GUI_client module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_client.html">image_client module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_processing.html">image_processing module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_server.html">image_server module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">initial_database module</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="image_server.html" title="previous chapter">image_server module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Liangyu Lucy Xiaoyu Ling.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/initial_database.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
